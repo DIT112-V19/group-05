@@ -1,13 +1,17 @@
 package com.example.hajken;
 
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements InterfaceMainActivity {
 
+    private static final String TAG = "MainActivity";
    // private TextView myToolbarTitle;
 
     @Override
@@ -63,5 +67,55 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
         }
 
+    }
+
+    private void cancelMethod(){
+        Log.d(TAG, "cancelMethod: Called");
+        toastMessage("Route cancelled");
+    }
+
+    private void startMethod(){
+        Log.d(TAG, "startMethod: Called");
+        toastMessage("Route started");
+    }
+
+    @Override
+    public void customDialog(String title, String message, final String cancelMethod, final String startMethod) {
+        Log.d(TAG, "customDialog: Called");
+        final android.support.v7.app.AlertDialog.Builder builderSingle = new android.support.v7.app.AlertDialog.Builder(this); // "this" references to interface
+
+        builderSingle.setTitle(title);
+        builderSingle.setMessage(message);
+
+        builderSingle.setNegativeButton(
+                "Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                            Log.d(TAG, "onClick: Called");
+                            if (cancelMethod.equals("cancelMethod")){
+                                cancelMethod();
+                            }
+                        }
+                    }
+                    );
+        builderSingle.setPositiveButton(
+                "Start",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.d(TAG, "onClick: Called");
+                        if (startMethod.equals("startMethod")){
+                            startMethod();
+                        }
+                    }
+                }
+        );
+
+        builderSingle.show();
+
+    }
+
+    private void toastMessage(String message){
+        Log.d(TAG, "toastMessage: Called");
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
     }
 }

@@ -22,6 +22,8 @@
     <!--Images-->
     <string name="bluetooth_symbol_description">Bluetooth</string>
     <string name="vehicle_symbol_description">Vehicle</string>
+    <string name="circle__symbol_description">Circle</string>
+    <string name="square_symbol_description">Square</string>
 
 
 </resources>

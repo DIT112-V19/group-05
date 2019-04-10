@@ -9,11 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 public class CollectionFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "DrawFragment";
     private InterfaceMainActivity interfaceMainActivity;
+    private ImageButton circle;
+    private ImageButton square;
+
 
     private Button startCollectionButton;
 
@@ -32,9 +36,13 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
         //Creates the buttons, list and image of the fragment
         startCollectionButton = view.findViewById(R.id.start_collection_button);
+        circle = view.findViewById(R.id.circle_symbol);
+        square = view.findViewById(R.id.square_symbol);
 
         //Enables functions to buttons
         startCollectionButton.setOnClickListener(this);
+        circle.setOnClickListener(this);
+        square.setOnClickListener(this);
 
         return view;
     }
@@ -57,6 +65,15 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             case R.id.start_collection_button: {
 
                 break;
+            }
+
+            case R.id.circle_symbol: {
+                interfaceMainActivity.customDialog("Circle route","Would you like to start the route?","cancelMethod","startMethod");
+                break;
+            }
+
+            case R.id.square_symbol: {
+                interfaceMainActivity.customDialog("Square route","Would you like to star the route?","cancelMethod","startMethod");
             }
 
         }
