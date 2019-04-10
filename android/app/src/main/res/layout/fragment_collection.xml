@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,13 +10,38 @@
         android:id="@+id/start_collection_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/start_collection_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/circle_symbol"
+        android:layout_width="197dp"
+        android:layout_height="175dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/circle__symbol_description"
+        app:layout_constraintBottom_toTopOf="@+id/square_symbol"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/circle_symbol" />
+
+    <ImageButton
+        android:id="@+id/square_symbol"
+        android:layout_width="193dp"
+        android:layout_height="222dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/square_symbol_description"
+        app:layout_constraintBottom_toTopOf="@+id/start_collection_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/square_symbol" />
 
 </android.support.constraint.ConstraintLayout>
