@@ -4,7 +4,7 @@
 //**********
 //ultraSonicSensor
 float carDistanceToObstacle; //actual distance to "object"
-float stopDistanceToObstacle = 20; //Distance that triggers to stop, in cm
+float stopDistanceToObstacle = 5; //Distance that triggers to stop, in cm
 
 //ultraSonicSensor Pin connection
 const int USS1_TRIGGER_PIN = 6; //Trigger Pin
@@ -22,6 +22,7 @@ const int gyroOffset = -30;
 //distanceCar
 //**********
 float speed = 50;
+int turningSpeed = 50;
 int stopSpeed = 0;
 
 //motor pin connection
@@ -58,15 +59,47 @@ void setup() {
 
 void loop() {
 
-  backward(100);
-
-  delay(1000);
   
-  backward(100);
+  turnLeft(); 
+  delay(1000);
+  forward(50);
+
+   turnLeft(); 
+  delay(1000);
+  forward(50);
+
+   turnLeft(); 
+  delay(1000);
+  forward(50);
+
+   turnLeft(); 
+  delay(1000);
+  forward(50);
+  
   while(true){
     car.update();
   }
 
+}
+
+void turnLeft(){
+  
+  car.overrideMotorSpeed(-turningSpeed, turningSpeed);
+  delay(2000);
+
+  car.setSpeed(stopSpeed);
+  car.update();
+  
+}
+
+void turnRight(){
+
+  
+  car.overrideMotorSpeed(turningSpeed, -turningSpeed);
+  delay(2000);
+  
+  car.setSpeed(stopSpeed);
+  car.update();
 }
 
 void forward(int distance){
@@ -79,7 +112,7 @@ void forward(int distance){
     car.update();
     obstacleAvoidance();
   }
-  car.setSpeed(0);
+  car.setSpeed(stopSpeed);
   car.update();
 }
 
@@ -93,7 +126,7 @@ void backward(int distance){
     car.update();
     obstacleAvoidance();
   }
-  car.setSpeed(0);
+  car.setSpeed(stopSpeed);
   car.update();
 }
 
@@ -102,5 +135,6 @@ void obstacleAvoidance(){
   carDistanceToObstacle = USSensorFront.ping_cm(); // UltraSonicSound Sensor measures (0 = more than 100 cm distance)
   if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) { 
     car.setSpeed(stopSpeed);
+    car.update();
   }
 }
