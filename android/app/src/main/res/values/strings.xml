@@ -1,0 +1,27 @@
+<resources>
+
+    <!--General-->
+    <string name="app_name">SurveillanceRoute</string>
+    <string name="start_fragment">start fragment</string>
+    <string name="scan_fragment">scan fragment</string>
+    <string name="gateway_fragment">gateway fragment</string>
+    <string name="collection_fragment">collection fragment</string>
+    <string name="draw_fragment">draw fragment</string>
+
+    <!--Buttons-->
+    <string name="find_vehicle_button">find vehicle</string>
+    <string name="scan_button">scan</string>
+    <string name="pair_button">pair</string>
+    <string name="unpair_button">unpair</string>
+    <string name="routes_button">routes</string>
+    <string name="draw_button">draw</string>
+    <string name="collection_button">collection</string>
+    <string name="start_draw_button">StartDraw</string>
+    <string name="start_collection_button">StartCollection</string>
+
+    <!--Images-->
+    <string name="bluetooth_symbol_description">Bluetooth</string>
+    <string name="vehicle_symbol_description">Vehicle</string>
+
+
+</resources>
