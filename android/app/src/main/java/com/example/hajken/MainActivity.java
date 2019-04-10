@@ -8,13 +8,13 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements InterfaceMainActivity {
 
-    private TextView myToolbarTitle;
+   // private TextView myToolbarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myToolbarTitle = findViewById(R.id.toolbar_title);
+       // myToolbarTitle = findViewById(R.id.toolbar_title);
 
         init(); // when mainActivity starts, it will inflate StartFragment first
     }

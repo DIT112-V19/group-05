@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gatewayLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,35 +10,29 @@
         android:id="@+id/collection_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="51dp"
         android:text="@string/collection_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/vehicle_symbol"
         app:layout_constraintTop_toBottomOf="@+id/vehicle_symbol" />
 
     <Button
         android:id="@+id/draw_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="22dp"
         android:text="@string/draw_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/collection_button"
-        app:layout_constraintVertical_bias="0.16" />
+        app:layout_constraintStart_toStartOf="@+id/collection_button"
+        app:layout_constraintTop_toBottomOf="@+id/collection_button" />
 
     <ImageView
         android:id="@+id/vehicle_symbol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="268dp"
+        android:layout_marginTop="200dp"
         android:contentDescription="@string/vehicle_symbol_description"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/vehicle_symbol" />
