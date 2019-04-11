@@ -2,16 +2,16 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/start_collection_button"
+        android:id="@+id/stop_vehicle_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="@string/start_collection_button"
+        android:text="@string/stop_vehicle_button"
+        android:background="@drawable/button_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -38,7 +38,7 @@
         android:layout_height="222dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/square_symbol_description"
-        app:layout_constraintBottom_toTopOf="@+id/start_collection_button"
+        app:layout_constraintBottom_toTopOf="@+id/stop_vehicle_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"

@@ -10,4 +10,6 @@ public interface InterfaceMainActivity {
     void inflateFragment(String fragmentTag);
 
     void customDialog(String title, String message, final String cancelMethod, final String startMethod);
+
+    boolean getVehicleActivity();
 }
