@@ -12,13 +12,12 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements InterfaceMainActivity {
 
     private static final String TAG = "MainActivity";
-   // private TextView myToolbarTitle;
+    private boolean vehicleActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-       // myToolbarTitle = findViewById(R.id.toolbar_title);
 
         init(); // when mainActivity starts, it will inflate StartFragment first
     }
@@ -70,12 +69,15 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     private void cancelMethod(){
         Log.d(TAG, "cancelMethod: Called");
+        vehicleActivity = false;
         toastMessage("Route cancelled");
     }
 
     private void startMethod(){
         Log.d(TAG, "startMethod: Called");
+        vehicleActivity = true;
         toastMessage("Route started");
+
     }
 
     @Override
@@ -95,8 +97,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
                                 cancelMethod();
                             }
                         }
-                    }
-                    );
+                    });
         builderSingle.setPositiveButton(
                 "Start",
                 new DialogInterface.OnClickListener() {
@@ -111,6 +112,12 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
         builderSingle.show();
 
+    }
+
+    @Override
+    public boolean getVehicleActivity() {
+        Log.d(TAG, "getVehicleActivity: Called");
+        return this.vehicleActivity;
     }
 
     private void toastMessage(String message){

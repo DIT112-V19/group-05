@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private InterfaceMainActivity interfaceMainActivity;
     private ImageButton circle;
     private ImageButton square;
-
-
-    private Button startCollectionButton;
+    private Button stopVehicleButton;
 
     //occurs after onAttach
     @Override
@@ -35,12 +34,11 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.fragment_collection,container,false);
 
         //Creates the buttons, list and image of the fragment
-        startCollectionButton = view.findViewById(R.id.start_collection_button);
+        stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
         circle = view.findViewById(R.id.circle_symbol);
         square = view.findViewById(R.id.square_symbol);
 
         //Enables functions to buttons
-        startCollectionButton.setOnClickListener(this);
         circle.setOnClickListener(this);
         square.setOnClickListener(this);
 
@@ -62,8 +60,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
             //This is the events that are associated with the buttons
 
-            case R.id.start_collection_button: {
-
+            case R.id.stop_vehicle_button: {
                 break;
             }
 
@@ -72,11 +69,20 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 break;
             }
 
+            //this is where the problem is, customDialog does run complete until if statement is checked, therefore its false
             case R.id.square_symbol: {
                 interfaceMainActivity.customDialog("Square route","Would you like to star the route?","cancelMethod","startMethod");
+                break;
             }
 
         }
+
+        if (interfaceMainActivity.getVehicleActivity()){
+            Log.d(TAG, "onClick: inside getVehicleActivity = true");
+            stopVehicleButton.setOnClickListener(this);
+            stopVehicleButton.setActivated(true);
+        }
+
 
     }
 }
