@@ -16,6 +16,8 @@ import java.util.UUID;
 
 public class BluetoothConnection {
 
+
+
     public static final String TAG = "BluetoothConnection ";
     public final String APPNAME = "HAJKEN";
 
@@ -23,7 +25,7 @@ public class BluetoothConnection {
 
     public final BluetoothAdapter myBluetoothAdapter;
     Context myContext;
-    Bluetooth myBluetooth;
+
 
     private AcceptThread myInsecureAcceptThread;
 
@@ -32,15 +34,22 @@ public class BluetoothConnection {
     private UUID myDeviceUUID;
 
     private ConnectedThread myConnectedThread;
-    private ProgressBar mProgressBar;
 
+    private static BluetoothConnection mInstance = null;
 
-
-    public BluetoothConnection(Context context) {
+    private  BluetoothConnection(Context context) {
         myContext = context;
         myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         start();
+    }
 
+    // CLASSIC singleton implementation
+
+    public static BluetoothConnection getInstance(Context context){
+        if (mInstance == null){
+            mInstance = new BluetoothConnection(context);
+        }
+        return mInstance;
     }
 
     private class AcceptThread extends Thread{
@@ -66,14 +75,11 @@ public class BluetoothConnection {
 
             try{
                 Log.d(TAG, "RFCOM server starts.. ");
-
                 mSocket = myServerSocket.accept();
-
                 Log.d(TAG, " server socket accepted connection! ");
 
             } catch (IOException e){
                 Log.e(TAG, " IO error in acceptthread - run" + e.getMessage());
-
 
             }
 
@@ -147,31 +153,20 @@ public class BluetoothConnection {
                 Log.e(TAG, "could not connect to UUID " + MY_UUID_INSECURE);
 
             }
-
             connected(mBluetoothSocket, mBluetoothDevice);
-
-
         }
-
-        public void cancel(){
-
-            try{
-                Log.d(TAG, " Closing other device socket ") ;
+        public void cancel() {
+            try {
+                Log.d(TAG, " Closing other device socket ");
                 mBluetoothSocket.close();
-            }catch (IOException e){
-                 Log.e(TAG, "Failed to close socket in connectThread cancel " + e.getMessage());
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to close socket in connectThread cancel " + e.getMessage());
             }
         }
-
-
-
-
     }
 
     public synchronized void start(){
-
         Log.d(TAG, " start is called.. ");
-
         if (myConnectThread != null){
             myConnectThread.cancel();
             myConnectThread = null;
@@ -179,28 +174,22 @@ public class BluetoothConnection {
         if (myInsecureAcceptThread == null){
             myInsecureAcceptThread = new AcceptThread();
             myInsecureAcceptThread.start();
-
         }
     }
 
     public void startClient(BluetoothDevice device, UUID uuid){
 
         Log.d(TAG, " StartClient initiated ");
-
-
         myConnectThread = new ConnectThread(device, uuid);
-
         myConnectThread.start();
     }
 
     private class ConnectedThread extends Thread{
-
         private final BluetoothSocket mSocket;
         private final InputStream mInputStream;
         private OutputStream mOutputStream;
 
         public ConnectedThread(BluetoothSocket socket){
-
             Log.d(TAG, " connectedThread starting ");
             mSocket = socket;
             InputStream tempInputStream = null;
@@ -213,7 +202,6 @@ public class BluetoothConnection {
 
             } catch (IOException e){
                 Log.e(TAG, " failed either stream in ConnectedThread " + e.getMessage());
-
             }
 
             mInputStream = tempInputStream;
@@ -221,9 +209,7 @@ public class BluetoothConnection {
         }
 
         public void run(){
-
             //stores what is read from stream
-
             byte[] byteForStream = new byte[1024];
 
             int bytes;
@@ -237,7 +223,6 @@ public class BluetoothConnection {
                 } catch (IOException e){
                     Log.e(TAG, " error reading from inputstream " + e.getMessage());
                     break;
-
                 }
             }
         }
@@ -254,22 +239,20 @@ public class BluetoothConnection {
             try{
 
                 mOutputStream = mSocket.getOutputStream();
-
                 mOutputStream.write(inputInBytes);
+
                 Log.d(TAG, " successfully written to outputstream in write()");
 
             } catch (IOException e){
                 Log.e(TAG," error writing to outputstream.. " + e.getMessage());
-
             }
-
         }
+
         public void cancel() {
             try {
                 mSocket.close();
             } catch (IOException e) {
                 Log.e(TAG, " failed to close socket" + e.getMessage());
-
             }
         }
 
@@ -294,5 +277,6 @@ public class BluetoothConnection {
         myConnectedThread = new ConnectedThread(socket);
         myConnectedThread.start();
     }
+
 
 }

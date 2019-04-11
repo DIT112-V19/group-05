@@ -22,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         doFragmentTransaction(fragment,getString(R.string.start_fragment),false);
     }
 
-
     //used to be a string message here as well but we are not using that
     private void doFragmentTransaction(Fragment fragment, String tag, boolean addToBackStack){
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
