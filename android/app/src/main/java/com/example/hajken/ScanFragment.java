@@ -1,12 +1,16 @@
 package com.example.hajken;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +33,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
     private ListView deviceList;
     private ImageView bluetoothSymbol;
     Bluetooth myBluetooth;
+    BluetoothAdapter mBluetoothAdapter;
+    ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
+    ListOfDevices mListOfDevices;
 
 
 
@@ -37,6 +44,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
 
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     @Nullable
@@ -54,6 +62,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
 
         //Enables functions to buttons
         routesButton.setOnClickListener(this);
+        scanButton.setOnClickListener(this);
 
         return view;
     }
@@ -65,9 +74,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
     }
 
-    public void showListOfDevicesScanned(){
-        deviceList.setAdapter((ListAdapter) myBluetooth.getmBluetoothdevices());
-    }
 
     @Override
     public void onClick(View view) {
@@ -75,8 +81,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
         //This is the events that are associated with the buttons
         switch (view.getId()){
             case R.id.scan_button:{
-                myBluetooth.enableBluetooth();
-                showListOfDevicesScanned();
+
+                enableBluetooth();
+
                 break;
             }
             case R.id.pair_button:{
@@ -108,6 +115,44 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
 
         }
     }
+
+    public void enableBluetooth() {
+
+        if (mBluetoothAdapter == null) {
+            Log.d(TAG, "No bluetooth exists");
+        }
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivity(intent);
+            Log.d(TAG, " Enabled bluetooth");
+
+        } else {
+
+            Log.i(TAG, "Bluetooth is on ");
+
+
+        }
+
+    }
+
+    BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (BluetoothDevice.ACTION_FOUND.equals(action)){
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                mBluetoothdevices.add(device);
+                mListOfDevices = new ListOfDevices(context, R.id.device_list, mBluetoothdevices);
+                deviceList.setAdapter(mListOfDevices);
+
+            }
+        }
+    };
+
+
+
 
 
 }

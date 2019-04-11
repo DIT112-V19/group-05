@@ -117,7 +117,7 @@ public class BluetoothConnection {
                 temp = mBluetoothDevice.createRfcommSocketToServiceRecord(MY_UUID_INSECURE);
 
             } catch (IOException e){
-                Log.e(TAG, " Could not connect using insecure RF socket" + e.getMessage()):
+                Log.e(TAG, " Could not connect using insecure RF socket" + e.getMessage());
 
             }
 
@@ -274,13 +274,7 @@ public class BluetoothConnection {
         }
 
 
-        private void connected(BluetoothSocket socket, BluetoothDevice device){
 
-            Log.d(TAG, " started connected()" );
-
-            myConnectedThread = new ConnectedThread(socket);
-            myConnectedThread.start();
-        }
 
         /*public void write(String input){
 
@@ -292,6 +286,13 @@ public class BluetoothConnection {
 
 
         }*/
+    }
+    private void connected(BluetoothSocket socket, BluetoothDevice device){
+
+        Log.d(TAG, " started connected()" );
+
+        myConnectedThread = new ConnectedThread(socket);
+        myConnectedThread.start();
     }
 
 }
