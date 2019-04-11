@@ -16,7 +16,7 @@ public class Bluetooth {
 
     BluetoothDevice mBluetoothDevice;
     BluetoothAdapter mBluetoothAdapter;
-    public boolean isActivated = false;
+    //public boolean isActivated = false;
     ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
 
     public Bluetooth(Context context, BluetoothAdapter bluetoothAdapter){
@@ -30,15 +30,15 @@ public class Bluetooth {
             Log.d(TAG, "No bluetooth exists");
         }
 
-        if(mBluetoothAdapter.enable()){
+        if(mBluetoothAdapter.isEnabled()){
             Log.d(TAG, " is already enabled");
-            isActivated = true;
+            //isActivated = true;
 
         } else {
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             mainActivity.startActivity(intent);
             Log.d(TAG, " Enabled bluetooth");
-            isActivated = true;
+           // isActivated = true;
         }
 
     }
@@ -87,13 +87,14 @@ public class Bluetooth {
         this.mBluetoothAdapter = mBluetoothAdapter;
     }
 
-    public boolean isActivated() {
+    /*public boolean isActivated() {
         return isActivated;
     }
 
     public void setActivated(boolean activated) {
         isActivated = activated;
     }
+    */
 
     public ArrayList<BluetoothDevice> getmBluetoothdevices() {
         return mBluetoothdevices;
