@@ -11,14 +11,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
-public class CollectionFragment extends Fragment implements View.OnClickListener {
+public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnStarted {
 
-    private static final String TAG = "DrawFragment";
+    private static final String TAG = "CollectionFragment";
     private InterfaceMainActivity interfaceMainActivity;
     private ImageButton circle;
     private ImageButton square;
     private Button stopVehicleButton;
+
+    CustomDialogFragment dialog = new CustomDialogFragment();
+
+    @Override
+    public void setUpStart(Boolean start) {
+        Log.e(TAG, "setUpStart: found incoming input");
+
+        //Change button state
+        if (start){
+            stopVehicleButton.setActivated(true);
+            stopVehicleButton.setOnClickListener(this);
+            Toast.makeText(getActivity(),"Starting route",Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(getActivity(),"Cancelled route",Toast.LENGTH_LONG).show();
+        }
+    }
 
     //occurs after onAttach
     @Override
@@ -31,6 +48,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //Inflates the fragment
         View view = inflater.inflate(R.layout.fragment_collection,container,false);
 
         //Creates the buttons, list and image of the fragment
@@ -65,24 +83,25 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             }
 
             case R.id.circle_symbol: {
-                interfaceMainActivity.customDialog("Circle route","Would you like to start the route?","cancelMethod","startMethod");
+                Log.d(TAG, "onClick: Clicked CIRCLE");
+                dialog.setTargetFragment(CollectionFragment.this,1);
+                dialog.show(getFragmentManager(),"DIALOG");
                 break;
             }
 
             //this is where the problem is, customDialog does run complete until if statement is checked, therefore its false
             case R.id.square_symbol: {
-                interfaceMainActivity.customDialog("Square route","Would you like to star the route?","cancelMethod","startMethod");
+                Log.d(TAG, "onClick: Clicked SQUARE");
+                dialog.setTargetFragment(CollectionFragment.this,1);
+                dialog.show(getFragmentManager(),"DIALOG");
                 break;
             }
 
         }
 
-        if (interfaceMainActivity.getVehicleActivity()){
-            Log.d(TAG, "onClick: inside getVehicleActivity = true");
-            stopVehicleButton.setOnClickListener(this);
-            stopVehicleButton.setActivated(true);
-        }
+
 
 
     }
+
 }
