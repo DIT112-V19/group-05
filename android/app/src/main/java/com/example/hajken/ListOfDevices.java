@@ -24,24 +24,20 @@ public class ListOfDevices extends ArrayAdapter<BluetoothDevice> {
         mViewResourceId = tvResourceId;
     }
 
-   /* public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         convertView = mLayoutInflater.inflate(mViewResourceId, null);
 
         BluetoothDevice device = mDevices.get(position);
 
         if (device != null) {
-            TextView deviceName = (TextView) convertView.findViewById(R.id.deviceName);
-            TextView deviceAdress = (TextView) convertView.findViewById(R.id.deviceAddress);
+            TextView deviceName = convertView.findViewById(R.id.device_name);
 
             if (deviceName != null) {
                 deviceName.setText(device.getName());
             }
-            if (deviceAdress != null) {
-                deviceAdress.setText(device.getAddress());
-            }
         }
 
         return convertView;
-    }*/
+    }
 
 }
