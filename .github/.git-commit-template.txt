@@ -1,0 +1,12 @@
+Subject: {SUBJECT_TITLE}
+
+{DESCRIPTION}
+
+Co-authored-by: JonatanVaara <jonatan.vaara94@gmail.com>
+Co-authored-by: EmanuelDellsen <emanuel.dellsen@gmail.com>
+Co-authored-by: strand93 <strand.93@hotmail.com>
+Co-authored-by: NiklasMoller <niklasxmoller@gmail.com>
+Co-authored-by: KarlWestgardh <karl.westgardh@gmail.com>
+Co-authored-by: HarFis <gusfisha@student.gu.se>
+
+Related Issue(s):
