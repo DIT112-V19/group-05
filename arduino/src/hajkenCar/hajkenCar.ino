@@ -3,13 +3,13 @@
 
 //**********
 //ultraSonicSensor
-float carDistanceToObstacle; //actual distance to "object"
-float stopDistanceToObstacle = 5; //Distance that triggers to stop, in cm
+float carDistanceToObstacle; //actual distance to next obstacle, in cm
+float stopDistanceToObstacle = 5; //distance that triggers to stop, in cm
 
 //ultraSonicSensor Pin connection
 const int USS1_TRIGGER_PIN = 6; //Trigger Pin
 const int USS1_ECHO_PIN = 7; //Echo Pin
-const unsigned int USS1_MAX_DISTANCE = 100; //max distance 100 cm of an object
+const unsigned int USS1_MAX_DISTANCE = 100; //max distance of an object to be detected, in cm
 //*create ultraSonicSensor Object*
 NewPing USSensorFront (USS1_TRIGGER_PIN, USS1_ECHO_PIN, USS1_MAX_DISTANCE);
 
@@ -24,6 +24,7 @@ const int gyroOffset = -30;
 float speed = 50;
 int turningSpeed = 50;
 int stopSpeed = 0;
+boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
 
 //motor pin connection
 int leftMotorForwardPin = 8;
@@ -42,7 +43,7 @@ BrushedMotor rightMotor(rightMotorForwardPin, rightMotorBackwardPin, rightMotorS
 //*create car's control object*
 DifferentialControl control(leftMotor, rightMotor);
 //*create odometer object*
-DirectionlessOdometer odometer1(PULSES_PER_METER); 
+DirectionlessOdometer odometer1(PULSES_PER_METER);
 //*create gyroscope object
 GY50 gyroscope(gyroOffset);
 //*create car object*
@@ -51,6 +52,8 @@ SmartCar car(control, gyroscope, odometer1);
 
 void setup() {
   Serial.begin(9600);
+  Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
+  
   //initialize Odometer
   odometer1.attach(ODOMETER1_PIN, []() {
     odometer1.update();
@@ -58,57 +61,44 @@ void setup() {
 }
 
 void loop() {
+obstacleAvoidanceOn = false;
+square(20);
 
-  
-  turnLeft(); 
-  delay(1000);
-  forward(50);
-
-   turnLeft(); 
-  delay(1000);
-  forward(50);
-
-   turnLeft(); 
-  delay(1000);
-  forward(50);
-
-   turnLeft(); 
-  delay(1000);
-  forward(50);
-  
-  while(true){
+  while (true) {
     car.update();
   }
-
 }
 
-void turnLeft(){
-  
+/*
+ * METHODS
+ */
+
+//Make car turn to the left ca. 90° 
+void turnLeft() {
   car.overrideMotorSpeed(-turningSpeed, turningSpeed);
-  delay(2000);
+  delay(1600);
 
   car.setSpeed(stopSpeed);
   car.update();
-  
 }
 
-void turnRight(){
-
-  
+//Make car turn to the left ca. 90° 
+void turnRight() {
   car.overrideMotorSpeed(turningSpeed, -turningSpeed);
-  delay(2000);
-  
+  delay(1600);
+
   car.setSpeed(stopSpeed);
   car.update();
 }
 
-void forward(int distance){
+//drives forward up to a set distance
+void forward(int distance) {
 
-  odometer1.reset();
+  odometer1.reset(); //resets the car's driven distance
   car.setSpeed(speed);
   car.update();
-  
-  while(car.getDistance() <= distance){
+
+  while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
   }
@@ -116,13 +106,13 @@ void forward(int distance){
   car.update();
 }
 
-void backward(int distance){
- 
-  odometer1.reset();
+//drives backwards up to a set distance
+void backward(int distance) {
+  odometer1.reset(); //resets the car's driven distance
   car.setSpeed(-speed);
   car.update();
-  
-  while(car.getDistance() <= distance){
+
+  while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
   }
@@ -130,11 +120,22 @@ void backward(int distance){
   car.update();
 }
 
-void obstacleAvoidance(){
-  car.update(); //control cruise control
+//drives in a square, starting at lower left corner
+void square(int sideLength){
+for(int i = 1; i<=4; i=i+1){
+  forward(sideLength);
+  turnRight();
+  }
+}
+
+//obstacle avoidance - stops in front of obstacle + sends message via bluetooth
+void obstacleAvoidance() {
+  if(obstacleAvoidanceOn)
+  {car.update(); 
   carDistanceToObstacle = USSensorFront.ping_cm(); // UltraSonicSound Sensor measures (0 = more than 100 cm distance)
-  if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) { 
+  if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) {
+    Serial2.write("Obstacle detected"); // Sending message to bluetooth
     car.setSpeed(stopSpeed);
     car.update();
-  }
+  }}
 }
