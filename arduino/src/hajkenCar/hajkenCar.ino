@@ -61,18 +61,27 @@ void setup() {
 }
 
 void loop() {
-obstacleAvoidanceOn = false;
-square(20);
 
-  while (true) {
-    car.update();
-  }
+circle();
+
 }
 
 /*
  * METHODS
  */
 
+void circle(){
+  car.setSpeed(speed);
+  car.update();
+  car.setAngle(45);
+  
+  if(car.getDistance()>=370){
+  car.setSpeed(stopSpeed);
+  car.update();
+    while (true) {
+      }
+    }
+  }
 //Make car turn to the left ca. 90° 
 void turnLeft() {
   car.overrideMotorSpeed(-turningSpeed, turningSpeed);
