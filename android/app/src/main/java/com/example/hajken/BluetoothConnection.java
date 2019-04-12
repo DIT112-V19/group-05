@@ -136,18 +136,15 @@ public class BluetoothConnection {
 
                 Log.d(TAG, " connected in connectThread");
 
-
             } catch (IOException e){
 
                 try{
                     mBluetoothSocket.close();
                     Log.e(TAG,  " socket closed in connectThread - run " + e.getMessage());
 
-
                 } catch (IOException e1){
 
                     Log.e(TAG, " unable to close socket in connectThread - run " + e.getMessage());
-
 
                 }
                 Log.e(TAG, "could not connect to UUID " + MY_UUID_INSECURE);
@@ -208,7 +205,7 @@ public class BluetoothConnection {
             mOutputStream = tempOutputStream;
         }
 
-        public void run(){
+        public void readInput(){
             //stores what is read from stream
             byte[] byteForStream = new byte[1024];
 
@@ -256,19 +253,6 @@ public class BluetoothConnection {
             }
         }
 
-
-
-
-        /*public void write(String input){
-
-            Log.d(TAG, " Write() is called ");
-
-            byte [] convertedString = input.getBytes();
-
-            myConnectedThread.write(convertedString);
-
-
-        }*/
     }
     private void connected(BluetoothSocket socket, BluetoothDevice device){
 

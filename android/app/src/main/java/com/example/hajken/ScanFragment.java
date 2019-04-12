@@ -77,6 +77,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
                     mBluetoothConnection = BluetoothConnection.getInstance(getContext());
                     mBluetoothConnection.startClient(mBluetoothdevices.get(i), MY_UUID_INSECURE );
                     Log.i(TAG, " connected to " + deviceName);
+
                 }
             }});
 
