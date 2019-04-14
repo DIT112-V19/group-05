@@ -53,6 +53,7 @@ SmartCar car(control, gyroscope, odometer1);
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
+  Serial2.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
   
   //initialize Odometer
   odometer1.attach(ODOMETER1_PIN, []() {
@@ -62,26 +63,42 @@ void setup() {
 
 void loop() {
 
-circle();
-
 }
 
 /*
  * METHODS
  */
 
-void circle(){
-  car.setSpeed(speed);
-  car.update();
-  car.setAngle(45);
+void testCommands(){
+  String commands[] = {"f","100", "r", "45", "f", "70", "b", "150", "r", "15"};
+  int arraySize = sizeof(commands) / sizeof(commands[0]); // 
   
-  if(car.getDistance()>=370){
-  car.setSpeed(stopSpeed);
-  car.update();
-    while (true) {
+  for (int i = 0; i < (arraySize-1); i = i+2) {
+      
+      if(commands[i] == "f") {
+        forward(commands[i+1].toInt());
+      }else if(commands[i] == "b") {
+        backward(commands[i+1].toInt());
+      }else if(commands[i] == "r") {
+        turnRight();
+      }else {
+        circle();
       }
     }
-  }
+}
+
+void circle(){
+ 
+  while(car.getDistance()<=370){
+      car.setSpeed(speed);
+      car.update();
+      car.setAngle(45);
+    }
+
+  car.setSpeed(stopSpeed);
+  car.update();
+}
+  
 //Make car turn to the left ca. 90° 
 void turnLeft() {
   car.overrideMotorSpeed(-turningSpeed, turningSpeed);
@@ -102,7 +119,8 @@ void turnRight() {
 
 //drives forward up to a set distance
 void forward(int distance) {
-
+  Serial2.write("Going forward\n"); //Printing status
+  
   odometer1.reset(); //resets the car's driven distance
   car.setSpeed(speed);
   car.update();
@@ -117,6 +135,8 @@ void forward(int distance) {
 
 //drives backwards up to a set distance
 void backward(int distance) {
+  Serial2.write("Going backward\n "); //Printing status
+  
   odometer1.reset(); //resets the car's driven distance
   car.setSpeed(-speed);
   car.update();
@@ -146,5 +166,8 @@ void obstacleAvoidance() {
     Serial2.write("Obstacle detected"); // Sending message to bluetooth
     car.setSpeed(stopSpeed);
     car.update();
+    while(true){
+    //Stops car
+  }
   }}
 }
