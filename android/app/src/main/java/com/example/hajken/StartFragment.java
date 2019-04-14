@@ -30,7 +30,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_start,container,false);
 
-        //Creates the buttons and image of the fragment
+        //Creates the buttons and image of the collFragment
         ScanFragmentButton = view.findViewById(R.id.find_vehicle_button);
         radar = view.findViewById(R.id.radar_symbol);
 
@@ -46,7 +46,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     }
 
     //calls before onCreate, used to instantiate the interface
-    //part of the fragment to activity communication
+    //part of the collFragment to activity communication
     @Override
     public void onAttach(Context context){
         super.onAttach(context);

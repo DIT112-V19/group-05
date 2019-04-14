@@ -10,18 +10,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 //DialogFragment is similar to Fragment but it is shrunked
 public class CustomDialogFragment extends DialogFragment {
 
+
+
     public interface OnStarted {
-        void setUpStart(Boolean start);
+        void controlVehicle(Boolean start);
     }
 
     public OnStarted onStarted; //instantiate interface object
 
     private static final String TAG = "CustomDialogFragment";
-    private TextView actionOk, actionCancel;
+    private TextView actionOk;
+    private TextView actionCancel;
+    private TextView dialogHeading;
+    private String heading,action = "Start";
+
+    public void setDialogHeading(String incoming) {
+        this.heading = incoming;
+    }
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     @Nullable
     @Override
@@ -29,6 +40,7 @@ public class CustomDialogFragment extends DialogFragment {
         //Inflates the dialog
         View view = inflater.inflate(R.layout.dialog_custom,container,false);
 
+        dialogHeading = view.findViewById(R.id.heading);
         actionOk = view.findViewById(R.id.action_ok);
         actionCancel = view.findViewById(R.id.action_cancel);
 
@@ -36,7 +48,7 @@ public class CustomDialogFragment extends DialogFragment {
         actionCancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view){
                 Log.d(TAG, "onCreateView: closing dialog");
-                onStarted.setUpStart(false);
+                onStarted.controlVehicle(false);
                 getDialog().dismiss();
             }
         });
@@ -46,11 +58,17 @@ public class CustomDialogFragment extends DialogFragment {
             public void onClick(View view){
                 Log.d(TAG, "onCreateView: send to start");
 
-                //Sends back to Collectionfragment -> setUpStart is true
-                onStarted.setUpStart(true);
+                //Sends back to Collectionfragment -> controlVehicle is true
+                onStarted.controlVehicle(true);
                 getDialog().dismiss();
             }
         });
+
+        //Changes the name of the heading of the dialog
+        dialogHeading.setText(heading);
+
+        //Changes the name of action button of the dialog
+        actionOk.setText(action);
         return view;
     }
 
