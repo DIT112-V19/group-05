@@ -61,6 +61,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             } else {
                 Toast.makeText(getActivity(),"Cancelling...",Toast.LENGTH_LONG).show();
             }
+            Toast.makeText(getActivity(),"Canceling route",Toast.LENGTH_LONG).show();
+            stopVehicleButton.setActivated(false);
         }
     }
 
@@ -97,6 +99,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
     }
 
+
     @Override
     public void onClick(View view) {
 
@@ -108,6 +111,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 dialog.setAction("STOP");
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");
+                Log.d(TAG, "onClick: Clicked Stop Vehicle");
                 break;
             }
 
