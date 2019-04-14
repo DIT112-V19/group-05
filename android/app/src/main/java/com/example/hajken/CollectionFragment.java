@@ -33,7 +33,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             stopVehicleButton.setOnClickListener(this);
             Toast.makeText(getActivity(),"Starting route",Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(getActivity(),"Cancelled route",Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(),"Canceling route",Toast.LENGTH_LONG).show();
+            stopVehicleButton.setActivated(false);
+
         }
     }
 
@@ -71,6 +73,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
     }
 
+
     @Override
     public void onClick(View view) {
 
@@ -79,6 +82,13 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             //This is the events that are associated with the buttons
 
             case R.id.stop_vehicle_button: {
+                Log.d(TAG, "onClick: Clicked Stop Vehicle");
+                // If button is enable, make it not enabled and send message
+                if (stopVehicleButton.isEnabled()){
+                    setUpStart(false);
+                } else {                    // Else, make it enabled and send message
+                    setUpStart(true);
+                }
                 break;
             }
 
