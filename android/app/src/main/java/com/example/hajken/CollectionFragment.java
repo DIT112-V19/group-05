@@ -20,7 +20,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private ImageButton circle;
     private ImageButton square;
     private Button stopVehicleButton;
-    private boolean vehicleOn;
+    private boolean vehicleOn = false;
 
     public boolean isVehicleOn() {
         return vehicleOn;
@@ -61,8 +61,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             } else {
                 Toast.makeText(getActivity(),"Cancelling...",Toast.LENGTH_LONG).show();
             }
-            Toast.makeText(getActivity(),"Canceling route",Toast.LENGTH_LONG).show();
-            stopVehicleButton.setActivated(false);
         }
     }
 
