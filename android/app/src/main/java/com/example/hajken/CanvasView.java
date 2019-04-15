@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+
 import static com.example.hajken.Bluetooth.TAG;
 
 public class CanvasView extends View {
@@ -22,7 +24,10 @@ public class CanvasView extends View {
     private Path mPath;
     private Paint mPaint;
     private float mX,mY;
+    private static final int ZERO = 0;
     private static final float TOLERANCE = 5; /// ???????
+    ArrayList<Float> listOfXCoordinates = new ArrayList<>();
+    ArrayList<Float> listOfYCoordinates = new ArrayList<>();
     Context context;
 
 
@@ -37,14 +42,17 @@ public class CanvasView extends View {
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeWidth(4f);
+        mPaint.setStrokeWidth(10f);
 
         setDrawingCacheEnabled(true);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh){
-        super.onSizeChanged(w,h,oldw,oldh);
+    protected void onSizeChanged(int w, int h, int oldW, int oldH){
+        super.onSizeChanged(w,h,oldW,oldH);
+
+        this.width = w;
+        this.height = h;
 
         mBitmap = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
@@ -70,14 +78,14 @@ public class CanvasView extends View {
         }
     }
 
-    public void clearCanvas(){
-        mPath.reset();
-        invalidate();
-    }
-
     private void upTouch(){
         mPath.lineTo(mX,mY);
         Log.d(TAG, "upTouch: "+"X:"+mX+"Y:"+mY);
+    }
+
+    public void clearCanvas(){
+        mPath.reset();
+        invalidate();
     }
 
     @Override
@@ -87,15 +95,28 @@ public class CanvasView extends View {
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN :
-                mPath.reset();
+
+                //Reset/clear canvas and lists of coordinates
+                clearCanvas();
+                listOfXCoordinates.clear();
+                listOfYCoordinates.clear();
+
                 startTouch(x,y);
+                listOfXCoordinates.add(x);
+                listOfYCoordinates.add(y);
                 invalidate();
                 break;
         }
 
         switch (event.getAction()){
             case MotionEvent.ACTION_MOVE :
+                //if (x > width || x < ZERO || y > height || y < ZERO){
+                  //  event.setAction(MotionEvent.ACTION_UP); // not the most beautiful solution :)
+                    //break;
+                //}
                 moveTouch(x,y);
+                listOfXCoordinates.add(x);
+                listOfYCoordinates.add(y);
                 invalidate();
                 break;
         }
@@ -103,17 +124,15 @@ public class CanvasView extends View {
         switch (event.getAction()){
             case MotionEvent.ACTION_UP :
                 upTouch();
+                listOfXCoordinates.add(x);
+                listOfYCoordinates.add(y);
                 invalidate();
-                printDrawing();
                 break;
         }
         return true;
     }
 
-    public void printDrawing(){
-        Bitmap toBePrinted = getDrawingCache();
-
-        Log.d(TAG, "printDrawing: "+toBePrinted.toString());
+    public void coordinateHandling(ArrayList<Float> x, ArrayList<Float> y){
     }
 
     @Override

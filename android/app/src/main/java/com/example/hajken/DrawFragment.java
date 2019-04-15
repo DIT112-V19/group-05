@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.concurrent.RecursiveTask;
+
 public class DrawFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "DrawFragment";
@@ -25,7 +27,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
     }
 
-
     //occurs after onCreate
     @Nullable
     @Override
@@ -38,10 +39,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
         canvasView = view.findViewById(R.id.canvasView);
 
         return view;
-    }
-
-    public void clearCanvas(View view){
-        canvasView.clearCanvas();
     }
 
     //calls before onCreate, used to instantiate the interface

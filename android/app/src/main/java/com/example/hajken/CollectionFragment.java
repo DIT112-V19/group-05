@@ -94,7 +94,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         //Inflates the collFragment
         View view = inflater.inflate(R.layout.fragment_collection,container,false);
 
-        //Creates the buttons, list and image of the collFragment
+        //Creates the buttons, listOfXCoordinates and image of the collFragment
         stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
         circle = view.findViewById(R.id.circle_symbol);
         square = view.findViewById(R.id.square_symbol);
