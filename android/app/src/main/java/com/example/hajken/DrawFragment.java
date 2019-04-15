@@ -30,7 +30,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_draw,container,false);
 
-        //Creates the buttons, list and image of the fragment
+        //Creates the buttons, list and image of the collFragment
         startDrawButton = view.findViewById(R.id.start_draw_button);
 
         //Enables functions to buttons
@@ -40,7 +40,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     }
 
     //calls before onCreate, used to instantiate the interface
-    //part of the fragment to activity communication
+    //part of the collFragment to activity communication
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
