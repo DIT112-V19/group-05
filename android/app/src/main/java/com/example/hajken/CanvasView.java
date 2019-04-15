@@ -7,8 +7,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import static com.example.hajken.Bluetooth.TAG;
 
 public class CanvasView extends View {
 
@@ -35,6 +38,8 @@ public class CanvasView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(4f);
+
+        setDrawingCacheEnabled(true);
     }
 
     @Override
@@ -49,11 +54,14 @@ public class CanvasView extends View {
         mPath.moveTo(x,y);
         mX = x;
         mY = y;
+        Log.d(TAG, "startTouch: "+"X:"+x+"y"+y);
     }
 
     private void moveTouch(float x, float y){
         float dx = Math.abs(x-mX);
         float dy = Math.abs(y-mY);
+
+        Log.d(TAG, "moveTouch: "+"x:"+x+"y:"+y);
 
         if (dx >= TOLERANCE || dy >= TOLERANCE) { // kolla upp detta
             mPath.quadTo(mX,mY,(x + mX) / 2,(y + mY) / 2); // kolla upp detta
@@ -69,6 +77,7 @@ public class CanvasView extends View {
 
     private void upTouch(){
         mPath.lineTo(mX,mY);
+        Log.d(TAG, "upTouch: "+"X:"+mX+"Y:"+mY);
     }
 
     @Override
@@ -78,6 +87,7 @@ public class CanvasView extends View {
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN :
+                mPath.reset();
                 startTouch(x,y);
                 invalidate();
                 break;
@@ -94,13 +104,24 @@ public class CanvasView extends View {
             case MotionEvent.ACTION_UP :
                 upTouch();
                 invalidate();
+                printDrawing();
                 break;
         }
         return true;
     }
 
+    public void printDrawing(){
+        Bitmap toBePrinted = getDrawingCache();
+
+        Log.d(TAG, "printDrawing: "+toBePrinted.toString());
+    }
+
     @Override
     public void onDraw(Canvas canvas){
+         super.onDraw(canvas);
+
+         canvas.drawBitmap(mBitmap, 0,0, mPaint);
+         canvas.drawPath(mPath, mPaint);
 
     }
 }

@@ -4,19 +4,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.example.hajken.DrawFragment">
 
     <Button
         android:id="@+id/start_draw_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@color/button_active"
         android:text="@string/start_draw_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.275"
+        app:layout_constraintEnd_toStartOf="@+id/clear_draw_button"
+        app:layout_constraintHorizontal_bias="0.522"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.917" />
@@ -26,13 +28,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="64dp"
         android:layout_marginBottom="8dp"
         android:background="@color/button_active"
         android:text="@string/clear_draw_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.736"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.917" />
 
@@ -44,6 +45,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/device_list"
+        android:onClick="clearCanvas"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
