@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         for (Fragment fragment : fragments){
             if (fragment instanceof CollectionFragment && ((CollectionFragment) fragment).isVehicleOn()){
                 Log.d(TAG, "onBackPressed: instance of CollectionFragment & backPressedDisabled = true");
+                Toast.makeText(this, "Can't go back while vehicle is running", Toast.LENGTH_SHORT).show();
             } else {
                 super.onBackPressed();
             }

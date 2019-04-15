@@ -59,8 +59,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     vehicleOn = false;
                     Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
                 }
-            } else {
-                Toast.makeText(getActivity(),"Cancelling...",Toast.LENGTH_LONG).show();
             }
 
         //when vehicle is not running
@@ -79,8 +77,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     vehicleOn = true;
                     Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
                 }
-            } else {
-                Toast.makeText(getActivity(),"Cancelling...",Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -136,6 +132,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             case R.id.circle_symbol: {
                 Log.d(TAG, "onClick: Clicked CIRCLE");
                 setInput(circleRouteData);
+                dialog.setAction("START");
                 dialog.setDialogHeading("Would you like to start the route?");
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");
@@ -145,6 +142,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             case R.id.square_symbol: {
                 Log.d(TAG, "onClick: Clicked SQUARE");
                 setInput(squareRouteData);
+                dialog.setAction("START");
                 dialog.setDialogHeading("Would you like to start the route?");
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");
