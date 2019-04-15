@@ -23,8 +23,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private boolean vehicleOn = false;
 
     //Data for the vehicle routes
-    private final String circleRouteData = "F25F23";
-    private final String squareRouteData = "F25R25";
+    private final String circleRouteData = ""; // to be fixed
+    private final String squareRouteData = "<F*30*R*90*F*30*R*90*F*30*R*90*F*30*R*90>";
     private String input;
 
     //Changes the input to users choice

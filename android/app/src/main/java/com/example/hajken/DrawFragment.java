@@ -16,6 +16,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     private InterfaceMainActivity interfaceMainActivity;
 
     private Button startDrawButton;
+    private Button clearButton;
+    private CanvasView canvasView;
 
     //occurs after onAttach
     @Override
@@ -30,13 +32,16 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_draw,container,false);
 
-        //Creates the buttons, list and image of the collFragment
+        //Creates the buttons and canvasView
         startDrawButton = view.findViewById(R.id.start_draw_button);
-
-        //Enables functions to buttons
-        startDrawButton.setOnClickListener(this);
+        clearButton = view.findViewById(R.id.clear_draw_button);
+        canvasView = view.findViewById(R.id.canvasView);
 
         return view;
+    }
+
+    public void clearCanvas(View view){
+        canvasView.clearCanvas();
     }
 
     //calls before onCreate, used to instantiate the interface
