@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         init(); // when mainActivity starts, it will inflate StartFragment first
     }
 

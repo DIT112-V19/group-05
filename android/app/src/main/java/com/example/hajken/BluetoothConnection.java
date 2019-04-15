@@ -6,7 +6,6 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
-import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,13 +17,13 @@ public class BluetoothConnection {
 
 
 
-    public static final String TAG = "BluetoothConnection ";
-    public final String APPNAME = "HAJKEN";
+    private static final String TAG = "BluetoothConnection ";
+    private final String APPNAME = "HAJKEN";
 
-    private final static UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private final static UUID MY_UUID_INSECURE = Bluetooth.getMyUuidInsecure();
 
-    public final BluetoothAdapter myBluetoothAdapter;
-    Context myContext;
+    private final BluetoothAdapter myBluetoothAdapter;
+    private Context myContext;
 
 
     private AcceptThread myInsecureAcceptThread;
@@ -260,6 +259,7 @@ public class BluetoothConnection {
 
         myConnectedThread = new ConnectedThread(socket);
         myConnectedThread.start();
+        Log.d(TAG, "Connected to " + device);
     }
 
 

@@ -33,7 +33,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
     private Button scanButton, pairButton, unpairButton, routesButton;
     private ListView mListView;
     private ImageView bluetoothSymbol;
-    Bluetooth myBluetooth;
+    Bluetooth mBluetooth;
     BluetoothAdapter mBluetoothAdapter;
     ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
     ListOfDevices mListAdapter;
@@ -68,6 +68,8 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+               // mBluetooth.addToListView(getContext(),i);
                 mBluetoothAdapter.cancelDiscovery();
                 String deviceName = mBluetoothdevices.get(i).getName();
 
