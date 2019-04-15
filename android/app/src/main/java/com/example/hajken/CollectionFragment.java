@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnStarted{
+public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
 
     private static final String TAG = "CollectionFragment";
     private InterfaceMainActivity interfaceMainActivity;
@@ -22,6 +22,17 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private Button stopVehicleButton;
     private boolean vehicleOn = false;
 
+    //Data for the vehicle routes
+    private final String circleRouteData = "F25F23";
+    private final String squareRouteData = "F25R25";
+    private String input;
+
+    //Changes the input to users choice
+    public void setInput(String input) {
+        this.input = input;
+    }
+
+    //Method checks indicates whether or not the vehicle is turned on (not connected to Bluetooth)
     public boolean isVehicleOn() {
         return vehicleOn;
     }
@@ -36,13 +47,18 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         if (isVehicleOn()){
             //when user chooses to stop the vehicle
             if (execute){
-                //Bluetooth.stopVehicle(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
-                circle.setClickable(true);
-                square.setClickable(true);
-                stopVehicleButton.setActivated(false);
-                stopVehicleButton.setClickable(false);
-                vehicleOn = false;
-                Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
+                if (input == null){
+                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
+                    return;
+                } else { // if there is route data
+                    //Bluetooth.StopVehicle(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
+                    circle.setClickable(true);
+                    square.setClickable(true);
+                    stopVehicleButton.setActivated(false);
+                    stopVehicleButton.setClickable(false);
+                    vehicleOn = false;
+                    Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(getActivity(),"Cancelling...",Toast.LENGTH_LONG).show();
             }
@@ -51,13 +67,18 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         } else {
             //Change button state
             if (execute){
-                //Bluetooth.StartVEHICLE(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
-                stopVehicleButton.setActivated(true);
-                stopVehicleButton.setOnClickListener(this);
-                circle.setClickable(false);
-                square.setClickable(false);
-                vehicleOn = true;
-                Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
+                if (input == null){
+                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
+                    return;
+                } else {
+                    //Bluetooth.StartVEHICLE(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
+                    stopVehicleButton.setActivated(true);
+                    stopVehicleButton.setOnClickListener(this);
+                    circle.setClickable(false);
+                    square.setClickable(false);
+                    vehicleOn = true;
+                    Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
+                }
             } else {
                 Toast.makeText(getActivity(),"Cancelling...",Toast.LENGTH_LONG).show();
             }
@@ -97,7 +118,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
     }
 
-
     @Override
     public void onClick(View view) {
 
@@ -115,6 +135,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.circle_symbol: {
                 Log.d(TAG, "onClick: Clicked CIRCLE");
+                setInput(circleRouteData);
                 dialog.setDialogHeading("Would you like to start the route?");
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");
@@ -123,6 +144,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.square_symbol: {
                 Log.d(TAG, "onClick: Clicked SQUARE");
+                setInput(squareRouteData);
                 dialog.setDialogHeading("Would you like to start the route?");
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");

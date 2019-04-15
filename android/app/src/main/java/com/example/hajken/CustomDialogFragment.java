@@ -13,13 +13,11 @@ import android.widget.TextView;
 //DialogFragment is similar to Fragment but it is shrunked
 public class CustomDialogFragment extends DialogFragment {
 
-
-
-    public interface OnStarted {
+    public interface OnActionInterface {
         void controlVehicle(Boolean start);
     }
 
-    public OnStarted onStarted; //instantiate interface object
+    public OnActionInterface onAction; //instantiate interface object
 
     private static final String TAG = "CustomDialogFragment";
     private TextView actionOk;
@@ -48,7 +46,7 @@ public class CustomDialogFragment extends DialogFragment {
         actionCancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view){
                 Log.d(TAG, "onCreateView: closing dialog");
-                onStarted.controlVehicle(false);
+                onAction.controlVehicle(false);
                 getDialog().dismiss();
             }
         });
@@ -57,9 +55,8 @@ public class CustomDialogFragment extends DialogFragment {
         actionOk.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view){
                 Log.d(TAG, "onCreateView: send to start");
-
                 //Sends back to Collectionfragment -> controlVehicle is true
-                onStarted.controlVehicle(true);
+                onAction.controlVehicle(true);
                 getDialog().dismiss();
             }
         });
@@ -67,7 +64,7 @@ public class CustomDialogFragment extends DialogFragment {
         //Changes the name of the heading of the dialog
         dialogHeading.setText(heading);
 
-        //Changes the name of action button of the dialog
+        //Changes the name of the action button of the dialog
         actionOk.setText(action);
         return view;
     }
@@ -77,7 +74,7 @@ public class CustomDialogFragment extends DialogFragment {
         super.onAttach(context);
 
         try {
-            onStarted = (OnStarted) getTargetFragment();
+            onAction = (OnActionInterface) getTargetFragment();
         } catch (ClassCastException exception){
             Log.e(TAG, "onAttach: ClassCastException "+exception.getMessage());
 

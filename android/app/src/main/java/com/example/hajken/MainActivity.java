@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     }
 
-    //Override method to be able to adapt onBackPressed for fragments
+    //Override method to be able to adapt onBackPressed for fragments --- could this be done with just an if statement instead of loop?
     @Override
     public void onBackPressed(){
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
