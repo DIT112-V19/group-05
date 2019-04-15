@@ -31,6 +31,11 @@ public class BluetoothConnection {
     private ConnectThread myConnectThread;
     private BluetoothDevice mBluetoothDevice;
     private UUID myDeviceUUID;
+    private OutputStream mOutputStream;
+    private InputStream mInputStream;
+    private BluetoothServerSocket mServerSocket;
+    private BluetoothSocket mSocket = null;
+
 
     private ConnectedThread myConnectedThread;
 
@@ -53,7 +58,7 @@ public class BluetoothConnection {
 
     private class AcceptThread extends Thread{
 
-        private final BluetoothServerSocket myServerSocket;
+        private final BluetoothServerSocket mServerSocket;
 
         public AcceptThread(){
             BluetoothServerSocket tempSocket = null;
@@ -64,7 +69,7 @@ public class BluetoothConnection {
             } catch(IOException e){
                 Log.e(TAG," AcceptThread IO error " + e.getMessage());
             }
-            myServerSocket = tempSocket;
+            mServerSocket = tempSocket;
         }
 
         public void run(){
@@ -74,7 +79,7 @@ public class BluetoothConnection {
 
             try{
                 Log.d(TAG, "RFCOM server starts.. ");
-                mSocket = myServerSocket.accept();
+                mSocket = mServerSocket.accept();
                 Log.d(TAG, " server socket accepted connection! ");
 
             } catch (IOException e){
@@ -92,7 +97,7 @@ public class BluetoothConnection {
 
             Log.d(TAG, " cancelling acceptThread ");
             try{
-                myServerSocket.close();
+                mServerSocket.close();
             } catch (IOException e){
                 Log.e(TAG, " cancel of acceptThread failed " + e.getMessage());
             }
@@ -181,9 +186,7 @@ public class BluetoothConnection {
     }
 
     private class ConnectedThread extends Thread{
-        private final BluetoothSocket mSocket;
         private final InputStream mInputStream;
-        private OutputStream mOutputStream;
 
         public ConnectedThread(BluetoothSocket socket){
             Log.d(TAG, " connectedThread starting ");
@@ -202,6 +205,7 @@ public class BluetoothConnection {
 
             mInputStream = tempInputStream;
             mOutputStream = tempOutputStream;
+
         }
 
         public void readInput(){
@@ -225,23 +229,11 @@ public class BluetoothConnection {
 
         //will send data to remote device
 
-        public void writeToDevice(String input){
-            Log.d(TAG, " What will be converted to bytes: " + input);
 
-            byte[] inputInBytes = input.getBytes();
 
-            Log.d(TAG, " what will be sent to outputstream: " + Arrays.toString(inputInBytes));
+        public void startCar(){
 
-            try{
 
-                mOutputStream = mSocket.getOutputStream();
-                mOutputStream.write(inputInBytes);
-
-                Log.d(TAG, " successfully written to outputstream in write()");
-
-            } catch (IOException e){
-                Log.e(TAG," error writing to outputstream.. " + e.getMessage());
-            }
         }
 
         public void cancel() {
@@ -260,7 +252,38 @@ public class BluetoothConnection {
         myConnectedThread = new ConnectedThread(socket);
         myConnectedThread.start();
         Log.d(TAG, "Connected to " + device);
+        writeToDevice("hej!");
+        writeToDevice("hej!");
+        writeToDevice("hej!");
+        writeToDevice("hej!");
+        writeToDevice("hej!");
+        writeToDevice("hej!");
+        writeToDevice("hej!");
+        writeToDevice("hej!");
+        writeToDevice("hej!");
+
     }
+
+    public void writeToDevice(String input){
+        Log.d(TAG, " What will be converted to bytes: " + input);
+
+        byte[] inputInBytes = input.getBytes();
+
+        Log.d(TAG, " what will be sent to outputstream: " + Arrays.toString(inputInBytes));
+
+        try{
+
+            mOutputStream = mSocket.getOutputStream();
+            mOutputStream.write(inputInBytes);
+
+            Log.d(TAG, " successfully written to outputstream in write()");
+
+        } catch (IOException e){
+            Log.e(TAG," error writing to outputstream.. " + e.getMessage());
+        }
+    }
+
+
 
 
 }

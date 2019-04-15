@@ -69,6 +69,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     public void onAttach(Context context) {
         super.onAttach(context);
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
+
+
     }
 
     @Override
@@ -79,6 +81,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             //This is the events that are associated with the buttons
 
             case R.id.stop_vehicle_button: {
+               // BluetoothConnection.getInstance(getContext()).writeToDevice();
+
                 break;
             }
 
@@ -86,6 +90,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 Log.d(TAG, "onClick: Clicked CIRCLE");
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");
+
                 break;
             }
 

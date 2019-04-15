@@ -27,13 +27,13 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
 
     //used to keep track of where we are in LogCat
     private static final String TAG = "ScanFragment";
-    private MainActivity interfaceMainActivity;
+    private MainActivity mMainActivity;
 
     //buttons and entities in fragment
     private Button scanButton, pairButton, unpairButton, routesButton;
     private ListView mListView;
     private ImageView bluetoothSymbol;
-    Bluetooth mBluetooth;
+    Bluetooth mBluetooth = Bluetooth.getInstance();
     BluetoothAdapter mBluetoothAdapter;
     ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
     ListOfDevices mListAdapter;
@@ -69,8 +69,8 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-               // mBluetooth.addToListView(getContext(),i);
-                mBluetoothAdapter.cancelDiscovery();
+               // Bluetooth.getInstance().addToListView(getContext(),i);
+                Bluetooth.getInstance().getmBluetoothAdapter().cancelDiscovery();
                 String deviceName = mBluetoothdevices.get(i).getName();
 
                 //the bond can only be created if the API are correct
@@ -90,8 +90,8 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        interfaceMainActivity = (MainActivity) getActivity();
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mMainActivity = (MainActivity) getActivity();
+        Bluetooth.initialize(getContext());
     }
 
     @Override
@@ -99,18 +99,20 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
         //This is the events that are associated with the buttons
         switch (view.getId()){
             case R.id.scan_button:{
-                enableBluetooth();
+                Bluetooth.getInstance().enableBluetooth();
+                startActivity(Bluetooth.getInstance().enableBluetooth());
                 discover();
                 break;
             }
             case R.id.pair_button:{
+
                 break;
             }
             case R.id.unpair_button:{
                 break;
             }
             case R.id.routes_button:{
-                interfaceMainActivity.inflateFragment(getString(R.string.gateway_fragment));
+                mMainActivity.inflateFragment(getString(R.string.gateway_fragment));
                 break;
             }
         }
@@ -149,15 +151,15 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
 
     public void discover(){
 
-        if (mBluetoothAdapter.isDiscovering()){
+        if (Bluetooth.getInstance().getmBluetoothAdapter().isDiscovering()){
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            interfaceMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
+            mMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
 
         }
-        if (!mBluetoothAdapter.isDiscovering()){
-            mBluetoothAdapter.startDiscovery();
+        if (!Bluetooth.getInstance().getmBluetoothAdapter().isDiscovering()){
+            Bluetooth.getInstance().getmBluetoothAdapter().startDiscovery();
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            interfaceMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
+            mMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
         }
     }
 }

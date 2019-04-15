@@ -8,18 +8,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class Bluetooth {
 
     private static final String TAG = "BluetoothClass: ";
-    private MainActivity mainActivity = getMainActivity();
+    private InterfaceMainActivity mInterface;
     private final static UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
 
     private BluetoothDevice mBluetoothDevice;
-    private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private BluetoothAdapter mBluetoothAdapter;
     private ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
     private static Bluetooth mInstance = null;
     private ListOfDevices mListAdapter;
@@ -28,38 +29,45 @@ public class Bluetooth {
 
     protected Bluetooth(Context context){
         context = context;
+       mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     }
 
-    public static Bluetooth getInstance(Context context){
-
-        if (mInstance == null){
-            mInstance = new Bluetooth(context);
-        }
+    public static Bluetooth getInstance(){
 
         return mInstance;
     }
 
-    /* void enableBluetooth(){
+    public static void initialize(Context context){
+
+        mInstance = new Bluetooth(context);
+    }
+
+    public Intent enableBluetooth(){
+        Intent intent = null;
 
         if (mBluetoothAdapter == null){
             Log.d(TAG, "No bluetooth exists");
+            return intent;
         }
 
         if(mBluetoothAdapter.isEnabled()){
             Log.d(TAG, " is already enabled");
             //isActivated = true;
+            return intent;
 
-        } else {
-            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            mainActivity.startActivity(intent);
-            Log.d(TAG, " Enabled bluetooth");
+        } else{
+
+
+             intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+
+            return intent;
            // isActivated = true;
         }
 
     }
 
-    private BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+   /* private BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -97,9 +105,9 @@ public class Bluetooth {
         }
         Log.d(TAG, " This device has no bluetooth");
         return null;
-    }*/
+    }
 
-   /* void discover(){
+  void discover(){
 
         if (mBluetoothAdapter.isDiscovering()){
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -153,13 +161,13 @@ public class Bluetooth {
     }
 
 
-    public MainActivity getMainActivity() {
+   /* public MainActivity getMainActivity() {
         return mainActivity;
     }
 
     public void setMainActivity(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
-    }
+    }*/
 
     public static UUID getMyUuidInsecure() {
         return MY_UUID_INSECURE;

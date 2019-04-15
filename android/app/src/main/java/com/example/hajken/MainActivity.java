@@ -62,4 +62,11 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         }
 
     }
+
+    public MainActivity getActivitySpecial(){
+        return this;
+    }
+
+
+
 }
