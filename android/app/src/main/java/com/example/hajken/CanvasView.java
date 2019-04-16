@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,10 +27,13 @@ public class CanvasView extends View {
     private float mX,mY;
     private static final int ZERO = 0;
     private static final float TOLERANCE = 5; /// ???????
-    ArrayList<Float> listOfXCoordinates = new ArrayList<>();
-    ArrayList<Float> listOfYCoordinates = new ArrayList<>();
-    Context context;
 
+    public ArrayList<PointF> getListOfCoordinates() {
+        return listOfCoordinates;
+    }
+
+    ArrayList<PointF> listOfCoordinates = new ArrayList<>();
+    Context context;
 
     public CanvasView(Context context, AttributeSet attributeSet){
         super(context,attributeSet);
@@ -93,30 +97,34 @@ public class CanvasView extends View {
         float x = event.getX();
         float y = event.getY();
 
+        //this makes sure that values are not stored when touching outside of canvas
+        if (x > width || x < ZERO || y > height || y < ZERO){
+          event.setAction(MotionEvent.ACTION_CANCEL);
+        }
+
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN :
 
                 //Reset/clear canvas and lists of coordinates
                 clearCanvas();
-                listOfXCoordinates.clear();
-                listOfYCoordinates.clear();
+                listOfCoordinates.clear();
 
                 startTouch(x,y);
-                listOfXCoordinates.add(x);
-                listOfYCoordinates.add(y);
+                PointF downPoint = new PointF();
+                downPoint.set(x,y);
+                Log.d(TAG, "onTouchEvent floatPoint: firstpoint"+downPoint.toString());
+                listOfCoordinates.add(downPoint);
                 invalidate();
                 break;
         }
 
         switch (event.getAction()){
             case MotionEvent.ACTION_MOVE :
-                //if (x > width || x < ZERO || y > height || y < ZERO){
-                  //  event.setAction(MotionEvent.ACTION_UP); // not the most beautiful solution :)
-                    //break;
-                //}
                 moveTouch(x,y);
-                listOfXCoordinates.add(x);
-                listOfYCoordinates.add(y);
+                PointF movePoint = new PointF();
+                movePoint.set(x,y);
+                Log.d(TAG, "onTouchEvent: Floatpoint MOVE"+movePoint.toString());
+                listOfCoordinates.add(movePoint);
                 invalidate();
                 break;
         }
@@ -124,15 +132,13 @@ public class CanvasView extends View {
         switch (event.getAction()){
             case MotionEvent.ACTION_UP :
                 upTouch();
-                listOfXCoordinates.add(x);
-                listOfYCoordinates.add(y);
+                PointF upPoint = new PointF();
+                upPoint.set(x,y);
+                listOfCoordinates.add(upPoint);
                 invalidate();
                 break;
         }
         return true;
-    }
-
-    public void coordinateHandling(ArrayList<Float> x, ArrayList<Float> y){
     }
 
     @Override
@@ -143,4 +149,6 @@ public class CanvasView extends View {
          canvas.drawPath(mPath, mPaint);
 
     }
+
+
 }

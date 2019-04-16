@@ -49,7 +49,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             if (execute){
                 if (input == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
-                    return;
                 } else { // if there is route data
                     //Bluetooth.StopVehicle(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
                     circle.setClickable(true);
@@ -67,7 +66,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             if (execute){
                 if (input == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
-                    return;
                 } else {
                     //Bluetooth.StartVEHICLE(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
                     stopVehicleButton.setActivated(true);
