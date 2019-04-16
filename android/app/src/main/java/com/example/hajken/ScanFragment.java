@@ -69,8 +69,8 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-               // Bluetooth.getInstance().addToListView(getContext(),i);
-                Bluetooth.getInstance().getmBluetoothAdapter().cancelDiscovery();
+               Bluetooth.getInstance().addToListView(getContext(),i);
+               /* Bluetooth.getInstance().getmBluetoothAdapter().cancelDiscovery();
                 String deviceName = mBluetoothdevices.get(i).getName();
 
                 //the bond can only be created if the API are correct
@@ -80,7 +80,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
                     mBluetoothConnection.startClient(mBluetoothdevices.get(i), MY_UUID_INSECURE );
                     Log.i(TAG, " connected to " + deviceName);
 
-                }
+                }*/
             }});
 
         return view;
@@ -100,8 +100,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
         switch (view.getId()){
             case R.id.scan_button:{
                 Bluetooth.getInstance().enableBluetooth();
-                startActivity(Bluetooth.getInstance().enableBluetooth());
-                discover();
+                Bluetooth.getInstance().discover();
                 break;
             }
             case R.id.pair_button:{

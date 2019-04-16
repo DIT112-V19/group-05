@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Bluetooth {
 
     private static final String TAG = "BluetoothClass: ";
-    private InterfaceMainActivity mInterface;
+    private MainActivity mMainActivity = MainActivity.getThis();
     private final static UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
 
@@ -43,31 +43,24 @@ public class Bluetooth {
         mInstance = new Bluetooth(context);
     }
 
-    public Intent enableBluetooth(){
-        Intent intent = null;
+    public void enableBluetooth(){
 
         if (mBluetoothAdapter == null){
             Log.d(TAG, "No bluetooth exists");
-            return intent;
         }
 
         if(mBluetoothAdapter.isEnabled()){
             Log.d(TAG, " is already enabled");
             //isActivated = true;
-            return intent;
 
         } else{
-
-
-             intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-
-            return intent;
+             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            mMainActivity.startActivity( intent );
            // isActivated = true;
         }
-
     }
 
-   /* private BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+   private BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -107,17 +100,17 @@ public class Bluetooth {
         return null;
     }
 
-  void discover(){
+     void discover(){
 
         if (mBluetoothAdapter.isDiscovering()){
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            mainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
+            mMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
 
         }
         if (!mBluetoothAdapter.isDiscovering()){
             mBluetoothAdapter.startDiscovery();
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            mainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
+            mMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
         }
     }
 
@@ -133,7 +126,7 @@ public class Bluetooth {
             Log.i(TAG, " connected to " + deviceName);
 
         }
-    }*/
+    }
 
 
     public BluetoothDevice getmBluetoothDevice() {
@@ -159,15 +152,6 @@ public class Bluetooth {
     public void setmBluetoothdevices(ArrayList<BluetoothDevice> mBluetoothdevices) {
         this.mBluetoothdevices = mBluetoothdevices;
     }
-
-
-   /* public MainActivity getMainActivity() {
-        return mainActivity;
-    }
-
-    public void setMainActivity(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
-    }*/
 
     public static UUID getMyUuidInsecure() {
         return MY_UUID_INSECURE;
@@ -197,11 +181,4 @@ public class Bluetooth {
         this.mBluetoothConnection = mBluetoothConnection;
     }
 
-   /* public BroadcastReceiver getmBroadcastReceiver1() {
-        return mBroadcastReceiver1;
-    }
-
-    public void setmBroadcastReceiver1(BroadcastReceiver mBroadcastReceiver1) {
-        this.mBroadcastReceiver1 = mBroadcastReceiver1;
-    } */
 }
