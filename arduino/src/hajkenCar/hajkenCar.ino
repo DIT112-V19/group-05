@@ -14,7 +14,7 @@ const unsigned int USS1_MAX_DISTANCE = 100; //max distance of an object to be de
 NewPing USSensorFront (USS1_TRIGGER_PIN, USS1_ECHO_PIN, USS1_MAX_DISTANCE);
 
 //Gyroscope
-const int gyroOffset = -30;
+const int gyroOffset = 11;
 //**********
 
 
