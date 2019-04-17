@@ -32,7 +32,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gateway,container,false);
 
-        //Creates the buttons, list and image of the fragment
+        //Creates the buttons, list and image of the collFragment
         collectionButton = view.findViewById(R.id.collection_button);
         drawButton = view.findViewById(R.id.draw_button);
         vehicleSymbol = view.findViewById(R.id.vehicle_symbol);
@@ -45,7 +45,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     }
 
     //calls before onCreate, used to instantiate the interface
-    //part of the fragment to activity communication
+    //part of the collFragment to activity communication
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

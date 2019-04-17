@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
-        android:background="@color/button_active"
+        android:background="@drawable/button_background"
         android:text="@string/unpair_button"
         app:layout_constraintBottom_toTopOf="@+id/routes_button"
         app:layout_constraintEnd_toEndOf="parent"
