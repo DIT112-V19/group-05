@@ -63,6 +63,7 @@ void setup() {
 
 void loop() {
 
+  go();
 
 }
 
@@ -131,6 +132,7 @@ void forward(int distance) {
   while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
+    checkForStop();
   }
   car.setSpeed(stopSpeed);
   car.update();
@@ -147,6 +149,7 @@ void backward(int distance) {
   while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
+    checkForStop();
   }
   car.setSpeed(stopSpeed);
   car.update();
@@ -154,16 +157,50 @@ void backward(int distance) {
 
 //drives in a square, starting at lower left corner
 void square(int sideLength) {
-  for(int i = 0; i<4; i=i+1){
-  forward(sideLength);
-  rotate(90);
+  for (int i = 0; i < 4; i = i + 1) {
+    forward(sideLength);
+    rotate(90);
   }
 }
 
 void circle() {
-  String testStringCircle[] = {"f","20","r","45","f","20","r","45","f","20","r","45","f","20","r","45","f","20","r","45","f","20","r","45","f","20","r","45","f","20","r","45"};
+  String testStringCircle[] = {"f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45"};
   int circleArrayLength = 32;
   commands(testStringCircle, circleArrayLength);
+}
+
+void go() {
+
+  String input;
+  
+  while (true) {
+    
+    if (Serial.available()) {
+      input = Serial.read();
+      if (input = 'g') {
+        car.setSpeed(speed);
+        car.update();
+      }
+      Serial.print(input);
+      if(input = 's'){
+        car.setSpeed(0);
+        car.update();
+      }
+    }
+  }
+}
+
+
+void checkForStop() {
+
+  char input;
+  if (Serial2.available() > 0) {
+    input = Serial2.read();
+    if (input == 's') {
+        car.setSpeed(stopSpeed);
+        car.update();
+    }
+  }
 }
 
 //obstacle avoidance - stops in front of obstacle + sends message via bluetooth
