@@ -22,7 +22,7 @@ const int gyroOffset = 11;
 //distanceCar
 //**********
 float speed = 50;
-int turningSpeed = 50;
+int turningSpeed = 45;
 int stopSpeed = 0;
 boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
 
@@ -63,6 +63,12 @@ void setup() {
 
 void loop() {
 
+  testCommands();
+
+  while(true){
+    car.update();
+  }
+
 }
 
 /*
@@ -80,7 +86,7 @@ void testCommands(){
       }else if(commands[i] == "b") {
         backward(commands[i+1].toInt());
       }else if(commands[i] == "r") {
-        turnRight();
+        rotate(commands[i+1].toInt());
       }else {
         circle();
       }
@@ -99,22 +105,42 @@ void circle(){
   car.update();
 }
   
-//Make car turn to the left ca. 90° 
-void turnLeft() {
-  car.overrideMotorSpeed(-turningSpeed, turningSpeed);
-  delay(1600);
+void rotate(int angleToTurn){
 
+  if(angleToTurn == 0){
+  return; // Dont do anything if angle to turn is 0
+  }
+  
+  int initialHeading = car.getHeading();
+  int targetHeading = initialHeading + angleToTurn % 360;
+  
+  if(angleToTurn > 0){
+    car.overrideMotorSpeed(turningSpeed, -turningSpeed);
+  }else if(angleToTurn < 0){
+    car.overrideMotorSpeed(-turningSpeed, turningSpeed);
+  }
+
+  Serial2.print("Initial heading: ");
+  Serial2.println(initialHeading);
+   
+  int currentTurned = 0;
+  do{
+      Serial2.print("Current heading: ");
+      Serial2.println(car.getHeading());
+      currentTurned = (car.getHeading() - initialHeading) % 360; 
+      if(angleToTurn < 0  && currentTurned > 0){
+        currentTurned = 360 - currentTurned;
+        }
+      Serial2.print("Current turned: ");
+      Serial2.println(currentTurned);
+      car.update();
+    
+  }while (currentTurned<abs(angleToTurn));
+
+  Serial2.println("Car stopped");
   car.setSpeed(stopSpeed);
   car.update();
-}
-
-//Make car turn to the left ca. 90° 
-void turnRight() {
-  car.overrideMotorSpeed(turningSpeed, -turningSpeed);
-  delay(1600);
-
-  car.setSpeed(stopSpeed);
-  car.update();
+  
 }
 
 //drives forward up to a set distance
@@ -153,7 +179,6 @@ void backward(int distance) {
 void square(int sideLength){
 for(int i = 1; i<=4; i=i+1){
   forward(sideLength);
-  turnRight();
   }
 }
 
