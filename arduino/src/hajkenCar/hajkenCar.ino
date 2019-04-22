@@ -25,6 +25,7 @@ float speed = 50;
 int turningSpeed = 55;
 int stopSpeed = 0;
 boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
+boolean stopFromDriving; //boolean to stop car
 
 //motor pin connection
 int leftMotorForwardPin = 8;
@@ -50,6 +51,11 @@ GY50 gyroscope(gyroOffset);
 SmartCar car(control, gyroscope, odometer1);
 //**********
 
+/*
+ *  ********************************************
+    SETUP
+ *  ********************************************
+*/
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
@@ -59,16 +65,23 @@ void setup() {
   odometer1.attach(ODOMETER1_PIN, []() {
     odometer1.update();
   });
-}
+  go();
+  }
+
+/*
+ *  ********************************************
+    LOOP
+ *  ********************************************
+*/
 
 void loop() {
-
-  go();
 
 }
 
 /*
-   METHODS
+ *  ********************************************
+    METHODS
+ *  ********************************************
 */
 
 void commands(String commands[], int arraySize) {
@@ -132,7 +145,7 @@ void forward(int distance) {
   while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
-    checkForStop();
+   // checkForStop();
   }
   car.setSpeed(stopSpeed);
   car.update();
@@ -149,8 +162,15 @@ void backward(int distance) {
   while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
-    checkForStop();
+    //checkForStop();
   }
+  car.setSpeed(stopSpeed);
+  car.update();
+}
+
+// stop car
+void stop() {
+  Serial2.write("Car stops\n ");
   car.setSpeed(stopSpeed);
   car.update();
 }
@@ -171,36 +191,39 @@ void circle() {
 
 void go() {
 
-  String input;
-  
-  while (true) {
-    
-    if (Serial.available()) {
-      input = Serial.read();
-      if (input = 'g') {
+  char inputToGo;  //input variable
+  while(true){
+  if (Serial2.available()) {
+    inputToGo = Serial2.read();
+    if (inputToGo = 'g') {
+      stopFromDriving = false;
+      while (!stopFromDriving) {
         car.setSpeed(speed);
         car.update();
+        checkForStop();
       }
-      Serial.print(input);
-      if(input = 's'){
-        car.setSpeed(0);
-        car.update();
-      }
+      break;
+    }
+}
+}
+}
+
+void checkForStop() {
+  while (Serial.available() > 0) { // empties input buffer
+  Serial.read();
+  }
+ char inputToStop;  //input variable
+  while(true)
+  {
+    if (Serial2.available()) {
+    inputToStop = Serial2.read();
+    if (inputToStop == 's') {
+      stop();
+      stopFromDriving = true;
+      return;
     }
   }
 }
-
-
-void checkForStop() {
-
-  char input;
-  if (Serial2.available() > 0) {
-    input = Serial2.read();
-    if (input == 's') {
-        car.setSpeed(stopSpeed);
-        car.update();
-    }
-  }
 }
 
 //obstacle avoidance - stops in front of obstacle + sends message via bluetooth
@@ -210,8 +233,7 @@ void obstacleAvoidance() {
     carDistanceToObstacle = USSensorFront.ping_cm(); // UltraSonicSound Sensor measures (0 = more than 100 cm distance)
     if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) {
       Serial2.write("Obstacle detected"); // Sending message to bluetooth
-      car.setSpeed(stopSpeed);
-      car.update();
+      stop();
       while (true) {
         //Stops car
       }
