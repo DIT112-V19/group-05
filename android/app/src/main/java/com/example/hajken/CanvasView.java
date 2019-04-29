@@ -14,8 +14,6 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import static com.example.hajken.Bluetooth.TAG;
-
 public class CanvasView extends View {
 
     public int width;
@@ -24,6 +22,8 @@ public class CanvasView extends View {
     private Canvas mCanvas;
     private Path mPath;
     private Paint mPaint;
+
+    private static final String TAG = "CanvasView";
 
     private float mX,mY;
     private static final int ZERO = 0;

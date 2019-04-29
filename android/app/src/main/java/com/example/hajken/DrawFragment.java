@@ -24,12 +24,14 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     private Button clearButton;
     private CanvasView canvasView;
     private MathUtility mathUtility;
+    private CoordinateConverter coordinateConverter;
 
     //occurs after onAttach
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mathUtility = new MathUtility();
+        coordinateConverter = new CoordinateConverter();
     }
 
     //occurs after onCreate
@@ -66,6 +68,9 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             case R.id.start_draw_button: {
                 ArrayList<PointF> validPoints = mathUtility.findPoints(canvasView.getListOfCoordinates());
                 Log.d(TAG, "coordinateHandling: "+validPoints.toString()+" SIZE:"+validPoints.size());
+                String instructions = coordinateConverter.returnString(validPoints);
+                Log.d(TAG, "onClick: "+instructions);
+                BluetoothConnection.getInstance(getContext()).startCar(instructions);
                 break;
             }
 
