@@ -21,7 +21,7 @@ const int gyroOffset = 11;
 //**********
 //distanceCar
 //**********
-float speed = 50;
+float speed = 100;
 int turningSpeed = 55;
 int stopSpeed = 0;
 boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
@@ -60,13 +60,19 @@ void setup() {
   Serial.begin(9600);
   Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
   Serial2.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
+  Serial.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
 
   //initialize Odometer
   odometer1.attach(ODOMETER1_PIN, []() {
     odometer1.update();
   });
-  go();
+  //go();
+
+
+  while (!Serial2.available()) {
+    //Do nothing until Serial2 receives something
   }
+}
 
 /*
  *  ********************************************
@@ -75,6 +81,10 @@ void setup() {
 */
 
 void loop() {
+
+  String input = Serial2.readStringUntil('!');
+  Serial.print(input);
+  stringToArray(input);
 
 }
 
@@ -85,19 +95,58 @@ void loop() {
 */
 
 void commands(String commands[], int arraySize) {
-  //int arraySize = sizeof(commands) / sizeof(commands[0]); // does not work with long arrays?!
-  for (int i = 0; i < (arraySize - 1); i = i + 2) {
+
+  //speed = commands[1].toFloat; does not work
+  
+  for (int i = 2; i < (arraySize - 1); i = i + 2) {
 
     if (commands[i] == "f") {
-      forward(commands[i + 1].toInt());
+      forward((int)commands[i + 1].toFloat());
     } else if (commands[i] == "b") {
-      backward(commands[i + 1].toInt());
+      backward((int)commands[i + 1].toFloat());
     } else if (commands[i] == "r") {
-      rotate(commands[i + 1].toInt());
+      rotate((int)commands[i + 1].toFloat());
     } else {
       Serial2.println("unknown or no command");
+      Serial.println("unknown or no command");
     }
   }
+}
+
+void stringToArray(String str) {
+  //String x = "<l,6,v,1,f,20,r,30>"; // TEST INPUT
+
+  //Getting size from string for array
+  String size;
+  int k = 3;
+  
+  while(str.charAt(k) != ','){
+    size += str.charAt(k);
+    k++;
+  }
+  int sizeInt = size.toInt();
+  //---------------------
+  
+  String commandArray[sizeInt];
+  int indexArray = 0;
+  int i = k+1; //Starting at correct position in string
+
+  while (str.charAt(i) != '>') {
+    if (str.charAt(i) == ',') {
+      indexArray++;
+    } else {
+      commandArray[indexArray] += str.charAt(i);
+    }
+    i++;
+  }
+
+  //TEST PRINT 
+
+  for (int k = 0; k < sizeInt; k++) {
+    Serial.println(k);
+    Serial.println(commandArray[k]);
+  }
+  commands(commandArray, sizeInt);
 }
 
 void rotate(int angleToTurn) {
@@ -137,6 +186,8 @@ void rotate(int angleToTurn) {
 //drives forward up to a set distance
 void forward(int distance) {
   Serial2.write("Going forward\n"); //Printing status
+  Serial.write("Going forward\n"); //Printing status
+
 
   odometer1.reset(); //resets the car's driven distance
   car.setSpeed(speed);
@@ -144,8 +195,8 @@ void forward(int distance) {
 
   while (car.getDistance() <= distance) {
     car.update();
-    obstacleAvoidance();
-   // checkForStop();
+    //obstacleAvoidance();
+    // checkForStop();
   }
   car.setSpeed(stopSpeed);
   car.update();
@@ -192,38 +243,38 @@ void circle() {
 void go() {
 
   char inputToGo;  //input variable
-  while(true){
-  if (Serial2.available()) {
-    inputToGo = Serial2.read();
-    if (inputToGo = 'g') {
-      stopFromDriving = false;
-      while (!stopFromDriving) {
-        car.setSpeed(speed);
-        car.update();
-        checkForStop();
+  while (true) {
+    if (Serial2.available()) {
+      inputToGo = Serial2.read();
+      if (inputToGo = 'g') {
+        stopFromDriving = false;
+        while (!stopFromDriving) {
+          car.setSpeed(speed);
+          car.update();
+          checkForStop();
+        }
+        break;
       }
-      break;
     }
-}
-}
+  }
 }
 
 void checkForStop() {
   while (Serial.available() > 0) { // empties input buffer
-  Serial.read();
+    Serial.read();
   }
- char inputToStop;  //input variable
-  while(true)
+  char inputToStop;  //input variable
+  while (true)
   {
     if (Serial2.available()) {
-    inputToStop = Serial2.read();
-    if (inputToStop == 's') {
-      stop();
-      stopFromDriving = true;
-      return;
+      inputToStop = Serial2.read();
+      if (inputToStop == 's') {
+        stop();
+        stopFromDriving = true;
+        return;
+      }
     }
   }
-}
 }
 
 //obstacle avoidance - stops in front of obstacle + sends message via bluetooth
