@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.concurrent.RecursiveTask;
 
 public class DrawFragment extends Fragment implements View.OnClickListener {
 
@@ -25,6 +24,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     private CanvasView canvasView;
     private MathUtility mathUtility;
     private CoordinateConverter coordinateConverter;
+    private String instructions;
 
     //occurs after onAttach
     @Override
@@ -68,7 +68,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             case R.id.start_draw_button: {
                 ArrayList<PointF> validPoints = mathUtility.findPoints(canvasView.getListOfCoordinates());
                 Log.d(TAG, "coordinateHandling: "+validPoints.toString()+" SIZE:"+validPoints.size());
-                String instructions = coordinateConverter.returnString(validPoints);
+                instructions = coordinateConverter.returnString(validPoints);
                 Log.d(TAG, "onClick: "+instructions);
                 BluetoothConnection.getInstance(getContext()).startCar(instructions);
                 break;
