@@ -23,8 +23,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private boolean vehicleOn = false;
 
     //Data for the vehicle routes
-    private final String circleRouteData = "F25F23";
-    private final String squareRouteData = "F25R25";
+    private final String circleRouteData = ""; // to be fixed
+    private final String squareRouteData = "<F*30*R*90*F*30*R*90*F*30*R*90*F*30*R*90>";
     private String input;
 
     //Changes the input to users choice
@@ -49,7 +49,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             if (execute){
                 if (input == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
-                    return;
                 } else { // if there is route data
                     //Bluetooth.StopVehicle(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
                     circle.setClickable(true);
@@ -67,7 +66,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             if (execute){
                 if (input == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
-                    return;
                 } else {
                     //Bluetooth.StartVEHICLE(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
                     stopVehicleButton.setActivated(true);
@@ -94,7 +92,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         //Inflates the collFragment
         View view = inflater.inflate(R.layout.fragment_collection,container,false);
 
-        //Creates the buttons, list and image of the collFragment
+        //Creates the buttons, listOfXCoordinates and image of the collFragment
         stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
         circle = view.findViewById(R.id.circle_symbol);
         square = view.findViewById(R.id.square_symbol);
