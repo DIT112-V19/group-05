@@ -17,7 +17,7 @@ public class Bluetooth {
     private static final String TAG = "BluetoothClass: ";
     private MainActivity mMainActivity = MainActivity.getThis();
     private final static UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
+    private ScanFragment mScanFragment;
 
     private BluetoothDevice mBluetoothDevice;
     private BluetoothAdapter mBluetoothAdapter;
@@ -51,16 +51,19 @@ public class Bluetooth {
 
         if(mBluetoothAdapter.isEnabled()){
             Log.d(TAG, " is already enabled");
-            //isActivated = true;
 
         } else{
              Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             mMainActivity.startActivity( intent );
-           // isActivated = true;
         }
     }
 
-   private BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+    public void unPairDevice(){
+
+
+    }
+
+   /*private BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -71,7 +74,7 @@ public class Bluetooth {
                     mBluetoothdevices.add(device);
                 }
                 //only create once and notify when changes occurs
-                mListAdapter.notifyDataSetChanged();
+                mScanFragment.getmListAdapter().notifyDataSetChanged();
             }
         }
     };
@@ -126,7 +129,7 @@ public class Bluetooth {
             Log.i(TAG, " connected to " + deviceName);
 
         }
-    }
+    }*/
 
 
     public BluetoothDevice getmBluetoothDevice() {

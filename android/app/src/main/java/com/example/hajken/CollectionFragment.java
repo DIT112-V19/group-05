@@ -21,6 +21,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private ImageButton square;
     private Button stopVehicleButton;
     private boolean vehicleOn = false;
+    private Bluetooth mBluetooth = Bluetooth.getInstance();
+    private BluetoothConnection mBluetoothConnection = BluetoothConnection.getInstance(getContext());
 
     //Data for the vehicle routes
     private final String circleRouteData = "F25F23";
@@ -51,7 +53,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                     return;
                 } else { // if there is route data
-                    //Bluetooth.StopVehicle(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
+                    BluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
                     circle.setClickable(true);
                     square.setClickable(true);
                     stopVehicleButton.setActivated(false);
@@ -69,7 +71,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                     return;
                 } else {
-                    //Bluetooth.StartVEHICLE(INPUT)  <<<<----- here is the bluetooth activation/starting the vehicle
+                    BluetoothConnection.getInstance(getContext()).startCar("g"); // <<<<----- here is the bluetooth activation/starting the vehicle
                     stopVehicleButton.setActivated(true);
                     stopVehicleButton.setOnClickListener(this);
                     circle.setClickable(false);
@@ -85,6 +87,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     //occurs after onCreate
@@ -112,6 +115,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     public void onAttach(Context context) {
         super.onAttach(context);
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
+
 
 
     }
