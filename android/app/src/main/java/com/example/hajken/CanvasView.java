@@ -24,6 +24,7 @@ public class CanvasView extends View {
     private Canvas mCanvas;
     private Path mPath;
     private Paint mPaint;
+
     private float mX,mY;
     private static final int ZERO = 0;
     private static final float TOLERANCE = 5; /// ???????
@@ -43,7 +44,7 @@ public class CanvasView extends View {
         mPaint = new Paint();
 
         mPaint.setAntiAlias(true); // ????
-        mPaint.setColor(Color.BLACK);
+        mPaint.setColor(Color.RED);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(10f);
@@ -97,10 +98,18 @@ public class CanvasView extends View {
         float x = event.getX();
         float y = event.getY();
 
+        //Inverts y-value so that it is the correct rotation for user
+        float invertedY = mBitmap.getHeight()-y;
+
         //this makes sure that values are not stored when touching outside of canvas
         if (x > width || x < ZERO || y > height || y < ZERO){
           event.setAction(MotionEvent.ACTION_CANCEL);
         }
+
+        if (listOfCoordinates.size() > 10){
+            mPaint.setColor(Color.BLACK);
+        }
+
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN :
@@ -111,7 +120,7 @@ public class CanvasView extends View {
 
                 startTouch(x,y);
                 PointF downPoint = new PointF();
-                downPoint.set(x,y);
+                downPoint.set(x,invertedY);
                 Log.d(TAG, "onTouchEvent floatPoint: firstpoint"+downPoint.toString());
                 listOfCoordinates.add(downPoint);
                 invalidate();
@@ -122,7 +131,7 @@ public class CanvasView extends View {
             case MotionEvent.ACTION_MOVE :
                 moveTouch(x,y);
                 PointF movePoint = new PointF();
-                movePoint.set(x,y);
+                movePoint.set(x,invertedY);
                 Log.d(TAG, "onTouchEvent: Floatpoint MOVE"+movePoint.toString());
                 listOfCoordinates.add(movePoint);
                 invalidate();
@@ -133,7 +142,7 @@ public class CanvasView extends View {
             case MotionEvent.ACTION_UP :
                 upTouch();
                 PointF upPoint = new PointF();
-                upPoint.set(x,y);
+                upPoint.set(x,invertedY);
                 listOfCoordinates.add(upPoint);
                 invalidate();
                 break;
@@ -147,6 +156,8 @@ public class CanvasView extends View {
 
          canvas.drawBitmap(mBitmap, 0,0, mPaint);
          canvas.drawPath(mPath, mPaint);
+
+
 
     }
 
