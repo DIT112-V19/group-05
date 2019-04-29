@@ -54,7 +54,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_scan,container,false);
 
-        //Creates the buttons, list and image of the collFragment
+        //Creates the buttons, listOfXCoordinates and image of the collFragment
         scanButton = view.findViewById(R.id.scan_button);
         pairButton = view.findViewById(R.id.pair_button);
         unpairButton = view.findViewById(R.id.unpair_button);
