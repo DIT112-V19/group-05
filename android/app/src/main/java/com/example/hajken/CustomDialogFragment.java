@@ -17,7 +17,7 @@ public class CustomDialogFragment extends DialogFragment {
         void controlVehicle(Boolean start);
     }
 
-    public OnActionInterface onAction; //instantiate interface object
+    public OnActionInterface onAction; //interface object
 
     private static final String TAG = "CustomDialogFragment";
     private TextView actionOk;
