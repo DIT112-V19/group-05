@@ -21,7 +21,7 @@ const int gyroOffset = 11;
 //**********
 //distanceCar
 //**********
-float speed = 100;
+float speed = 50;
 int turningSpeed = 55;
 int stopSpeed = 0;
 boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
@@ -83,7 +83,7 @@ void setup() {
 void loop() {
 
   String input = Serial2.readStringUntil('!');
-  Serial.print(input);
+  Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
 
 }
@@ -146,6 +146,8 @@ void stringToArray(String str) {
     Serial.println(k);
     Serial.println(commandArray[k]);
   }
+
+  //Running command method for current input
   commands(commandArray, sizeInt);
 }
 
@@ -195,7 +197,7 @@ void forward(int distance) {
 
   while (car.getDistance() <= distance) {
     car.update();
-    //obstacleAvoidance();
+    obstacleAvoidance();
     // checkForStop();
   }
   car.setSpeed(stopSpeed);
