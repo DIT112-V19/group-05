@@ -22,7 +22,7 @@ const int gyroOffset = 11;
 //distanceCar
 //**********
 float speed = 50;
-int turningSpeed = 55;
+int turningSpeed = 35;
 int stopSpeed = 0;
 boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
 boolean stopFromDriving; //boolean to stop car
@@ -68,7 +68,6 @@ void setup() {
   });
   //go();
 
-
   while (!Serial2.available()) {
     //Do nothing until Serial2 receives something
   }
@@ -83,8 +82,13 @@ void setup() {
 void loop() {
 
   String input = Serial2.readStringUntil('!');
+  input = "<l,10,v,1,f,100,r,90,f,100,r,-90>";
   Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
+
+  while(true){
+    
+  }
 
 }
 
@@ -143,7 +147,6 @@ void stringToArray(String str) {
   //TEST PRINT 
 
   for (int k = 0; k < sizeInt; k++) {
-    Serial.println(k);
     Serial.println(commandArray[k]);
   }
 
@@ -151,38 +154,38 @@ void stringToArray(String str) {
   commands(commandArray, sizeInt);
 }
 
+//-----Rotate-----
+
 void rotate(int angleToTurn) {
   if (angleToTurn == 0) {
     return; // Dont do anything if angle to turn is 0
   }
-  Serial2.println("Car starts to turn");
-  int initialHeading = car.getHeading();
-  int targetHeading = initialHeading + angleToTurn % 360;
 
+  angleToTurn %= 360;
+
+  //Setting rotation
   if (angleToTurn > 0) {
     car.overrideMotorSpeed(turningSpeed, -turningSpeed);
   } else if (angleToTurn < 0) {
     car.overrideMotorSpeed(-turningSpeed, turningSpeed);
   }
 
-  Serial2.print("Initial heading: ");
-  Serial2.println(initialHeading);
-
+  unsigned int initialHeading = car.getHeading();
   int currentTurned = 0;
-  do {
-    currentTurned = (car.getHeading() - initialHeading) % 360;
-    if (angleToTurn < 0  && currentTurned > 0) {
-      currentTurned = 360 - currentTurned;
-    }
 
+  while (abs(currentTurned) < abs(angleToTurn)){
     car.update();
+    int currentHeading = car.getHeading();
 
-  } while (currentTurned < abs(angleToTurn));
-  Serial2.print("Totally turned: ");
-  Serial2.println(currentTurned);
-  car.setSpeed(stopSpeed);
-  car.update();
+    if((angleToTurn < 0) && (currentHeading > initialHeading)){
+      currentHeading -= 360;
+    }else if((angleToTurn > 0) && (currentHeading < initialHeading)){
+      currentHeading += 360;
+    }
+    currentTurned = initialHeading - currentHeading;
+  }
 
+  stop();
 }
 
 //drives forward up to a set distance
