@@ -70,7 +70,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
                 Log.d(TAG, "coordinateHandling: "+validPoints.toString()+" SIZE:"+validPoints.size());
                 instructions = coordinateConverter.returnString(validPoints);
                 Log.d(TAG, "onClick: "+instructions);
-                BluetoothConnection.getInstance(getContext()).startCar(instructions);
+               // BluetoothConnection.getInstance(getContext()).startCar(instructions);
                 break;
             }
 
