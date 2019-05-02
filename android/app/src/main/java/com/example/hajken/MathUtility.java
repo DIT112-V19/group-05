@@ -1,13 +1,18 @@
 package com.example.hajken;
 
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MathUtility {
 
-    private static final float DIFFERENCE_MARGIN = 30;
+    private static final float DIFFERENCE_MARGIN = 20;
+    private static final float DIFFERENCE_MARGIN_X = 10;
+    private static final float DIFFERENCE_MARGIN_Y = 10;
 
     private static final String TAG = "MathUtility";
 
@@ -62,6 +67,62 @@ public class MathUtility {
         return validPoints;
     }
 
+    private double perpendicularDistance (PointF point, PointF lineStart, PointF lineEnd){
+        double dx = lineEnd.x - lineStart.x;
+        double dy = lineEnd.y - lineStart.y;
+
+        double mag = Math.hypot(dx,dy);
+
+        if (mag > 0.0) {
+            dx /= mag;
+            dy /= mag;
+        }
+
+        double pvx = point.x - lineStart.x;
+        double pvy = point.y - lineStart.y;
+
+        double pvdot = dx * pvx + dy * pvy;
+
+        double ax = pvx - pvdot * dx;
+        double ay = pvy - pvdot * dy;
+
+        return Math.hypot(ax, ay);
+
+    }
+
+    public ArrayList<PointF> findPoints2(ArrayList<PointF> listOfCoordinates, double epsilon){
+
+        double dmax = 0.0;
+        int index = 0;
+        int end = listOfCoordinates.size() - 1;
+
+        for (int i = 2; i < end ; i++) {
+
+            double d = perpendicularDistance(listOfCoordinates.get(i) , listOfCoordinates.get(0), listOfCoordinates.get(end));
+            if (d > dmax){
+                index = i;
+                dmax = d;
+            }
+        }
+
+        ArrayList<PointF> resultList = new ArrayList<>();
+
+        if (dmax > epsilon) {
+
+            ArrayList<PointF> subList1 = new ArrayList<>(listOfCoordinates.subList(0, index));
+            ArrayList<PointF> subList2 = new ArrayList<>(listOfCoordinates.subList(index+1, end));
+            ArrayList<PointF> recResults1 = findPoints2( subList1, epsilon);
+            ArrayList<PointF> recResults2 = findPoints2( subList2, epsilon);
+            resultList.addAll(recResults1);
+            resultList.addAll(recResults2);
+        } else {
+            Log.d(TAG, "findPoints2: ELSE " + listOfCoordinates.toString());
+            resultList.add(listOfCoordinates.get(0));
+            resultList.add(listOfCoordinates.get(end));
+        }
+        return resultList;
+    }
+
     public boolean isNewVector(PointF firstPoint, PointF secondPoint, PointF thirdPoint){
 
         Log.d(TAG, "isNewVector: "+thirdPoint.toString());
@@ -81,7 +142,7 @@ public class MathUtility {
         double b2 = secondPoint.x - firstPoint.x;
         Log.d(TAG, "vector diff x second-first: "+b2);
 
-        if (a1 == 0.0 || b1 == 0.0|| a2 == 0.0 || b2 == 0.0) {
+        if (Math.abs(a1) < DIFFERENCE_MARGIN_Y && Math.abs(b1) < DIFFERENCE_MARGIN_X) {
             return false;
         }
 
@@ -91,7 +152,7 @@ public class MathUtility {
 
         Log.d(TAG, "isNewVector: grades:"+(Math.toDegrees(Math.atan2(a1,b1))-Math.toDegrees(Math.atan2(a2,b2))));
 
-        return Math.abs((Math.toDegrees(Math.atan2(a1,b1)))-(Math.toDegrees(Math.atan2(a2,b2)))) > DIFFERENCE_MARGIN;
+        return Math.abs((Math.toDegrees(Math.atan2(a1,b1)))-(Math.toDegrees(Math.atan2(a2,b2)))) > DIFFERENCE_MARGIN  ;
     }
 
     public float getMagnitude(PointF pointA, PointF pointB){

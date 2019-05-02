@@ -64,7 +64,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             //This is the events that are associated with the buttons
 
             case R.id.start_draw_button: {
-                ArrayList<PointF> validPoints = mathUtility.findPoints(canvasView.getListOfCoordinates());
+                ArrayList<PointF> validPoints = mathUtility.findPoints2(canvasView.getListOfCoordinates(),50.0);
                 Log.d(TAG, "coordinateHandling: "+validPoints.toString()+" SIZE:"+validPoints.size());
                 break;
             }

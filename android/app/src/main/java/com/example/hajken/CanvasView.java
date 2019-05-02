@@ -14,7 +14,6 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import static com.example.hajken.Bluetooth.TAG;
 
 public class CanvasView extends View {
 
@@ -35,6 +34,7 @@ public class CanvasView extends View {
 
     ArrayList<PointF> listOfCoordinates = new ArrayList<>();
     Context context;
+    private static final String TAG = "CanvasView";
 
     public CanvasView(Context context, AttributeSet attributeSet){
         super(context,attributeSet);
@@ -144,6 +144,7 @@ public class CanvasView extends View {
                 PointF upPoint = new PointF();
                 upPoint.set(x,invertedY);
                 listOfCoordinates.add(upPoint);
+                Log.d(TAG, "onTouchEvent: COORDINATES " + listOfCoordinates.toString());
                 invalidate();
                 break;
         }
