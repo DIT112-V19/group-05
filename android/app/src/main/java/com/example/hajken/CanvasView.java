@@ -24,6 +24,8 @@ public class CanvasView extends View {
     private Path mPath;
     private Paint mPaint;
 
+    private static final String TAG = "CanvasView";
+
     private float mX,mY;
     private static final int ZERO = 0;
     private static final float TOLERANCE = 5; /// ???????
@@ -34,7 +36,7 @@ public class CanvasView extends View {
 
     ArrayList<PointF> listOfCoordinates = new ArrayList<>();
     Context context;
-    private static final String TAG = "CanvasView";
+
 
     public CanvasView(Context context, AttributeSet attributeSet){
         super(context,attributeSet);
@@ -44,7 +46,7 @@ public class CanvasView extends View {
         mPaint = new Paint();
 
         mPaint.setAntiAlias(true); // ????
-        mPaint.setColor(Color.RED);
+        mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(10f);
@@ -106,9 +108,7 @@ public class CanvasView extends View {
           event.setAction(MotionEvent.ACTION_CANCEL);
         }
 
-        if (listOfCoordinates.size() > 10){
-            mPaint.setColor(Color.BLACK);
-        }
+
 
 
         switch (event.getAction()){
@@ -116,7 +116,9 @@ public class CanvasView extends View {
 
                 //Reset/clear canvas and lists of coordinates
                 clearCanvas();
+
                 listOfCoordinates.clear();
+
 
                 startTouch(x,y);
                 PointF downPoint = new PointF();
@@ -131,7 +133,7 @@ public class CanvasView extends View {
             case MotionEvent.ACTION_MOVE :
                 moveTouch(x,y);
                 PointF movePoint = new PointF();
-                movePoint.set(x,invertedY);
+                movePoint.set( x, invertedY);
                 Log.d(TAG, "onTouchEvent: Floatpoint MOVE"+movePoint.toString());
                 listOfCoordinates.add(movePoint);
                 invalidate();

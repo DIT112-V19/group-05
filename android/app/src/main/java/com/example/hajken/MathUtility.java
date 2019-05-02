@@ -159,4 +159,12 @@ public class MathUtility {
         return (float) Math.sqrt(Math.pow((pointB.x-pointA.x),2)+Math.pow((pointB.y-pointA.y),2));
     }
 
+    public float getRotation(PointF pointA, PointF pointB){
+        float diffY = pointB.y - pointA.y;
+        float diffX = pointB.x - pointA.x;
+
+        return (float) Math.toDegrees(Math.atan2(diffY,diffX));
+
+    }
+
 }
