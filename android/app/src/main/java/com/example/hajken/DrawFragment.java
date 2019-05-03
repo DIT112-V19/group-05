@@ -69,7 +69,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
                 ArrayList<PointF> validPoints = mathUtility.findPoints2(canvasView.getListOfCoordinates(),50.0);
                 Log.d(TAG, "coordinateHandling: "+validPoints.toString()+" SIZE:"+validPoints.size());
                 instructions = coordinateConverter.returnString(validPoints);
-                Log.d(TAG, "onClick: "+instructions);
+                Log.d(TAG, "Instruction coordinates: "+instructions.toString());
                // BluetoothConnection.getInstance(getContext()).startCar(instructions);
                 break;
             }

@@ -22,8 +22,11 @@ public class CoordinateConverter {
         //Change speed of vehicle
         instructions = instructions.concat(",v,3,"); // this needs to adaptable later
 
+        instructions = instructions.concat("r,0,"); // amount of loops - needs to be adaptable later
+
         for(int i = 0; i < validPoints.size()-1;i++){
-            instructions = instructions.concat("r,"+mathUtility.getRotation(validPoints.get(i),validPoints.get(i+1)));
+
+            instructions = instructions.concat("t,"+mathUtility.getRotation(validPoints.get(i),validPoints.get(i+1)));
             instructions = instructions.concat(",");
             instructions = instructions.concat("f,"+mathUtility.getMagnitude(validPoints.get(i),validPoints.get(i+1)));
 
