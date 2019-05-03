@@ -110,6 +110,8 @@ void loop() {
   Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
 
+  gpsFunction();
+
   while (true) {
 
   }
@@ -381,7 +383,5 @@ if (gps.location.isUpdated()){
  longitude = String(lng, 6);
 
  Serial2.println(latitude + "*" + longitude);
-
- delay(1000);
 }
 }
