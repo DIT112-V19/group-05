@@ -1,5 +1,9 @@
+#include <TinyGPS++.h>
+
 #include <NewPing.h>
 #include <Smartcar.h>
+#include "TinyGPS++.h"
+#include <SoftwareSerial.h>
 
 //**********
 //ultraSonicSensor
@@ -51,6 +55,24 @@ GY50 gyroscope(gyroOffset);
 SmartCar car(control, gyroscope, odometer1);
 //**********
 
+//**********
+//Creating GPS-object
+TinyGPSPlus gps;
+
+//GPS variables
+double lat;
+double lng;
+String latitude;
+String longitude;
+
+//GPS pin connection
+static const int RXPin = 12, TXPin = 13;
+static const uint32_t GPSBaud = 9600;
+
+SoftwareSerial ss(RXPin, TXPin);
+
+//*********
+
 /*
  *  ********************************************
     SETUP
@@ -59,6 +81,8 @@ SmartCar car(control, gyroscope, odometer1);
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
+  ss.begin(GPSBaud); //GPS
+
   Serial2.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
   Serial.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
 
@@ -343,4 +367,21 @@ void obstacleAvoidance() {
       }
     }
   }
+}
+
+void gpsFunction() {
+  while (ss.available() > 0)
+  gps.encode(ss.read());
+
+if (gps.location.isUpdated()){
+ lat = gps.location.lat();
+ lng = gps.location.lng();
+
+ latitude = String(lat,6);
+ longitude = String(lng, 6);
+
+ Serial2.println(latitude + "*" + longitude);
+
+ delay(1000);
+}
 }
