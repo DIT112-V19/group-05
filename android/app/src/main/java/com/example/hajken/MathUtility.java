@@ -160,10 +160,31 @@ public class MathUtility {
     }
 
     public float getRotation(PointF pointA, PointF pointB){
+
         float diffY = pointB.y - pointA.y;
         float diffX = pointB.x - pointA.x;
 
-        return (float) Math.toDegrees(Math.atan2(diffY,diffX));
+        float degrees = (float) Math.toDegrees(Math.atan2(diffY,diffX));
+
+        if (degrees < 0){
+            degrees = Math.abs(degrees);
+        } else {
+            Log.d(TAG, "coordinate before 0-degrees: "+degrees);
+
+            degrees = 0 - degrees;
+            Log.d(TAG, "coordinate after 0-degrees: "+degrees);
+
+        }
+
+        Log.d(TAG, "coordinate getRotation: "+degrees);
+
+        degrees = degrees+90;
+
+        if (degrees > 180){
+            degrees = degrees-360;
+        }
+
+        return degrees;
 
     }
 
