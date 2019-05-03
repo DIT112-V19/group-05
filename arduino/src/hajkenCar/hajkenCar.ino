@@ -52,9 +52,9 @@ SmartCar car(control, gyroscope, odometer1);
 //**********
 
 /*
- *  ********************************************
-    SETUP
- *  ********************************************
+ *********************************************
+  SETUP
+ *********************************************
 */
 void setup() {
   Serial.begin(9600);
@@ -74,9 +74,9 @@ void setup() {
 }
 
 /*
- *  ********************************************
-    LOOP
- *  ********************************************
+ *********************************************
+  LOOP
+ *********************************************
 */
 
 void loop() {
@@ -93,9 +93,9 @@ void loop() {
 }
 
 /*
- *  ********************************************
-    METHODS
- *  ********************************************
+ *********************************************
+  METHODS
+ *********************************************
 */
 
 void commands(String commands[], int arraySize) {
@@ -154,7 +154,13 @@ void stringToArray(String str) {
   commands(commandArray, sizeInt);
 }
 
-//-----Rotate-----
+/*
+ *********************************************
+  DRIVING FUNCTIONS
+ *********************************************
+*/
+
+//-->>---Rotate--<<---
 
 void rotate(int angleToTurn) {
   if (angleToTurn == 0) {
@@ -188,7 +194,7 @@ void rotate(int angleToTurn) {
   stop();
 }
 
-//drives forward up to a set distance
+//--->>--Drive forward to a set distance--<<---
 void forward(int distance) {
   Serial2.write("Going forward\n"); //Printing status
   Serial.write("Going forward\n"); //Printing status
@@ -207,7 +213,7 @@ void forward(int distance) {
   car.update();
 }
 
-//drives backwards up to a set distance
+//--->>--Drive backwards up to a set distance---<<--
 void backward(int distance) {
   Serial2.write("Going backward\n "); //Printing status
 
@@ -224,14 +230,20 @@ void backward(int distance) {
   car.update();
 }
 
-// stop car
+//--->>--Stop---<<--
 void stop() {
   Serial2.write("Car stops\n ");
   car.setSpeed(stopSpeed);
   car.update();
 }
 
-//drives in a square, starting at lower left corner
+/*
+ *********************************************
+  EXAMPLE FORMATIONS
+ *********************************************
+*/
+
+//-----square-----
 void square(int sideLength) {
   for (int i = 0; i < 4; i = i + 1) {
     forward(sideLength);
@@ -239,12 +251,20 @@ void square(int sideLength) {
   }
 }
 
+//-----circle-----
 void circle() {
   String testStringCircle[] = {"f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45"};
   int circleArrayLength = 32;
   commands(testStringCircle, circleArrayLength);
 }
 
+/*
+ *********************************************
+  MANUAL COMMANDS
+ *********************************************
+*/
+
+//-----Start driving at input "g"-----
 void go() {
 
   char inputToGo;  //input variable
@@ -264,6 +284,7 @@ void go() {
   }
 }
 
+//-----Stop driving at input "s"-----
 void checkForStop() {
   while (Serial.available() > 0) { // empties input buffer
     Serial.read();
@@ -281,6 +302,12 @@ void checkForStop() {
     }
   }
 }
+
+/*
+ *********************************************
+  OBSTACLE AVOIDANCE
+ *********************************************
+*/
 
 //obstacle avoidance - stops in front of obstacle + sends message via bluetooth
 void obstacleAvoidance() {
