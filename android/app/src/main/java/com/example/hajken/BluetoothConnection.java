@@ -250,6 +250,8 @@ public class BluetoothConnection {
 
     }
 
+
+
     private void connected(BluetoothSocket socket, final BluetoothDevice device) {
 
         Log.d(TAG, " started connected()");
@@ -309,6 +311,32 @@ public class BluetoothConnection {
     public void stopCar(String input) {
         writeToDevice(input);
     }
+
+    public String readGPS(){
+        return readString();
+    }
+
+    public String readString() {
+        //stores what is read from stream
+        byte[] byteForStream = new byte[1024];
+        String message = "";
+
+        int bytes;
+
+        while (true) {
+            try {
+                bytes = mInputStream.read(byteForStream);
+                message = new String(byteForStream, 0, bytes);
+                Log.d(TAG, " Read from inputstream " + message);
+
+            } catch (IOException e) {
+                Log.e(TAG, " error reading from inputstream " + e.getMessage());
+                break;
+            }
+        }
+    return message;
+    }
+
 
 }
 

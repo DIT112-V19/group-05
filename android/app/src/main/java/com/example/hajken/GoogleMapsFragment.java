@@ -27,9 +27,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 /**
  * A simple {@link Fragment} subclass.
  */
+
 public class GoogleMapsFragment extends Fragment  implements View.OnClickListener, OnMapReadyCallback {
 
     private MapView mMapView;
+    private BluetoothConnection bluetoothConnection;
 
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
@@ -72,8 +74,12 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
     public void onAttach(Context context){
         super.onAttach(context);
-        BluetoothConnection.getInstance(getContext());
 
+        bluetoothConnection = BluetoothConnection.getInstance(getContext());
+        bluetoothConnection.startCar("g"); //small g to request GPS
+        String GPS = bluetoothConnection.readGPS();
+
+        //String longitude =
 
     }
 
@@ -127,10 +133,10 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         //String latitude = call for latitude;
         //String longitude = call car for longitude;
 
-        Double lat = Double.parseDouble(latitude);
-        Double lng = Double.parseDouble(longitude);
+        //Double lat = Double.parseDouble(latitude);
+        //Double lng = Double.parseDouble(longitude);
 
-        map.addMarker(new MarkerOptions().position(new LatLng(lat, lat)).title("THE HAJKEN CAR"));
+        //map.addMarker(new MarkerOptions().position(new LatLng(lat, lat)).title("THE HAJKEN CAR"));
 
 
     }
