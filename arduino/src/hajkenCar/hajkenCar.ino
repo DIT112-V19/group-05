@@ -82,12 +82,12 @@ void setup() {
 void loop() {
 
   String input = Serial2.readStringUntil('!');
-  //input = "<l,12,v,3,r,3,f,100,t,90,f,100,t,-90>"; //Test input
+  input = "<l,10,v,1,f,100,r,90,f,100,r,-90>";
   Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
 
-  while (true) {
-
+  while(true){
+    
   }
 
 }
@@ -100,87 +100,40 @@ void loop() {
 
 void commands(String commands[], int arraySize) {
 
-  int roundsToDrive = commands[3].toInt();
-
-  //Select speed
-  if (commands[1].toInt() == 1) {
-    speed = 50;
-  } else if (commands[1].toInt() == 2) {
-    speed = 60;
-  } else if (commands[1].toInt() == 3) {
-    speed = 70;
-  } else if (commands[1].toInt() == 4) {
-    speed = 80;
-  } else if (commands[1].toInt() == 5) {
-    speed = 90;
-  }
-
-  int k = 0;
-  do {
-
-    for (int i = 4; i < (arraySize - 1); i = i + 2) {
-
-      if (commands[i] == "f") {
-        forward((int)commands[i + 1].toFloat());
-      } else if (commands[i] == "b") {
-        backward((int)commands[i + 1].toFloat());
-      } else if (commands[i] == "t") {
-        rotate((int)commands[i + 1].toFloat());
-      } else {
-        Serial2.println("unknown or no command");
-        Serial.println("unknown or no command");
-      }
-    }
-    k++;
-    if (roundsToDrive > 0 && k < roundsToDrive) {
-      reverseCommands(commands, arraySize);
-      k++;
-    }
-  } while (k < roundsToDrive);
-
-}
-
-void reverseCommands(String commands[], int arraySize) {
-
-  rotate(180);//Turn around for back
-
-  for (int i = (arraySize - 2); i >= 4; i = i - 2) {
+  //speed = commands[1].toFloat; does not work
+  
+  for (int i = 2; i < (arraySize - 1); i = i + 2) { //change to SWITCH CASE?
 
     if (commands[i] == "f") {
       forward((int)commands[i + 1].toFloat());
     } else if (commands[i] == "b") {
       backward((int)commands[i + 1].toFloat());
-    } else if (commands[i] == "t") {
-      int reverseTurn = (int)commands[i + 1].toFloat();
-      reverseTurn = reverseTurn * -1;
-      rotate(reverseTurn);
+    } else if (commands[i] == "r") {
+      rotate((int)commands[i + 1].toFloat());
     } else {
       Serial2.println("unknown or no command");
       Serial.println("unknown or no command");
     }
   }
-
-  rotate(180);//Turn around to be ready for going forward
 }
 
 void stringToArray(String str) {
-  //String x = "<l,6,v,1,r,0,f,20,t,30>"; // TEST INPUT
+  //String x = "<l,6,v,1,f,20,r,30>"; // TEST INPUT
 
   //Getting size from string for array
   String size;
   int k = 3;
-
-  while (str.charAt(k) != ',') {
+  
+  while(str.charAt(k) != ','){
     size += str.charAt(k);
     k++;
   }
   int sizeInt = size.toInt();
-
   //---------------------
-
+  
   String commandArray[sizeInt];
   int indexArray = 0;
-  int i = k + 1; //Starting at correct position in string
+  int i = k+1; //Starting at correct position in string
 
   while (str.charAt(i) != '>') {
     if (str.charAt(i) == ',') {
@@ -191,11 +144,10 @@ void stringToArray(String str) {
     i++;
   }
 
-  //TEST PRINT
+  //TEST PRINT 
 
   for (int k = 0; k < sizeInt; k++) {
-    Serial.print(commandArray[k]);
-    Serial.print(", ");
+    Serial.println(commandArray[k]);
   }
 
   //Running command method for current input
@@ -227,13 +179,13 @@ void rotate(int angleToTurn) {
   unsigned int initialHeading = car.getHeading();
   int currentTurned = 0;
 
-  while (abs(currentTurned) < abs(angleToTurn)) {
+  while (abs(currentTurned) < abs(angleToTurn)){
     car.update();
     int currentHeading = car.getHeading();
 
-    if ((angleToTurn < 0) && (currentHeading > initialHeading)) {
+    if((angleToTurn < 0) && (currentHeading > initialHeading)){
       currentHeading -= 360;
-    } else if ((angleToTurn > 0) && (currentHeading < initialHeading)) {
+    }else if((angleToTurn > 0) && (currentHeading < initialHeading)){
       currentHeading += 360;
     }
     currentTurned = initialHeading - currentHeading;
