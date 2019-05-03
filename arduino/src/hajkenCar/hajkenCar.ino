@@ -52,9 +52,9 @@ SmartCar car(control, gyroscope, odometer1);
 //**********
 
 /*
- *********************************************
-  SETUP
- *********************************************
+ *  ********************************************
+    SETUP
+ *  ********************************************
 */
 void setup() {
   Serial.begin(9600);
@@ -74,66 +74,113 @@ void setup() {
 }
 
 /*
- *********************************************
-  LOOP
- *********************************************
+ *  ********************************************
+    LOOP
+ *  ********************************************
 */
 
 void loop() {
 
   String input = Serial2.readStringUntil('!');
-  input = "<l,10,v,1,f,100,r,90,f,100,r,-90>";
+  //input = "<l,12,v,3,r,3,f,100,t,90,f,100,t,-90>"; //Test input
   Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
 
-  while(true){
-    
+  while (true) {
+
   }
 
 }
 
 /*
- *********************************************
-  METHODS
- *********************************************
+ *  ********************************************
+    METHODS
+ *  ********************************************
 */
 
 void commands(String commands[], int arraySize) {
 
-  //speed = commands[1].toFloat; does not work
-  
-  for (int i = 2; i < (arraySize - 1); i = i + 2) { //change to SWITCH CASE?
+  int roundsToDrive = commands[3].toInt();
+
+  //Select speed
+  if (commands[1].toInt() == 1) {
+    speed = 50;
+  } else if (commands[1].toInt() == 2) {
+    speed = 60;
+  } else if (commands[1].toInt() == 3) {
+    speed = 70;
+  } else if (commands[1].toInt() == 4) {
+    speed = 80;
+  } else if (commands[1].toInt() == 5) {
+    speed = 90;
+  }
+
+  int k = 0;
+  do {
+
+    for (int i = 4; i < (arraySize - 1); i = i + 2) {
+
+      if (commands[i] == "f") {
+        forward((int)commands[i + 1].toFloat());
+      } else if (commands[i] == "b") {
+        backward((int)commands[i + 1].toFloat());
+      } else if (commands[i] == "t") {
+        rotate((int)commands[i + 1].toFloat());
+      } else {
+        Serial2.println("unknown or no command");
+        Serial.println("unknown or no command");
+      }
+    }
+    k++;
+    if (roundsToDrive > 0 && k < roundsToDrive) {
+      reverseCommands(commands, arraySize);
+      k++;
+    }
+  } while (k < roundsToDrive);
+
+}
+
+void reverseCommands(String commands[], int arraySize) {
+
+  rotate(180);//Turn around for back
+
+  for (int i = (arraySize - 2); i >= 4; i = i - 2) {
 
     if (commands[i] == "f") {
       forward((int)commands[i + 1].toFloat());
     } else if (commands[i] == "b") {
       backward((int)commands[i + 1].toFloat());
-    } else if (commands[i] == "r") {
-      rotate((int)commands[i + 1].toFloat());
+    } else if (commands[i] == "t") {
+      int reverseTurn = (int)commands[i + 1].toFloat();
+      reverseTurn = reverseTurn * -1;
+      rotate(reverseTurn);
     } else {
       Serial2.println("unknown or no command");
       Serial.println("unknown or no command");
     }
   }
+
+  rotate(180);//Turn around to be ready for going forward
 }
 
 void stringToArray(String str) {
-  //String x = "<l,6,v,1,f,20,r,30>"; // TEST INPUT
+  //String x = "<l,6,v,1,r,0,f,20,t,30>"; // TEST INPUT
 
   //Getting size from string for array
   String size;
   int k = 3;
-  
-  while(str.charAt(k) != ','){
+
+  while (str.charAt(k) != ',') {
     size += str.charAt(k);
     k++;
   }
   int sizeInt = size.toInt();
+
   //---------------------
-  
+
   String commandArray[sizeInt];
   int indexArray = 0;
-  int i = k+1; //Starting at correct position in string
+  int i = k + 1; //Starting at correct position in string
 
   while (str.charAt(i) != '>') {
     if (str.charAt(i) == ',') {
@@ -144,23 +191,18 @@ void stringToArray(String str) {
     i++;
   }
 
-  //TEST PRINT 
+  //TEST PRINT
 
   for (int k = 0; k < sizeInt; k++) {
-    Serial.println(commandArray[k]);
+    Serial.print(commandArray[k]);
+    Serial.print(", ");
   }
 
   //Running command method for current input
   commands(commandArray, sizeInt);
 }
 
-/*
- *********************************************
-  DRIVING FUNCTIONS
- *********************************************
-*/
-
-//-->>---Rotate--<<---
+//-----Rotate-----
 
 void rotate(int angleToTurn) {
   if (angleToTurn == 0) {
@@ -179,13 +221,13 @@ void rotate(int angleToTurn) {
   unsigned int initialHeading = car.getHeading();
   int currentTurned = 0;
 
-  while (abs(currentTurned) < abs(angleToTurn)){
+  while (abs(currentTurned) < abs(angleToTurn)) {
     car.update();
     int currentHeading = car.getHeading();
 
-    if((angleToTurn < 0) && (currentHeading > initialHeading)){
+    if ((angleToTurn < 0) && (currentHeading > initialHeading)) {
       currentHeading -= 360;
-    }else if((angleToTurn > 0) && (currentHeading < initialHeading)){
+    } else if ((angleToTurn > 0) && (currentHeading < initialHeading)) {
       currentHeading += 360;
     }
     currentTurned = initialHeading - currentHeading;
@@ -194,7 +236,7 @@ void rotate(int angleToTurn) {
   stop();
 }
 
-//--->>--Drive forward to a set distance--<<---
+//drives forward up to a set distance
 void forward(int distance) {
   Serial2.write("Going forward\n"); //Printing status
   Serial.write("Going forward\n"); //Printing status
@@ -213,7 +255,7 @@ void forward(int distance) {
   car.update();
 }
 
-//--->>--Drive backwards up to a set distance---<<--
+//drives backwards up to a set distance
 void backward(int distance) {
   Serial2.write("Going backward\n "); //Printing status
 
@@ -230,20 +272,14 @@ void backward(int distance) {
   car.update();
 }
 
-//--->>--Stop---<<--
+// stop car
 void stop() {
   Serial2.write("Car stops\n ");
   car.setSpeed(stopSpeed);
   car.update();
 }
 
-/*
- *********************************************
-  EXAMPLE FORMATIONS
- *********************************************
-*/
-
-//-----square-----
+//drives in a square, starting at lower left corner
 void square(int sideLength) {
   for (int i = 0; i < 4; i = i + 1) {
     forward(sideLength);
@@ -251,20 +287,12 @@ void square(int sideLength) {
   }
 }
 
-//-----circle-----
 void circle() {
   String testStringCircle[] = {"f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45"};
   int circleArrayLength = 32;
   commands(testStringCircle, circleArrayLength);
 }
 
-/*
- *********************************************
-  MANUAL COMMANDS
- *********************************************
-*/
-
-//-----Start driving at input "g"-----
 void go() {
 
   char inputToGo;  //input variable
@@ -284,7 +312,6 @@ void go() {
   }
 }
 
-//-----Stop driving at input "s"-----
 void checkForStop() {
   while (Serial.available() > 0) { // empties input buffer
     Serial.read();
@@ -302,12 +329,6 @@ void checkForStop() {
     }
   }
 }
-
-/*
- *********************************************
-  OBSTACLE AVOIDANCE
- *********************************************
-*/
 
 //obstacle avoidance - stops in front of obstacle + sends message via bluetooth
 void obstacleAvoidance() {
