@@ -16,12 +16,13 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements InterfaceMainActivity {
 
     private static final String TAG = "MainActivity";
+    private static MainActivity mMainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mMainActivity = this;
         init(); // when mainActivity starts, it will inflate StartFragment first
     }
 
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     }
 
+
     //Override method to be able to adapt onBackPressed for fragments --- could this be done with just an if statement instead of loop?
     @Override
     public void onBackPressed(){
@@ -88,5 +90,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
                 super.onBackPressed();
             }
         }
+    }
+
+    // hack to get activity passable in different fragments
+    public static MainActivity getThis(){
+        return mMainActivity;
     }
 }
