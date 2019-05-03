@@ -19,6 +19,8 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     private Button ScanFragmentButton;
     private ImageView radar;
 
+    private Button GoogleMapsButton;
+
     //calls after onAttach
     public void onCreate(@Nullable Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -32,19 +34,36 @@ public class StartFragment extends Fragment implements View.OnClickListener{
 
         //Creates the buttons and image of the collFragment
         ScanFragmentButton = view.findViewById(R.id.find_vehicle_button);
+        GoogleMapsButton = view.findViewById(R.id.GoogleMapsButton);
+
         radar = view.findViewById(R.id.radar_symbol);
 
         //Enables functions to buttons
         ScanFragmentButton.setOnClickListener(this); //"this" refers to the interface (View.OnClickListener)
+        GoogleMapsButton.setOnClickListener(this);
 
         return view;
     }
 
-    public void onClick(View view){
-        //This is the events that are associated with the buttons
-        interfaceMainActivity.inflateFragment(getString(R.string.scan_fragment));
-    }
+    public void onClick(View view) {
 
+
+        switch (view.getId()) {
+
+            //These are the events that are associated with clicking of the buttons
+            case R.id.GoogleMapsButton: {
+
+                interfaceMainActivity.inflateFragment(getString(R.string.googlemaps_fragment));
+
+            }
+
+            case R.id.scan_button: {
+                interfaceMainActivity.inflateFragment(getString(R.string.scan_fragment));
+
+            }
+
+        }
+    }
     //calls before onCreate, used to instantiate the interface
     //part of the collFragment to activity communication
     @Override

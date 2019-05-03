@@ -69,6 +69,8 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
                 break;
             }
 
+
+
         }
 
     }

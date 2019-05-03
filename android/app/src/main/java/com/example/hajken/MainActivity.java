@@ -1,11 +1,15 @@
 package com.example.hajken;
 
+import android.app.Dialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.List;
 
@@ -38,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         transaction.commit();
     }
 
+
+
     //this method is responsible to start fragmentTransactions
     @Override
     public void inflateFragment(String fragmentTag) {
@@ -62,6 +68,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
             CollectionFragment fragment = new CollectionFragment();
             doFragmentTransaction(fragment,fragmentTag,true); //addToBackStack(true) makes it possible to go back without closing the app
 
+        } else if (fragmentTag.equals(getString(R.string.googlemaps_fragment))){
+
+            GoogleMapsFragment fragment = new GoogleMapsFragment();
+            doFragmentTransaction(fragment,fragmentTag,true);
         }
 
     }
