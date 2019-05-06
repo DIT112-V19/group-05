@@ -82,6 +82,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         bluetoothConnection.startCar("g!"); //small g to request GPS
         Log.d(TAG, "Request for GPS-message sent");
 
+        /*
         String GPS = bluetoothConnection.readGPS();
         Log.d(TAG, "Received this GPS-message from car: " + GPS);
 
@@ -96,30 +97,18 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         Double lat = Double.parseDouble(latitude);
         Log.d(TAG, "Latitude is: " + lat);
-
-
+        */
 
     }
-
-
-
 
     @Override
     public void onClick(View v) {
 
     }
 
-
-
-
-
     @Override
-
     public void onSaveInstanceState(Bundle outState) {
-
         super.onSaveInstanceState(outState);
-
-
 
         Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
 
@@ -130,14 +119,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
 
         }
-
-
-
         mMapView.onSaveInstanceState(mapViewBundle);
-
     }
-
-
 
     public void addCarOnMap(GoogleMap map){
 
@@ -154,7 +137,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         //Double lat = Double.parseDouble(latitude);
         //Double lng = Double.parseDouble(longitude);
 
-        //map.addMarker(new MarkerOptions().position(new LatLng(lat, lat)).title("THE HAJKEN CAR"));
+        map.addMarker(new MarkerOptions().position(new LatLng(00.000000, 00.000000)).title("THE HAJKEN CAR"));
 
 
     }
