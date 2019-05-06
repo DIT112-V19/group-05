@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -76,10 +79,25 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         super.onAttach(context);
 
         bluetoothConnection = BluetoothConnection.getInstance(getContext());
-        bluetoothConnection.startCar("g"); //small g to request GPS
-        String GPS = bluetoothConnection.readGPS();
+        bluetoothConnection.startCar("g!"); //small g to request GPS
+        Log.d(TAG, "Request for GPS-message sent");
 
-        //String longitude =
+        String GPS = bluetoothConnection.readGPS();
+        Log.d(TAG, "Received this GPS-message from car: " + GPS);
+
+        //For tesing purposes
+        //String rawData = "57.707005*11.939065";
+
+        String latitude = GPS.substring(0, 8);
+        String longitude = GPS.substring(9, 18);
+
+        Double lng = Double.parseDouble(longitude);
+        Log.d(TAG, "Longitude is: " + lng);
+
+        Double lat = Double.parseDouble(latitude);
+        Log.d(TAG, "Latitude is: " + lat);
+
+
 
     }
 

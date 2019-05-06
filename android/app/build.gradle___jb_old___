@@ -9,19 +9,15 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
-        //resValue "string", "GOOGLE_MAPS_API", 'AIzaSyAlPOqrGhmGEL4wfUa0l2L7EtnhvxyY_hY'
-        //manifestPlaceholders = [ facebookAppId:"someId..."]
     }
     buildTypes {
-        debug {
-         //   resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
-        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-           // resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
         }
+    }
+    buildTypes.each{
+    it.buildConfigField ‘String’, ‘GOOGLE_MAPS_API_KEY’, hajkenMapApi
     }
 
 
