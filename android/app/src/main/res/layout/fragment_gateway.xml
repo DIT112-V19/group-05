@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/gatewayLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/darkBackground">
 
     <Button
         android:id="@+id/collection_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="51dp"
-        android:background="@color/button_active"
+        android:background="@drawable/button"
         android:text="@string/collection_button"
         app:layout_constraintEnd_toEndOf="@+id/vehicle_symbol"
         app:layout_constraintStart_toStartOf="@+id/vehicle_symbol"
@@ -21,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        android:background="@color/button_active"
+        android:background="@drawable/button"
         android:text="@string/draw_button"
         app:layout_constraintEnd_toEndOf="@+id/collection_button"
         app:layout_constraintStart_toStartOf="@+id/collection_button"
@@ -37,5 +38,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/vehicle_symbol" />
+
+    <TextView
+        android:id="@+id/device_gatewayFragment"
+        android:layout_width="280dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/canvasView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/deviceNameColour"/>
 
 </android.support.constraint.ConstraintLayout>

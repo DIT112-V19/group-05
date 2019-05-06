@@ -1,101 +1,130 @@
 package com.example.hajken;
 
 import android.graphics.PointF;
+import android.util.AndroidRuntimeException;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MathUtility {
 
-    private static final float DIFFERENCE_MARGIN = 30;
-
     private static final String TAG = "MathUtility";
 
-    public ArrayList<PointF> findPoints(ArrayList<PointF> listOfCoordinates){
+    private double perpendicularDistance (PointF point, PointF lineStart, PointF lineEnd){
+        double dx = lineEnd.x - lineStart.x;
+        double dy = lineEnd.y - lineStart.y;
 
-        Log.d(TAG, "incomingPoints: "+listOfCoordinates.toString()+" SIZE"+listOfCoordinates.size());
-        ArrayList<PointF> validPoints = new ArrayList<>();
-        PointF startPoint;
-        PointF firstPoint;
-        PointF secondPoint;
-        PointF thirdPoint;
+        double mag = Math.hypot(dx,dy);
 
-        //if there is only one or less points in list
-        if (listOfCoordinates.size() <= 1){
-            return null;
+        if (mag > 0.0) {
+            dx /= mag;
+            dy /= mag;
         }
 
-        //gets the starting point and stores the starting point among the valid points
-        startPoint = listOfCoordinates.get(0);
-        Log.d(TAG, "ADD START: "+startPoint.toString());
-        validPoints.add(startPoint);
+        double pvx = point.x - lineStart.x;
+        double pvy = point.y - lineStart.y;
 
+        double pvdot = dx * pvx + dy * pvy;
 
-        //gets the first point after starting point
-        firstPoint = startPoint;
-        secondPoint = listOfCoordinates.get(1);
+        double ax = pvx - pvdot * dx;
+        double ay = pvy - pvdot * dy;
 
-        for (int i = 2; i < listOfCoordinates.size()-1;i++) {
-            thirdPoint = listOfCoordinates.get(i);
+        return Math.hypot(ax, ay);
 
-            Log.d(TAG, "findPoints: "+"first:"+firstPoint+" second:"+secondPoint+" third:"+thirdPoint);
-
-            if (isNewVector(firstPoint,secondPoint,thirdPoint)){
-                Log.d(TAG, "findPoints: Is new Vector true");
-                Log.d(TAG, "ADDING: "+secondPoint.toString());
-                validPoints.add(secondPoint);
-                firstPoint = secondPoint;
-                secondPoint = thirdPoint;
-            } else {
-                Log.d(TAG, "findPoints: Is new Vector false");
-                firstPoint = secondPoint;
-                secondPoint = thirdPoint;
-            }
-
-        }
-
-        //add last point in list to valid points
-        validPoints.add(secondPoint);
-        Log.d(TAG, "ADD LAST: "+secondPoint.toString());
-
-        Log.d(TAG, "findpoints vector list: "+validPoints.toString());
-        return validPoints;
     }
 
-    public boolean isNewVector(PointF firstPoint, PointF secondPoint, PointF thirdPoint){
 
-        Log.d(TAG, "isNewVector: "+thirdPoint.toString());
-        Log.d(TAG, "isNewVector: "+secondPoint.toString());
-        Log.d(TAG, "isNewVector: "+firstPoint.toString());
+    //https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
 
+    public ArrayList<PointF> rdpSimplifier(ArrayList<PointF> listOfCoordinates, double epsilon){
 
-        double a1 = thirdPoint.y - secondPoint.y;
-        Log.d(TAG, "vector diff Y third-second: "+a1);
-        double b1 = thirdPoint.x - secondPoint.x;
-        Log.d(TAG, "vector diff X third-second: "+b1);
+        double dmax = 0.0;
+        int index = 0;
+        int end = listOfCoordinates.size() - 1;
 
+        for (int i = 2; i < end ; i++) {
 
-        double a2 = secondPoint.y - firstPoint.y;
-        Log.d(TAG, "vector diff y second-first: "+a2);
-
-        double b2 = secondPoint.x - firstPoint.x;
-        Log.d(TAG, "vector diff x second-first: "+b2);
-
-        if (a1 == 0.0 || b1 == 0.0|| a2 == 0.0 || b2 == 0.0) {
-            return false;
+            double d = perpendicularDistance(listOfCoordinates.get(i) , listOfCoordinates.get(0), listOfCoordinates.get(end));
+            if (d > dmax){
+                index = i;
+                dmax = d;
+            }
         }
 
-        Log.d(TAG, "isNewVector: grades second to third"+Math.toDegrees(Math.atan2(a1,b1)));
-        Log.d(TAG, "isNewVector: grades first to second"+Math.toDegrees(Math.atan2(a2,b2)));
+        ArrayList<PointF> resultList = new ArrayList<>();
 
+        if (dmax > epsilon) {
 
-        Log.d(TAG, "isNewVector: grades:"+(Math.toDegrees(Math.atan2(a1,b1))-Math.toDegrees(Math.atan2(a2,b2))));
+            ArrayList<PointF> subList1 = new ArrayList<>(listOfCoordinates.subList(0, index));
+            ArrayList<PointF> subList2 = new ArrayList<>(listOfCoordinates.subList(index+1, end));
+            ArrayList<PointF> recResults1 = rdpSimplifier( subList1, epsilon);
+            ArrayList<PointF> recResults2 = rdpSimplifier( subList2, epsilon);
+            resultList.addAll(recResults1);
+            resultList.addAll(recResults2);
 
-        return Math.abs((Math.toDegrees(Math.atan2(a1,b1)))-(Math.toDegrees(Math.atan2(a2,b2)))) > DIFFERENCE_MARGIN;
+        } else {
+            Log.d(TAG, "rdpSimplifier: ELSE " + listOfCoordinates.toString());
+            resultList.add(listOfCoordinates.get(0));
+            resultList.add(listOfCoordinates.get(end));
+        }
+        return resultList;
     }
 
     public float getMagnitude(PointF pointA, PointF pointB){
         return (float) Math.sqrt(Math.pow((pointB.x-pointA.x),2)+Math.pow((pointB.y-pointA.y),2));
+    }
+
+    public ArrayList<Float> getRotation(PointF pointA, PointF pointB, float prevDegrees){
+        float diffY = pointB.y - pointA.y;
+        float diffX = pointB.x - pointA.x;
+        float atan = (float) Math.atan(Math.abs(diffY) / Math.abs(diffX));
+
+        float degrees = (float) Math.toDegrees(atan);
+        float actualRotation;
+
+        ArrayList<Float> angles = new ArrayList<>();
+
+        if (diffY > 0){
+
+            //in quadrant 1 --- rotate right
+            if (diffX > 0){
+                degrees = 90 - degrees;
+
+            } else {
+                // in quadrant 2 --- rotate left
+                degrees = (90-degrees)*-1;
+
+            }
+        } else {
+
+            //in quadrant 3 ----- rotate left
+            if (diffX < 0){
+                degrees = (degrees+90)*-1;
+
+
+            } else {
+                //in quadrant 4 --- rotate right
+               degrees = degrees+90;
+
+            }
+        }
+
+        actualRotation = degrees-prevDegrees;
+
+        if (actualRotation > 180){
+            actualRotation = actualRotation-180;
+        }
+
+        if (actualRotation < -180){
+            actualRotation = 360 + actualRotation;
+        }
+
+        angles.add(actualRotation);
+        angles.add(degrees);
+        Log.d(TAG, "degree : here ");
+
+        return angles;
     }
 
 }
