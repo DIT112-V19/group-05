@@ -310,6 +310,14 @@ public class BluetoothConnection {
         writeToDevice(input);
     }
 
+    public boolean getIsConnected(){
+        return isConnected;
+    }
+
+    public void setIsConnected(Boolean isConnected){
+        this.isConnected = isConnected;
+    }
+
 }
 
 

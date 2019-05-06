@@ -136,23 +136,32 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
             case R.id.circle_symbol: {
                 Log.d(TAG, "onClick: Clicked CIRCLE");
-                setInput(circleRouteData);
-                dialog.setAction("START");
-                dialog.setDialogHeading("Would you like to start the route?");
-                dialog.setTargetFragment(CollectionFragment.this,1);
-                dialog.show(getFragmentManager(),"DIALOG");
-
-                break;
+                if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
+                    setInput(circleRouteData);
+                    dialog.setAction("START");
+                    dialog.setDialogHeading("Would you like to start the route?");
+                    dialog.setTargetFragment(CollectionFragment.this, 1);
+                    dialog.show(getFragmentManager(), "DIALOG");
+                    break;
+                } else {
+                    Toast.makeText(getActivity(),"Not connected to a device",Toast.LENGTH_LONG).show();
+                    break;
+                }
             }
 
             case R.id.square_symbol: {
                 Log.d(TAG, "onClick: Clicked SQUARE");
-                setInput(squareRouteData);
-                dialog.setAction("START");
-                dialog.setDialogHeading("Would you like to start the route?");
-                dialog.setTargetFragment(CollectionFragment.this,1);
-                dialog.show(getFragmentManager(),"DIALOG");
-                break;
+                if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
+                    setInput(squareRouteData);
+                    dialog.setAction("START");
+                    dialog.setDialogHeading("Would you like to start the route?");
+                    dialog.setTargetFragment(CollectionFragment.this,1);
+                    dialog.show(getFragmentManager(),"DIALOG");
+                    break;
+                } else {
+                    Toast.makeText(getActivity(),"Not connected to a device",Toast.LENGTH_LONG).show();
+                    break;
+                }
             }
 
         }
