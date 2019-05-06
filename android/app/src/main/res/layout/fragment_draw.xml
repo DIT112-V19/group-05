@@ -3,9 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/darkBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.hajken.DrawFragment">
+
 
     <Button
         android:id="@+id/start_car_button"
@@ -15,7 +17,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button"
         android:text="START CAR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/clear_draw_button"
@@ -30,7 +32,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="96dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button"
         android:text="CLEAR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -65,6 +67,7 @@
         app:layout_constraintBottom_toTopOf="@+id/canvasView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/deviceNameColour"/>
 
 </android.support.constraint.ConstraintLayout>

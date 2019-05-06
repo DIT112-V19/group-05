@@ -122,6 +122,7 @@ public class MathUtility {
 
         angles.add(actualRotation);
         angles.add(degrees);
+        Log.d(TAG, "degree : here ");
 
         return angles;
     }
