@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -19,9 +21,10 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "DrawFragment";
     private InterfaceMainActivity interfaceMainActivity;
 
-    private Button startDrawButton;
+    private Button startCarButton;
     private Button clearButton;
     private CanvasView canvasView;
+    private TextView textView;
     private MathUtility mathUtility;
     private CoordinateConverter coordinateConverter;
     private String instructions;
@@ -38,14 +41,24 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_draw,container,false);
+        View view = inflater.inflate(R.layout.fragment_draw, container, false);
 
         //Creates the buttons and canvasView
-        startDrawButton = view.findViewById(R.id.start_draw_button);
+        startCarButton = view.findViewById(R.id.start_car_button);
         clearButton = view.findViewById(R.id.clear_draw_button);
         canvasView = view.findViewById(R.id.canvasView);
+        textView = view.findViewById(R.id.device_drawFragment);
+        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+            textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
+        } else {
+            textView.setText("Connected Device: None");
+        }
 
-        startDrawButton.setOnClickListener(this);
+
+
+
+        startCarButton.setOnClickListener(this);
+        clearButton.setOnClickListener(this);
 
         return view;
     }
@@ -61,20 +74,33 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
 
             //This is the events that are associated with the buttons
 
-            case R.id.start_draw_button: {
-                ArrayList<PointF> validPoints = mathUtility.rdpSimplifier(canvasView.getListOfCoordinates(),65.0);
-                Log.d(TAG, "coordinateHandling: "+validPoints.toString()+" SIZE:"+validPoints.size());
-                instructions = coordinateConverter.returnString(validPoints);
-                Log.d(TAG, "Instruction coordinates degree: "+instructions.toString());
-               // BluetoothConnection.getInstance(getContext()).startCar(instructions);
-                break;
+
+            case R.id.start_car_button: {
+
+                if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
+
+                    Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
+                    ArrayList<PointF> validPoints = mathUtility.rdpSimplifier(canvasView.getListOfCoordinates(), 50.0);
+                    Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
+                    instructions = coordinateConverter.returnString(validPoints);
+                    Log.d(TAG, "Instruction coordinates: " + instructions.toString());
+                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+
+                    break;
+                } else {
+                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
+                    break;
+                }
+
             }
+            case R.id.clear_draw_button: {
+                canvasView.clearCanvas();
 
+            }
         }
-
     }
 }

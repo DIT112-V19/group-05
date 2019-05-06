@@ -1,5 +1,6 @@
 package com.example.hajken;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -91,8 +92,11 @@ public class CanvasView extends View {
     }
 
     public void clearCanvas(){
+
+        mBitmap.eraseColor(Color.TRANSPARENT);
         mPath.reset();
         invalidate();
+
     }
 
     @Override
@@ -163,6 +167,4 @@ public class CanvasView extends View {
 
 
     }
-
-
 }
