@@ -40,7 +40,7 @@
         app:srcCompat="@drawable/vehicle_symbol" />
 
     <TextView
-        android:id="@+id/device_gatewayFragmentt"
+        android:id="@+id/device_gatewayFragment"
         android:layout_width="280dp"
         android:layout_height="34dp"
         android:layout_marginStart="8dp"

@@ -20,19 +20,19 @@ public class CoordinateConverter {
         instructions = instructions.concat("l,"+(((validPoints.size()-1)*4)+4));
 
         //Change speed of vehicle
-        instructions = instructions.concat(",v,3,"); // this needs to adaptable later
+        instructions = instructions.concat(",v,5,"); // this needs to adaptable later
 
         instructions = instructions.concat("r,0,"); // amount of loops - needs to be adaptable later
 
+        ArrayList<Float> angles = new ArrayList<>();
         float prevAngle = 0;
-        float rotation;
 
         for(int i = 0; i < validPoints.size()-1;i++){
 
             if (mathUtility.getMagnitude(validPoints.get(i),validPoints.get(i+1)) > 20){
-                rotation = mathUtility.getRotation2(validPoints.get(i),validPoints.get(i+1),prevAngle);
-                prevAngle = rotation;
-                instructions = instructions.concat("t,"+rotation);
+                angles = mathUtility.getRotation(validPoints.get(i),validPoints.get(i+1),prevAngle);
+                prevAngle = angles.get(1); // previous degrees
+                instructions = instructions.concat("t,"+angles.get(0)); // actual rotation
                 instructions = instructions.concat(",");
                 instructions = instructions.concat("f,"+mathUtility.getMagnitude(validPoints.get(i),validPoints.get(i+1)));
 
@@ -43,13 +43,9 @@ public class CoordinateConverter {
                 } else {
                     instructions = instructions.concat(",");
                 }
-
             }
-
-
         }
         Log.d(TAG, "returnString: "+instructions);
         return instructions;
     }
-
 }

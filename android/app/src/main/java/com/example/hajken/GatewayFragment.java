@@ -38,7 +38,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
         collectionButton = view.findViewById(R.id.collection_button);
         drawButton = view.findViewById(R.id.draw_button);
         vehicleSymbol = view.findViewById(R.id.vehicle_symbol);
-        textView = view.findViewById(R.id.device_gatewayFragmentt);
+        textView = view.findViewById(R.id.device_gatewayFragment);
         if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
             textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
         } else {

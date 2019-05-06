@@ -23,11 +23,12 @@ public class CustomDialogFragment extends DialogFragment {
     private TextView actionOk;
     private TextView actionCancel;
     private TextView dialogHeading;
-    private String heading,action = "Start";
+    private String heading, action = "Start";
 
     public void setDialogHeading(String incoming) {
         this.heading = incoming;
     }
+
     public void setAction(String action) {
         this.action = action;
     }
@@ -36,7 +37,7 @@ public class CustomDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         //Inflates the dialog
-        View view = inflater.inflate(R.layout.dialog_custom,container,false);
+        View view = inflater.inflate(R.layout.dialog_custom, container, false);
 
         dialogHeading = view.findViewById(R.id.heading);
         actionOk = view.findViewById(R.id.action_ok);
@@ -44,7 +45,7 @@ public class CustomDialogFragment extends DialogFragment {
 
         //Event of cancel
         actionCancel.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view){
+            public void onClick(View view) {
                 Log.d(TAG, "onCreateView: closing dialog");
                 onAction.controlVehicle(false);
                 getDialog().dismiss();
@@ -53,7 +54,7 @@ public class CustomDialogFragment extends DialogFragment {
 
         //Event of start
         actionOk.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view){
+            public void onClick(View view) {
                 Log.d(TAG, "onCreateView: send to start");
                 //Sends back to Collectionfragment -> controlVehicle is true
                 onAction.controlVehicle(true);
@@ -75,8 +76,8 @@ public class CustomDialogFragment extends DialogFragment {
 
         try {
             onAction = (OnActionInterface) getTargetFragment();
-        } catch (ClassCastException exception){
-            Log.e(TAG, "onAttach: ClassCastException "+exception.getMessage());
+        } catch (ClassCastException exception) {
+            Log.e(TAG, "onAttach: ClassCastException " + exception.getMessage());
 
         }
 

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class DrawFragment extends Fragment implements View.OnClickListener {
 
+
     private static final String TAG = "DrawFragment";
     private InterfaceMainActivity interfaceMainActivity;
 
@@ -48,14 +49,12 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
         clearButton = view.findViewById(R.id.clear_draw_button);
         canvasView = view.findViewById(R.id.canvasView);
         textView = view.findViewById(R.id.device_drawFragment);
+
         if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
             textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
         } else {
             textView.setText("Connected Device: None");
         }
-
-
-
 
         startCarButton.setOnClickListener(this);
         clearButton.setOnClickListener(this);
@@ -78,13 +77,12 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
 
             //This is the events that are associated with the buttons
 
-
             case R.id.start_car_button: {
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
 
                     Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
-                    ArrayList<PointF> validPoints = mathUtility.rdpSimplifier(canvasView.getListOfCoordinates(), 50.0);
+                    ArrayList<PointF> validPoints = mathUtility.rdpSimplifier(canvasView.getListOfCoordinates(), 65.0);
                     Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
                     instructions = coordinateConverter.returnString(validPoints);
                     Log.d(TAG, "Instruction coordinates: " + instructions.toString());
@@ -103,4 +101,5 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             }
         }
     }
+
 }
