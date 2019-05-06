@@ -17,7 +17,7 @@ public class CoordinateConverter {
         instructions = "<";
         Log.d(TAG, "returnString: ");
 
-        instructions = instructions.concat("l,"+(((validPoints.size()-1)*4)+2));
+        instructions = instructions.concat("l,"+(((validPoints.size()-1)*4)+4));
 
         //Change speed of vehicle
         instructions = instructions.concat(",v,3,"); // this needs to adaptable later
