@@ -56,7 +56,8 @@ install:
     # Install Smartcar shield library (used by our sketch)
     - arduino --install-library "Smartcar shield"
     - arduino --install-library "NewPing"
-
+    - git clone https://github.com/mikalhart/TinyGPS.git
+    
 script:
     # Build the Android app
     - cd $TRAVIS_BUILD_DIR/android
