@@ -89,9 +89,10 @@ public class CanvasView extends View {
         Log.d(TAG, "upTouch: " + "X:" + mX + "Y:" + mY);
     }
 
-    public void clearCanvas() {
+    public void clearCanvas(){
         mPath.reset();
         invalidate();
+
     }
 
     @Override

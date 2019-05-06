@@ -28,4 +28,10 @@ dependencies {
 
     //design library for using toolbars
     implementation 'com.android.support:design:27.1.1'
+
+    // design library for using recyclerview
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+
+    // Cardview
+    implementation 'com.android.support:cardview-v7:27.1.1'
 }

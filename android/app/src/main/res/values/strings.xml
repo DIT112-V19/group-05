@@ -26,5 +26,8 @@
     <string name="circle__symbol_description">Circle</string>
     <string name="square_symbol_description">Square</string>
 
+    <!--Random Strings-->
+    <string name="square">Square</string>
+
 
 </resources>

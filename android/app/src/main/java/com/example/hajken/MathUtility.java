@@ -9,10 +9,6 @@ import java.util.ArrayList;
 
 public class MathUtility {
 
-    private static final float DIFFERENCE_MARGIN = 20;
-    private static final float DIFFERENCE_MARGIN_X = 10;
-    private static final float DIFFERENCE_MARGIN_Y = 10;
-
     private static final String TAG = "MathUtility";
 
     private double perpendicularDistance (PointF point, PointF lineStart, PointF lineEnd){

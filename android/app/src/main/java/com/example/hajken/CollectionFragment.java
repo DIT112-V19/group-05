@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
@@ -23,6 +24,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private boolean vehicleOn = false;
     private Bluetooth mBluetooth = Bluetooth.getInstance();
     private BluetoothConnection mBluetoothConnection = BluetoothConnection.getInstance(getContext());
+    private TextView textView;
 
     //Data for the vehicle routes
     private final String circleRouteData = ""; // to be fixed
@@ -44,6 +46,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void controlVehicle(Boolean execute) {
         Log.e(TAG, "controlVehicle: found incoming input");
+
+
 
         //when vehicle is running
         if (isVehicleOn()) {
@@ -99,6 +103,12 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
         circle = view.findViewById(R.id.circle_symbol);
         square = view.findViewById(R.id.square_symbol);
+        textView = view.findViewById(R.id.device_collectionFragment);
+        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+            textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
+        } else {
+            textView.setText("Connected Device: None");
+        }
 
         //Enables functions to buttons
         circle.setOnClickListener(this);
