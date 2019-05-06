@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class GatewayFragment extends Fragment implements View.OnClickListener {
 
@@ -18,6 +19,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
 
     private Button collectionButton, drawButton;
     private ImageView vehicleSymbol;
+    private TextView textView;
 
     //occurs after onAttach
     @Override
@@ -36,6 +38,12 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
         collectionButton = view.findViewById(R.id.collection_button);
         drawButton = view.findViewById(R.id.draw_button);
         vehicleSymbol = view.findViewById(R.id.vehicle_symbol);
+        textView = view.findViewById(R.id.device_gatewayFragment);
+        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+            textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
+        } else {
+            textView.setText("Connected Device: None");
+        }
 
         //Enables functions to buttons
         collectionButton.setOnClickListener(this);
@@ -50,6 +58,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     public void onAttach(Context context) {
         super.onAttach(context);
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
+
     }
 
     @Override

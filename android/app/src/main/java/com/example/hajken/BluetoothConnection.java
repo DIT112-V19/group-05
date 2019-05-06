@@ -296,6 +296,7 @@ public class BluetoothConnection {
     public void unPair(BluetoothDevice device) {
 
                 try {
+                    isConnected = false;
                     Method m = device.getClass()
                             .getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
@@ -311,6 +312,7 @@ public class BluetoothConnection {
     public void stopCar(String input) {
         writeToDevice(input);
     }
+
 
     public String readGPS(){
         return readString();
@@ -335,6 +337,19 @@ public class BluetoothConnection {
             }
         }
     return message;
+    }
+
+
+    public boolean getIsConnected(){
+        return isConnected;
+    }
+
+    public void setIsConnected(Boolean isConnected){
+        this.isConnected = isConnected;
+    }
+
+    public String getDeviceName(){
+        return mBluetoothDevice.getName();
     }
 
 

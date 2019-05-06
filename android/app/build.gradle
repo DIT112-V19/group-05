@@ -10,7 +10,6 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
-        //resValue "string", "GOOGLE_MAPS_API", 'AIzaSyAlPOqrGhmGEL4wfUa0l2L7EtnhvxyY_hY'
         //manifestPlaceholders = [ facebookAppId:"someId..."]
     }
     buildTypes {
@@ -46,5 +45,12 @@ dependencies {
     //Google Maps
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
 
+
+
+    // design library for using recyclerview
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+
+    // Cardview
+    implementation 'com.android.support:cardview-v7:27.1.1'
 
 }

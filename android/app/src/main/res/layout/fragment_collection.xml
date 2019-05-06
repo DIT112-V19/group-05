@@ -2,8 +2,11 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/darkBackground"
+    >
 
     <Button
         android:id="@+id/stop_vehicle_button"
@@ -11,11 +14,12 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/stop_vehicle_button"
-        android:background="@drawable/button_background"
+        android:background="@drawable/button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <ImageButton
         android:id="@+id/circle_symbol"
@@ -32,6 +36,7 @@
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/circle_symbol" />
 
+
     <ImageButton
         android:id="@+id/square_symbol"
         android:layout_width="193dp"
@@ -43,5 +48,38 @@
         app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/square_symbol" />
+
+
+
+    <TextView
+        android:id="@+id/device_collectionFragment"
+        android:layout_width="280dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/canvasView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/deviceNameColour"/>
+
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/recycler_view"
+        android:layout_width="335dp"
+        android:layout_height="338dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:scrollbars="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/stop_vehicle_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:itemCount="5"
+        tools:spanCount="5" />
 
 </android.support.constraint.ConstraintLayout>
