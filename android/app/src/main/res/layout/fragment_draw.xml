@@ -8,15 +8,15 @@
     tools:context="com.example.hajken.DrawFragment">
 
     <Button
-        android:id="@+id/start_draw_button"
+        android:id="@+id/start_car_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="88dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/button_active"
-        android:text="@string/start_draw_button"
+        android:background="@drawable/button_background"
+        android:text="START CAR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/clear_draw_button"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,8 +30,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="96dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/button_active"
-        android:text="@string/clear_draw_button"
+        android:background="@drawable/button_background"
+        android:text="CLEAR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -53,5 +53,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.381" />
+
+    <TextView
+        android:id="@+id/device_drawFragment"
+        android:layout_width="280dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/canvasView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

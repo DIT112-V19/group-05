@@ -12,5 +12,8 @@
     <!-- ListView -->
     <color name="device_list_border">#717171</color>
 
+    <!-- Backgrounds -->
+    <color name="darkBackground">#111111</color>
+
 
 </resources>
