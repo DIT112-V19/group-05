@@ -17,27 +17,36 @@ public class CoordinateConverter {
         instructions = "<";
         Log.d(TAG, "returnString: ");
 
-        instructions = instructions.concat("l,"+(((validPoints.size()-1)*4)+2));
+        instructions = instructions.concat("l,"+(((validPoints.size()-1)*4)+4));
 
         //Change speed of vehicle
         instructions = instructions.concat(",v,3,"); // this needs to adaptable later
 
         instructions = instructions.concat("r,0,"); // amount of loops - needs to be adaptable later
 
+        float prevAngle = 0;
+        float rotation;
+
         for(int i = 0; i < validPoints.size()-1;i++){
 
-            instructions = instructions.concat("t,"+mathUtility.getRotation(validPoints.get(i),validPoints.get(i+1)));
-            instructions = instructions.concat(",");
-            instructions = instructions.concat("f,"+mathUtility.getMagnitude(validPoints.get(i),validPoints.get(i+1)));
+            if (mathUtility.getMagnitude(validPoints.get(i),validPoints.get(i+1)) > 20){
+                rotation = mathUtility.getRotation2(validPoints.get(i),validPoints.get(i+1),prevAngle);
+                prevAngle = rotation;
+                instructions = instructions.concat("t,"+rotation);
+                instructions = instructions.concat(",");
+                instructions = instructions.concat("f,"+mathUtility.getMagnitude(validPoints.get(i),validPoints.get(i+1)));
+
+                Log.d(TAG, "returnString: "+validPoints.size());
+                Log.d(TAG, "returnString: "+i);
+                if (i+1 == validPoints.size()-1) {
+                    instructions = instructions.concat(">!");
+                } else {
+                    instructions = instructions.concat(",");
+                }
+
+            }
 
 
-            Log.d(TAG, "returnString: "+validPoints.size());
-            Log.d(TAG, "returnString: "+i);
-           if (i+1 == validPoints.size()-1) {
-               instructions = instructions.concat(">!");
-           } else {
-               instructions = instructions.concat(",");
-           }
         }
         Log.d(TAG, "returnString: "+instructions);
         return instructions;

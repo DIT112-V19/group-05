@@ -33,9 +33,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
     //buttons and entities in collFragment
     private Button scanButton, pairButton, unpairButton, routesButton;
     private ListView mListView;
-    private ImageView bluetoothSymbol;
     Bluetooth mBluetooth = Bluetooth.getInstance();
-    BluetoothAdapter mBluetoothAdapter;
     ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
     ListOfDevices mListAdapter;
     BluetoothDevice mPairedBluetoothDevice;
@@ -60,7 +58,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
         unpairButton = view.findViewById(R.id.unpair_button);
         routesButton = view.findViewById(R.id.routes_button);
         mListView = view.findViewById(R.id.device_list);
-        bluetoothSymbol = view.findViewById(R.id.bluetooth_symbol);
 
         //Enables functions to buttons
         routesButton.setOnClickListener(this);
