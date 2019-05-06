@@ -15,5 +15,10 @@
     <!-- Backgrounds -->
     <color name="darkBackground">#111111</color>
 
+    <!-- TextColour -->
+    <color name="deviceNameColour">#717171</color>
+
+
+
 
 </resources>

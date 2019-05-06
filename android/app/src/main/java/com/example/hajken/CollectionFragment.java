@@ -90,6 +90,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
     }
 
     //occurs after onCreate

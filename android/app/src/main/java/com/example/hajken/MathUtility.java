@@ -162,7 +162,6 @@ public class MathUtility {
 
         Log.d(TAG, "degree : here ");
 
-        if (degrees-prevDegrees >
 
         return degrees-prevDegrees;
     }
