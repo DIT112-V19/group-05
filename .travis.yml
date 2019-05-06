@@ -1,24 +1,3 @@
-language: android  # this means the project will be built in an Android environment
-
-android:
-  components:
-    - tools               # will be built with latest version of Android SDK tools
-    - platform-tools      # ''
-    - build-tools-23.0.1  # build tools version of my project
-    - android-27          # Android SDK version of my project
-
-    # Additional components
-- extra-google-google_play_services
-- extra-google-m2repository
-- extra-android-m2repository
-
-# Emulator Management: Create, Start and Wait
-before_script:
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a -c 100M
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-
 language: android
 jdk: oraclejdk8
 
