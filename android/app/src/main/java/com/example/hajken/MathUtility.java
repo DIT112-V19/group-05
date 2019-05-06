@@ -1,8 +1,10 @@
 package com.example.hajken;
 
 import android.graphics.PointF;
+import android.util.AndroidRuntimeException;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MathUtility {
@@ -77,50 +79,15 @@ public class MathUtility {
         return (float) Math.sqrt(Math.pow((pointB.x-pointA.x),2)+Math.pow((pointB.y-pointA.y),2));
     }
 
-    public float getRotation(PointF pointA, PointF pointB, float prevDegrees){
-
-        float diffY = pointB.y - pointA.y;
-        float diffX = pointB.x - pointA.x;
-        float atan = (float) Math.atan(Math.abs(diffY) / Math.abs(diffX));
-
-        //float degrees = (float) Math.toDegrees(Math.atan2(diffY,diffX));
-
-        float degrees = (float) Math.toDegrees(atan);
-
-        if (degrees < 0){
-            degrees = Math.abs(degrees);
-        } else {
-            Log.d(TAG, "coordinate before 0-degrees: "+degrees);
-
-            degrees = 0 - degrees;
-            Log.d(TAG, "coordinate after 0-degrees: "+degrees);
-        }
-
-        degrees = degrees+90 - prevDegrees;
-        Log.d(TAG, "coordinate degrees: "+degrees);
-        Log.d(TAG, "getRotation degree previous: "+prevDegrees);
-
-       // degrees = degrees-prevDegrees;
-
-        Log.d(TAG, "getRotation degree-previous: "+(degrees-prevDegrees));
-
-
-        if (degrees > 180 || degrees < -180){
-            degrees = degrees-360;
-            Log.d(TAG, "getRotation after 360 degree:"+degrees);
-        }
-
-        Log.d(TAG, "getRotation degree returned: "+degrees);
-        return degrees;
-
-    }
-
-    public float getRotation2(PointF pointA, PointF pointB, float prevDegrees){
+    public ArrayList<Float> getRotation(PointF pointA, PointF pointB, float prevDegrees){
         float diffY = pointB.y - pointA.y;
         float diffX = pointB.x - pointA.x;
         float atan = (float) Math.atan(Math.abs(diffY) / Math.abs(diffX));
 
         float degrees = (float) Math.toDegrees(atan);
+        float actualRotation;
+
+        ArrayList<Float> angles = new ArrayList<>();
 
         if (diffY > 0){
 
@@ -147,24 +114,20 @@ public class MathUtility {
             }
         }
 
+        actualRotation = degrees-prevDegrees;
 
-        if (degrees-prevDegrees < -180){
-            Log.d(TAG, "degree -180 : here ");
-            return 360 - Math.abs(degrees-prevDegrees);
+        if (actualRotation > 180){
+            actualRotation = actualRotation-180;
         }
 
-
-        if (degrees - prevDegrees > 180){
-            Log.d(TAG, "degree +180 : here ");
-
-            return (degrees-prevDegrees) - 360;
+        if (actualRotation < -180){
+            actualRotation = 360 + actualRotation;
         }
 
-        Log.d(TAG, "degree : here ");
+        angles.add(actualRotation);
+        angles.add(degrees);
 
-        if (degrees-prevDegrees >
-
-        return degrees-prevDegrees;
+        return angles;
     }
 
 }

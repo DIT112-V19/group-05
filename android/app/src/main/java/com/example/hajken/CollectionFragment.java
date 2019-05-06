@@ -46,11 +46,11 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         Log.e(TAG, "controlVehicle: found incoming input");
 
         //when vehicle is running
-        if (isVehicleOn()){
+        if (isVehicleOn()) {
             //when user chooses to stop the vehicle
-            if (execute){
-                if (input == null){
-                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
+            if (execute) {
+                if (input == null) {
+                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG).show();
                 } else { // if there is route data
                     BluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
                     circle.setClickable(true);
@@ -58,16 +58,16 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     stopVehicleButton.setActivated(false);
                     stopVehicleButton.setClickable(false);
                     vehicleOn = false;
-                    Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Vehicle stopping", Toast.LENGTH_LONG).show();
                 }
             }
 
-        //when vehicle is not running
+            //when vehicle is not running
         } else {
             //Change button state
-            if (execute){
-                if (input == null){
-                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
+            if (execute) {
+                if (input == null) {
+                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG).show();
                 } else {
                     BluetoothConnection.getInstance(getContext()).startCar("g"); // <<<<----- here is the bluetooth activation/starting the vehicle
                     stopVehicleButton.setActivated(true);
@@ -75,7 +75,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     circle.setClickable(false);
                     square.setClickable(false);
                     vehicleOn = true;
-                    Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Starting...", Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -93,7 +93,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Inflates the collFragment
-        View view = inflater.inflate(R.layout.fragment_collection,container,false);
+        View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
         //Creates the buttons, listOfXCoordinates and image of the collFragment
         stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
@@ -114,22 +114,20 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         super.onAttach(context);
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
 
-
-
     }
 
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
 
             //These are the events that are associated with clicking of the buttons
             case R.id.stop_vehicle_button: {
 
                 dialog.setDialogHeading("Are you sure you want to stop the vehicle?");
                 dialog.setAction("STOP");
-                dialog.setTargetFragment(CollectionFragment.this,1);
-                dialog.show(getFragmentManager(),"DIALOG");
+                dialog.setTargetFragment(CollectionFragment.this, 1);
+                dialog.show(getFragmentManager(), "DIALOG");
                 Log.d(TAG, "onClick: Clicked Stop Vehicle");
                 break;
             }
@@ -144,7 +142,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     dialog.show(getFragmentManager(), "DIALOG");
                     break;
                 } else {
-                    Toast.makeText(getActivity(),"Not connected to a device",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
                     break;
                 }
             }
@@ -155,11 +153,11 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     setInput(squareRouteData);
                     dialog.setAction("START");
                     dialog.setDialogHeading("Would you like to start the route?");
-                    dialog.setTargetFragment(CollectionFragment.this,1);
-                    dialog.show(getFragmentManager(),"DIALOG");
+                    dialog.setTargetFragment(CollectionFragment.this, 1);
+                    dialog.show(getFragmentManager(), "DIALOG");
                     break;
                 } else {
-                    Toast.makeText(getActivity(),"Not connected to a device",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
                     break;
                 }
             }

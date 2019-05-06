@@ -26,7 +26,7 @@ public class CanvasView extends View {
 
     private static final String TAG = "CanvasView";
 
-    private float mX,mY;
+    private float mX, mY;
     private static final int ZERO = 0;
     private static final float TOLERANCE = 5; /// ???????
 
@@ -37,9 +37,8 @@ public class CanvasView extends View {
     ArrayList<PointF> listOfCoordinates = new ArrayList<>();
     Context context;
 
-
-    public CanvasView(Context context, AttributeSet attributeSet){
-        super(context,attributeSet);
+    public CanvasView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
         this.context = context;
 
         mPath = new Path();
@@ -55,96 +54,90 @@ public class CanvasView extends View {
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldW, int oldH){
-        super.onSizeChanged(w,h,oldW,oldH);
+    protected void onSizeChanged(int w, int h, int oldW, int oldH) {
+        super.onSizeChanged(w, h, oldW, oldH);
 
         this.width = w;
         this.height = h;
 
-        mBitmap = Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);
+        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         mCanvas = new Canvas(mBitmap);
     }
 
-    private void startTouch(float x, float y){
-        mPath.moveTo(x,y);
+    private void startTouch(float x, float y) {
+        mPath.moveTo(x, y);
         mX = x;
         mY = y;
-        Log.d(TAG, "startTouch: "+"X:"+x+"y"+y);
+        Log.d(TAG, "startTouch: " + "X:" + x + "y" + y);
     }
 
-    private void moveTouch(float x, float y){
-        float dx = Math.abs(x-mX);
-        float dy = Math.abs(y-mY);
+    private void moveTouch(float x, float y) {
+        float dx = Math.abs(x - mX);
+        float dy = Math.abs(y - mY);
 
-        Log.d(TAG, "moveTouch: "+"x:"+x+"y:"+y);
+        Log.d(TAG, "moveTouch: " + "x:" + x + "y:" + y);
 
         if (dx >= TOLERANCE || dy >= TOLERANCE) { // kolla upp detta
-            mPath.quadTo(mX,mY,(x + mX) / 2,(y + mY) / 2); // kolla upp detta
+            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2); // kolla upp detta
             mX = x;
             mY = y;
         }
     }
 
-    private void upTouch(){
-        mPath.lineTo(mX,mY);
-        Log.d(TAG, "upTouch: "+"X:"+mX+"Y:"+mY);
+    private void upTouch() {
+        mPath.lineTo(mX, mY);
+        Log.d(TAG, "upTouch: " + "X:" + mX + "Y:" + mY);
     }
 
-    public void clearCanvas(){
+    public void clearCanvas() {
         mPath.reset();
         invalidate();
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
 
         //Inverts y-value so that it is the correct rotation for user
-        float invertedY = mBitmap.getHeight()-y;
+        float invertedY = mBitmap.getHeight() - y;
 
         //this makes sure that values are not stored when touching outside of canvas
-        if (x > width || x < ZERO || y > height || y < ZERO){
-          event.setAction(MotionEvent.ACTION_CANCEL);
+        if (x > width || x < ZERO || y > height || y < ZERO) {
+            event.setAction(MotionEvent.ACTION_CANCEL);
         }
 
-
-
-
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN :
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
 
                 //Reset/clear canvas and lists of coordinates
                 clearCanvas();
-
                 listOfCoordinates.clear();
-
-
-                startTouch(x,y);
+                startTouch(x, y);
                 PointF downPoint = new PointF();
-                downPoint.set(x,invertedY);
-                Log.d(TAG, "onTouchEvent floatPoint: firstpoint"+downPoint.toString());
+                downPoint.set(x, invertedY);
+                Log.d(TAG, "onTouchEvent floatPoint: firstpoint" + downPoint.toString());
                 listOfCoordinates.add(downPoint);
                 invalidate();
                 break;
         }
 
-        switch (event.getAction()){
-            case MotionEvent.ACTION_MOVE :
-                moveTouch(x,y);
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_MOVE:
+                moveTouch(x, y);
                 PointF movePoint = new PointF();
-                movePoint.set( x, invertedY);
-                Log.d(TAG, "onTouchEvent: Floatpoint MOVE"+movePoint.toString());
+                movePoint.set(x, invertedY);
+                Log.d(TAG, "onTouchEvent: Floatpoint MOVE" + movePoint.toString());
                 listOfCoordinates.add(movePoint);
                 invalidate();
                 break;
         }
 
-        switch (event.getAction()){
-            case MotionEvent.ACTION_UP :
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_UP:
                 upTouch();
                 PointF upPoint = new PointF();
-                upPoint.set(x,invertedY);
+                upPoint.set(x, invertedY);
                 listOfCoordinates.add(upPoint);
                 Log.d(TAG, "onTouchEvent: COORDINATES " + listOfCoordinates.toString());
                 invalidate();
@@ -154,15 +147,11 @@ public class CanvasView extends View {
     }
 
     @Override
-    public void onDraw(Canvas canvas){
-         super.onDraw(canvas);
+    public void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
 
-         canvas.drawBitmap(mBitmap, 0,0, mPaint);
-         canvas.drawPath(mPath, mPaint);
-
-
-
+        canvas.drawBitmap(mBitmap, 0, 0, mPaint);
+        canvas.drawPath(mPath, mPaint);
     }
-
 
 }

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 public class DrawFragment extends Fragment implements View.OnClickListener {
 
+
     private static final String TAG = "DrawFragment";
     private InterfaceMainActivity interfaceMainActivity;
 
@@ -38,7 +39,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_draw,container,false);
+        View view = inflater.inflate(R.layout.fragment_draw, container, false);
 
         //Creates the buttons and canvasView
         startDrawButton = view.findViewById(R.id.start_draw_button);
@@ -61,20 +62,21 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
 
             //This is the events that are associated with the buttons
 
             case R.id.start_draw_button: {
-                ArrayList<PointF> validPoints = mathUtility.rdpSimplifier(canvasView.getListOfCoordinates(),65.0);
-                Log.d(TAG, "coordinateHandling: "+validPoints.toString()+" SIZE:"+validPoints.size());
+                ArrayList<PointF> validPoints = mathUtility.rdpSimplifier(canvasView.getListOfCoordinates(), 65.0);
+                Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
                 instructions = coordinateConverter.returnString(validPoints);
-                Log.d(TAG, "Instruction coordinates degree: "+instructions.toString());
-               // BluetoothConnection.getInstance(getContext()).startCar(instructions);
+                Log.d(TAG, "Instruction coordinates degree: " + instructions.toString());
+                BluetoothConnection.getInstance(getContext()).startCar(instructions);
                 break;
             }
 
         }
 
     }
+
 }
