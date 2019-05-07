@@ -44,10 +44,10 @@ before_script:
     - adb shell input keyevent 82 &
     # Set `gradlew` as executable
     - chmod +x $TRAVIS_BUILD_DIR/android/gradlew
-    - wget https://github.com/mikalhart/TinyGPSPlus/archive/v1.0.2.tar.gz
-    - tar -xzvf v1.0.2.tar.gz
-    - export PATH=$PATH:$PWD/TinyGPSPlus/src/
-    - mv TinyGPSPlus-1.0.2/TinyGPSPlus/
+   # - wget https://github.com/mikalhart/TinyGPSPlus/archive/v1.0.2.tar.gz
+   # - tar -xzvf v1.0.2.tar.gz
+   # - export PATH=$PATH:$PWD/TinyGPSPlus/src/
+   # - mv TinyGPSPlus-1.0.2/TinyGPSPlus/
 
 
 before_install:
@@ -60,7 +60,7 @@ install:
     # Install Smartcar shield library (used by our sketch)
     - arduino --install-library "Smartcar shield"
     - arduino --install-library "NewPing"
-    - arduino --install-library "TinyGPSPlus"
+    - git clone https://github.com/mikalhart/TinyGPSPlus.git $HOME/arduino_ide/libraries/TinyGPSPlus
     
 script:
     # Build the Android app
