@@ -36,7 +36,9 @@ int rightMotorBackwardPin = 13;
 int rightMotorSpeedPin = 11;
 //odometer nr1 pin connection
 const unsigned short ODOMETER1_PIN = 2;
-const unsigned long PULSES_PER_METER = 184; //Calibration, Median of 5 odometer tests
+const unsigned long PULSES_PER_METER_1 = 184;
+const unsigned short ODOMETER2_PIN = 3;
+const unsigned long PULSES_PER_METER_2 = 295;
 
 //*create cars' motor's object*
 BrushedMotor leftMotor(leftMotorForwardPin, leftMotorBackwardPin, leftMotorSpeedPin);
@@ -44,27 +46,32 @@ BrushedMotor rightMotor(rightMotorForwardPin, rightMotorBackwardPin, rightMotorS
 //*create car's control object*
 DifferentialControl control(leftMotor, rightMotor);
 //*create odometer object*
-DirectionlessOdometer odometer1(PULSES_PER_METER);
-//*create gyroscope object
+DirectionlessOdometer odometer1(PULSES_PER_METER_1);
+DirectionlessOdometer odometer2(PULSES_PER_METER_2);
+
+//*create gyroscope object*
 GY50 gyroscope(gyroOffset);
 //*create car object*
-SmartCar car(control, gyroscope, odometer1);
+SmartCar car(control, gyroscope, odometer1, odometer2);
 //**********
 
 /*
- *  ********************************************
-    SETUP
- *  ********************************************
-*/
+ *********************************************
+     SETUP
+ *********************************************
+**/
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
   Serial2.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
   Serial.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
 
-  //initialize Odometer
+  //initialize Odometers
   odometer1.attach(ODOMETER1_PIN, []() {
     odometer1.update();
+  });
+  odometer2.attach(ODOMETER2_PIN, []() {
+    odometer2.update();
   });
   //go();
 
@@ -74,10 +81,10 @@ void setup() {
 }
 
 /*
- *  ********************************************
-    LOOP
- *  ********************************************
-*/
+ *********************************************
+     LOOP
+ *********************************************
+**/
 
 void loop() {
 
@@ -93,75 +100,17 @@ void loop() {
 }
 
 /*
- *  ********************************************
-    METHODS
- *  ********************************************
-*/
+ *********************************************
+     METHODS
+ *********************************************
+**/
 
-void commands(String commands[], int arraySize) {
 
-  int roundsToDrive = commands[3].toInt();
-
-  //Select speed
-  if (commands[1].toInt() == 1) {
-    speed = 50;
-  } else if (commands[1].toInt() == 2) {
-    speed = 60;
-  } else if (commands[1].toInt() == 3) {
-    speed = 70;
-  } else if (commands[1].toInt() == 4) {
-    speed = 80;
-  } else if (commands[1].toInt() == 5) {
-    speed = 90;
-  }
-
-  int k = 0;
-  do {
-
-    for (int i = 4; i < (arraySize - 1); i = i + 2) {
-
-      if (commands[i] == "f") {
-        forward((int)commands[i + 1].toFloat());
-      } else if (commands[i] == "b") {
-        backward((int)commands[i + 1].toFloat());
-      } else if (commands[i] == "t") {
-        rotate((int)commands[i + 1].toFloat());
-      } else {
-        Serial2.println("unknown or no command");
-        Serial.println("unknown or no command");
-      }
-    }
-    k++;
-    if (roundsToDrive > 0 && k < roundsToDrive) {
-      reverseCommands(commands, arraySize);
-      k++;
-    }
-  } while (k < roundsToDrive);
-
-}
-
-void reverseCommands(String commands[], int arraySize) {
-
-  rotate(180);//Turn around for back
-
-  for (int i = (arraySize - 2); i >= 4; i = i - 2) {
-
-    if (commands[i] == "f") {
-      forward((int)commands[i + 1].toFloat());
-    } else if (commands[i] == "b") {
-      backward((int)commands[i + 1].toFloat());
-    } else if (commands[i] == "t") {
-      int reverseTurn = (int)commands[i + 1].toFloat();
-      reverseTurn = reverseTurn * -1;
-      rotate(reverseTurn);
-    } else {
-      Serial2.println("unknown or no command");
-      Serial.println("unknown or no command");
-    }
-  }
-
-  rotate(180);//Turn around to be ready for going forward
-}
+/*
+ *********************************************
+     INPUT TO ARRAY
+ *********************************************
+**/
 
 void stringToArray(String str) {
   //String x = "<l,6,v,1,r,0,f,20,t,30>"; // TEST INPUT
@@ -202,7 +151,100 @@ void stringToArray(String str) {
   commands(commandArray, sizeInt);
 }
 
-//-----Rotate-----
+/*
+ *********************************************
+     DRIVING after ARRAY
+ *********************************************
+**/
+
+void commands(String commands[], int arraySize) {
+
+  int roundsToDrive = commands[3].toInt();
+
+  //Select speed
+  if (commands[1].toInt() == 1) {
+    speed = 50;
+  } else if (commands[1].toInt() == 2) {
+    speed = 60;
+  } else if (commands[1].toInt() == 3) {
+    speed = 70;
+  } else if (commands[1].toInt() == 4) {
+    speed = 80;
+  } else if (commands[1].toInt() == 5) {
+    speed = 90;
+  }
+
+  int k = 0;
+  do {
+
+    for (int i = 4; i < (arraySize - 1); i = i + 2) {
+
+      if (commands[i] == "f") {
+        forward((int)commands[i + 1].toFloat());
+      } else if (commands[i] == "t") {
+        rotate((int)commands[i + 1].toFloat());
+      } else {
+        Serial2.println("unknown or no command");
+        Serial.println("unknown or no command");
+      }
+    }
+    k++;
+    if (roundsToDrive > 0 && k < roundsToDrive) {
+      reverseCommands(commands, arraySize);
+      k++;
+    }
+  } while (k < roundsToDrive);
+
+}
+
+void reverseCommands(String commands[], int arraySize) {
+
+  rotate(180);//Turn around for back
+
+  for (int i = (arraySize - 2); i >= 4; i = i - 2) {
+
+    if (commands[i] == "f") {
+      forward((int)commands[i + 1].toFloat());
+    } else if (commands[i] == "t") {
+      int reverseTurn = (int)commands[i + 1].toFloat();
+      reverseTurn = reverseTurn * -1;
+      rotate(reverseTurn);
+    } else {
+      Serial2.println("unknown or no command");
+      Serial.println("unknown or no command");
+    }
+  }
+
+  rotate(180);//Turn around to be ready for going forward
+}
+
+
+/*
+ *********************************************
+     BASIC DRIVING COMMANDS
+ *********************************************
+**/
+
+//**FORWARD DRIVING**
+
+void forward(int distance) {
+  Serial2.write("Going forward\n"); //Printing status
+  Serial.write("Going forward\n"); //Printing status
+
+  odometer1.reset(); //resets the car's driven distance
+  odometer2.reset();
+  car.setSpeed(speed);
+  car.update();
+
+  while (car.getDistance() <= distance) {
+    car.update();
+    obstacleAvoidance();
+    // checkForStop();
+  }
+  stop();
+}
+
+//**ROTATING**
 
 void rotate(int angleToTurn) {
   if (angleToTurn == 0) {
@@ -236,48 +278,20 @@ void rotate(int angleToTurn) {
   stop();
 }
 
-//drives forward up to a set distance
-void forward(int distance) {
-  Serial2.write("Going forward\n"); //Printing status
-  Serial.write("Going forward\n"); //Printing status
 
+//**STOPPING**
 
-  odometer1.reset(); //resets the car's driven distance
-  car.setSpeed(speed);
-  car.update();
-
-  while (car.getDistance() <= distance) {
-    car.update();
-    obstacleAvoidance();
-    // checkForStop();
-  }
-  car.setSpeed(stopSpeed);
-  car.update();
-}
-
-//drives backwards up to a set distance
-void backward(int distance) {
-  Serial2.write("Going backward\n "); //Printing status
-
-  odometer1.reset(); //resets the car's driven distance
-  car.setSpeed(-speed);
-  car.update();
-
-  while (car.getDistance() <= distance) {
-    car.update();
-    obstacleAvoidance();
-    //checkForStop();
-  }
-  car.setSpeed(stopSpeed);
-  car.update();
-}
-
-// stop car
 void stop() {
   Serial2.write("Car stops\n ");
   car.setSpeed(stopSpeed);
   car.update();
 }
+
+/*
+ *********************************************
+     EXAMPLE DRIVING SHAPES
+ *********************************************
+**/
 
 //drives in a square, starting at lower left corner
 void square(int sideLength) {
@@ -292,6 +306,13 @@ void circle() {
   int circleArrayLength = 32;
   commands(testStringCircle, circleArrayLength);
 }
+
+
+/*
+ *********************************************
+     MANUAL CONTROL
+ *********************************************
+**/
 
 void go() {
 
@@ -330,7 +351,15 @@ void checkForStop() {
   }
 }
 
-//obstacle avoidance - stops in front of obstacle + sends message via bluetooth
+
+/*
+ *********************************************
+     OBSTACLE AVOIDANCE
+ *********************************************
+**/
+
+//**STOPS IN FRONT OF OBSTACLE**
+
 void obstacleAvoidance() {
   if (obstacleAvoidanceOn)
   { car.update();
