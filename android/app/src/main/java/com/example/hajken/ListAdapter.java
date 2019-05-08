@@ -21,6 +21,7 @@ public class ListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ((ListViewHolder) holder).bindView(position);
+
     }
 
     @Override
@@ -53,4 +54,6 @@ public class ListAdapter extends RecyclerView.Adapter {
         }
 
     }
+
+
 }
