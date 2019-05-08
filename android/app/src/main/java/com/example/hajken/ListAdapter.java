@@ -1,5 +1,6 @@
 package com.example.hajken;
 
+import android.graphics.PointF;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,8 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class ListAdapter extends RecyclerView.Adapter {
+
+    private OurData ourData = new OurData();
+
 
 
     @NonNull
@@ -31,8 +39,11 @@ public class ListAdapter extends RecyclerView.Adapter {
 
     private class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+
         private TextView mItemText;
         private ImageView mItemImage;
+        private ArrayList<ArrayList<PointF>> imageCoordinates = ourData.getImageCoordinates();
+
 
         public ListViewHolder(View itemView) {
 
@@ -47,13 +58,16 @@ public class ListAdapter extends RecyclerView.Adapter {
         public void bindView(int position){
             mItemText.setText(OurData.imageName[position]);
             mItemImage.setImageResource(OurData.picturePath[position]);
+
         }
 
         public void onClick(View view){
 
         }
 
+
     }
+
 
 
 }

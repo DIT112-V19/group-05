@@ -1,6 +1,7 @@
 package com.example.hajken;
 
 import android.content.Context;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface  {
@@ -28,6 +30,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private Bluetooth mBluetooth = Bluetooth.getInstance();
     private BluetoothConnection mBluetoothConnection;
     private TextView textView;
+    private OurData ourData = new OurData();
+    private CoordinateConverter coordinateConverter;
 
     //Data for the vehicle routes
     private final String circleRouteData = ""; // to be fixed
@@ -85,6 +89,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBluetoothConnection = BluetoothConnection.getInstance(getContext());
+        coordinateConverter = new CoordinateConverter();
+
 
     }
 
@@ -102,7 +108,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-        ListAdapter listAdapter = new ListAdapter();
+        final ListAdapter listAdapter = new ListAdapter();
         recyclerView.setAdapter(listAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -112,6 +118,35 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         } else {
             textView.setText("Connected Device: None");
         }
+
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        Log.d(TAG, "position is: "+position);
+                        if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
+
+
+                            Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
+                            ArrayList<PointF> makeToString = ourData.getCoordinates(position);
+                            String instructions = coordinateConverter.returnString(makeToString);
+                            Log.d(TAG, "Instruction coordinates: " + instructions.toString());
+                            BluetoothConnection.getInstance(getContext()).startCar(instructions);
+
+
+                        } else {
+                            Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+                })
+        );
 
 
 
@@ -143,6 +178,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 Log.d(TAG, "onClick: Clicked Stop Vehicle");
                 break;
             }
+
+
 
 
 

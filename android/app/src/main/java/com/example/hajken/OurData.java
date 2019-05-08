@@ -1,5 +1,10 @@
 package com.example.hajken;
 
+import android.graphics.PointF;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class OurData {
 
     public static String[] imageName = new String[]{
@@ -21,5 +26,44 @@ public class OurData {
 
     };
 
+    public static ArrayList<PointF> squareCoordinates = new ArrayList<PointF>(){{
+        add(new PointF(0,0));
+        add(new PointF(0,100));
+        add(new PointF(100,100));
+        add(new PointF(100,0));
+        add(new PointF(0,0));
+    }};
+
+    public static ArrayList<PointF> circleCoordinates = new ArrayList<PointF>(){{
+        add(new PointF(0,0));
+        add(new PointF(0,50));
+        add(new PointF(50,100));
+        add(new PointF(150,100));
+        add(new PointF(200,50));
+        add(new PointF(200,-50));
+        add(new PointF(150,-100));
+        add(new PointF(50,-100));
+        add(new PointF(0,-50));
+        add(new PointF(0,0));
+    }};
+
+
+
+    public static ArrayList<ArrayList<PointF>> imageCoordinates = new ArrayList<ArrayList<PointF>>(){{
+            add(squareCoordinates);
+            add(circleCoordinates);
+    }};
+
+    public ArrayList<PointF> getCoordinates(int position){
+
+            return imageCoordinates.get(position);
+
+
+
+    }
+
+    public ArrayList<ArrayList<PointF>> getImageCoordinates (){
+        return imageCoordinates;
+    }
 
 }
