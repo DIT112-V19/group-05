@@ -3,7 +3,6 @@ package com.example.hajken;
 import android.graphics.PointF;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class OurData {
 
