@@ -40,7 +40,7 @@ int rightMotorSpeedPin = 11;
 const unsigned short ODOMETER1_PIN = 2;
 const unsigned long PULSES_PER_METER_1 = 184;
 const unsigned short ODOMETER2_PIN = 3;
-const unsigned long PULSES_PER_METER_2 = 295;
+const unsigned long PULSES_PER_METER_2 = 258;
 
 //*create cars' motor's object*
 BrushedMotor leftMotor(leftMotorForwardPin, leftMotorBackwardPin, leftMotorSpeedPin);
@@ -96,9 +96,6 @@ void setup() {
   odometer2.attach(ODOMETER2_PIN, []() {
     odometer2.update();
   });
-
-  //forward(200);
-  
   
   while (!Serial2.available()) {
     //Do nothing until Serial2 receives something
@@ -117,6 +114,8 @@ void loop() {
 
   String input = Serial2.readStringUntil('!');
   //input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
+  //input = "<l,18,v,1,r,0,f,50,t,90,f,50,t,90,f,50,t,90,f,50,t,90>"; //square
+
   Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
 
@@ -278,7 +277,15 @@ void rotate(int angleToTurn) {
     return; // Dont do anything if angle to turn is 0
   }
 
-  angleToTurn %= 360;
+  //correction of overturn
+  /*if(angleToTurn > 180){
+    angleToTurn = angleToTurn * 0.97;
+    }
+  else{
+    angleToTurn = angleToTurn * 0.94;
+  }
+  */
+    angleToTurn %= 360;
 
   //Setting rotation
   if (angleToTurn > 0) {
