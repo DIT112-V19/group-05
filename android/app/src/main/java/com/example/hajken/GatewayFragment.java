@@ -20,6 +20,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     private Button collectionButton, drawButton;
     private ImageView vehicleSymbol;
     private TextView textView;
+    private Button GoogleMapsButton;
 
     //occurs after onAttach
     @Override
@@ -39,6 +40,8 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
         drawButton = view.findViewById(R.id.draw_button);
         vehicleSymbol = view.findViewById(R.id.vehicle_symbol);
         textView = view.findViewById(R.id.device_gatewayFragment);
+        GoogleMapsButton = view.findViewById(R.id.GoogleMapsButton);
+
         if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
             textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
         } else {
@@ -48,6 +51,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
         //Enables functions to buttons
         collectionButton.setOnClickListener(this);
         drawButton.setOnClickListener(this);
+        GoogleMapsButton.setOnClickListener(this);
 
         return view;
     }
@@ -68,6 +72,11 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
 
             //This is the events that are associated with the buttons
 
+            case R.id.GoogleMapsButton: {
+                interfaceMainActivity.inflateFragment(getString(R.string.googlemaps_fragment));
+                break;
+            }
+
             case R.id.collection_button: {
                 interfaceMainActivity.inflateFragment(getString(R.string.collection_fragment));
                 break;
@@ -77,6 +86,8 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
                 interfaceMainActivity.inflateFragment(getString(R.string.draw_fragment));
                 break;
             }
+
+
 
         }
 

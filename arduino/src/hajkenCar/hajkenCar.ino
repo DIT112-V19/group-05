@@ -1,5 +1,7 @@
 #include <NewPing.h>
 #include <Smartcar.h>
+#include "TinyGPS++.h"
+#include <SoftwareSerial.h>
 
 //**********
 //ultraSonicSensor
@@ -51,6 +53,25 @@ GY50 gyroscope(gyroOffset);
 SmartCar car(control, gyroscope, odometer1);
 //**********
 
+//**********
+//Creating GPS-object
+TinyGPSPlus gps;
+
+//GPS variables
+double lat;
+double lng;
+String latitude;
+String longitude;
+boolean GPS = false;
+
+//GPS pin connection
+static const int RXPin = 12, TXPin = 13;
+static const uint32_t GPSBaud = 9600;
+
+SoftwareSerial ss(RXPin, TXPin);
+
+//*********
+
 /*
  *  ********************************************
     SETUP
@@ -59,6 +80,8 @@ SmartCar car(control, gyroscope, odometer1);
 void setup() {
   Serial.begin(9600);
   Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
+  ss.begin(GPSBaud); //GPS
+
   Serial2.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
   Serial.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
 
@@ -79,12 +102,26 @@ void setup() {
  *  ********************************************
 */
 
+
+
 void loop() {
 
   String input = Serial2.readStringUntil('!');
   //input = "<l,12,v,3,r,3,f,100,t,90,f,100,t,-90>"; //Test input
   Serial.print(input);// Checking input string in serial monitor
-  stringToArray(input);
+  //stringToArray(input);
+
+
+
+  if(input.equals("g")){
+    GPS == true;
+    Serial.print("Got into setting GPS to True");
+  }
+  
+  while(true){
+  gpsFunction();
+  }
+
 
   while (true) {
 
@@ -342,5 +379,26 @@ void obstacleAvoidance() {
         //Stops car
       }
     }
+  }
+}
+
+void gpsFunction() {
+
+  
+  while (ss.available() > 0){
+ 
+  gps.encode(ss.read());
+  
+  if (gps.location.isUpdated()){
+  lat = gps.location.lat();
+  lng = gps.location.lng();
+
+  latitude = String(lat,6);
+  longitude = String(lng, 6);
+
+  Serial2.println(latitude + "*" + longitude);
+  //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
+
+  }
   }
 }
