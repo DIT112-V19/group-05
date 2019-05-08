@@ -30,10 +30,9 @@
         android:contentDescription="@string/circle__symbol_description"
         app:layout_constraintBottom_toTopOf="@+id/square_symbol"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.115"
         app:srcCompat="@drawable/circle_symbol" />
 
 
@@ -41,15 +40,12 @@
         android:id="@+id/square_symbol"
         android:layout_width="193dp"
         android:layout_height="222dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="176dp"
         android:contentDescription="@string/square_symbol_description"
         app:layout_constraintBottom_toTopOf="@+id/stop_vehicle_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/square_symbol" />
-
-
 
     <TextView
         android:id="@+id/device_collectionFragment"
@@ -64,5 +60,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="@color/deviceNameColour"/>
+
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/stop_vehicle_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/square_symbol">
+
+        <RadioButton
+            android:id="@+id/speed_low"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/speed_low" />
+
+        <RadioButton
+            android:id="@+id/speed_med"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_med" />
+
+        <RadioButton
+            android:id="@+id/speed_high"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_high" />
+
+    </RadioGroup>
+
 
 </android.support.constraint.ConstraintLayout>

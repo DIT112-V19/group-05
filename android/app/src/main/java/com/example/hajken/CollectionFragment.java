@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,14 +24,18 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private ImageButton square;
     private Button stopVehicleButton;
     private boolean vehicleOn = false;
-    private Bluetooth mBluetooth = Bluetooth.getInstance();
-    private BluetoothConnection mBluetoothConnection = BluetoothConnection.getInstance(getContext());
     private TextView textView;
+    private RadioGroup radioGroup;
+    private RadioButton radioButton;
 
     //Data for the vehicle routes
     private final String circleRouteData = ""; // to be fixed
     private final String squareRouteData = "<F*30*R*90*F*30*R*90*F*30*R*90*F*30*R*90>";
     private String input;
+
+    private final int LOW = 1;
+    private final int MED = 2;
+    private final int HIGH = 3;
 
     //Changes the input to users choice
     public void setInput(String input) {
@@ -46,8 +52,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void controlVehicle(Boolean execute) {
         Log.e(TAG, "controlVehicle: found incoming input");
-
-
 
         //when vehicle is running
         if (isVehicleOn()) {
@@ -89,8 +93,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     //occurs after onCreate
@@ -98,13 +100,29 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Inflates the collFragment
-        View view = inflater.inflate(R.layout.fragment_collection, container, false);
+        final View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
         //Creates the buttons, listOfXCoordinates and image of the collFragment
         stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
         circle = view.findViewById(R.id.circle_symbol);
         square = view.findViewById(R.id.square_symbol);
         textView = view.findViewById(R.id.device_collectionFragment);
+
+        //Speed changing
+        radioGroup = view.findViewById(R.id.radiogroup);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton checkedRadioButton = group.findViewById(checkedId);
+                boolean isChecked = checkedRadioButton.isChecked();
+
+                if (isChecked){
+                    checkButton(view);
+                }
+            }
+        });
+
         if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
             textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
         } else {
@@ -116,6 +134,28 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         square.setOnClickListener(this);
 
         return view;
+    }
+
+    public void checkButton(View view){
+        int radioId = radioGroup.getCheckedRadioButtonId();
+        radioButton = view.findViewById(radioId);
+
+        switch (radioButton.getText().toString()){
+            case "Low" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(LOW);
+                break;
+            }
+
+            case "Medium" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(MED);
+                break;
+            }
+
+            case "High" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(HIGH);
+                break;
+            }
+        }
     }
 
     //calls before onCreate, used to instantiate the interface
