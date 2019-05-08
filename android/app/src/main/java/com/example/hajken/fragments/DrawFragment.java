@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.fragments;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -13,6 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.hajken.helpers.BluetoothConnection;
+import com.example.hajken.CanvasView;
+import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.helpers.MathUtility;
+import com.example.hajken.R;
 
 import java.util.ArrayList;
 

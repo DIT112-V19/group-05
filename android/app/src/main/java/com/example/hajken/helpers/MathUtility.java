@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.helpers;
 
 import android.graphics.PointF;
 import android.util.AndroidRuntimeException;

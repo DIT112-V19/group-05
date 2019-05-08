@@ -6,7 +6,7 @@
     android:background="@color/darkBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.hajken.DrawFragment">
+    tools:context="com.example.hajken.fragments.DrawFragment">
 
 
     <Button

@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,6 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.hajken.helpers.BluetoothConnection;
+import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.R;
 
 public class GatewayFragment extends Fragment implements View.OnClickListener {
 

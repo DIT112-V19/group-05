@@ -14,7 +14,7 @@
 
 
     <!--Buttons-->
-    <string name="find_vehicle_button">find vehicle</string>
+    <string name="find_vehicle_button">connect to vehicle</string>
     <string name="scan_button">scan</string>
     <string name="pair_button">pair</string>
     <string name="unpair_button">unpair</string>

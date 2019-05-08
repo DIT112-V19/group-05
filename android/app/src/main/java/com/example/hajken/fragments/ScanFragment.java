@@ -1,6 +1,5 @@
-package com.example.hajken;
+package com.example.hajken.fragments;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,9 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.hajken.helpers.Bluetooth;
+import com.example.hajken.helpers.BluetoothConnection;
+import com.example.hajken.helpers.ListOfDevices;
+import com.example.hajken.MainActivity;
+import com.example.hajken.R;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -54,7 +58,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
 
         //Creates the buttons, listOfXCoordinates and image of the collFragment
         scanButton = view.findViewById(R.id.scan_button);
-        pairButton = view.findViewById(R.id.pair_button);
         unpairButton = view.findViewById(R.id.unpair_button);
         routesButton = view.findViewById(R.id.routes_button);
         mListView = view.findViewById(R.id.device_list);
@@ -105,10 +108,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
                 Bluetooth.getInstance().enableBluetooth();
                 discover();
                 Toast.makeText(getActivity(), "Scanning...", Toast.LENGTH_LONG).show();
-                break;
-            }
-            case R.id.pair_button:{
-
                 break;
             }
             case R.id.unpair_button:{

@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,6 +13,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.hajken.helpers.Bluetooth;
+import com.example.hajken.helpers.BluetoothConnection;
+import com.example.hajken.CustomDialogFragment;
+import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.R;
 
 public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
 
@@ -46,8 +52,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void controlVehicle(Boolean execute) {
         Log.e(TAG, "controlVehicle: found incoming input");
-
-
 
         //when vehicle is running
         if (isVehicleOn()) {

@@ -1,6 +1,5 @@
 package com.example.hajken;
 
-import android.app.Dialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -8,8 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
+import com.example.hajken.fragments.CollectionFragment;
+import com.example.hajken.fragments.DrawFragment;
+import com.example.hajken.fragments.GatewayFragment;
+import com.example.hajken.fragments.GoogleMapsFragment;
+import com.example.hajken.fragments.ScanFragment;
+import com.example.hajken.fragments.StartFragment;
 
 import java.util.List;
 
