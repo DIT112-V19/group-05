@@ -98,9 +98,7 @@ void setup() {
   });
 
   //forward(200);
-  rotate(90);
-  delay(1000);
-  rotate(-90);
+  
   
   while (!Serial2.available()) {
     //Do nothing until Serial2 receives something
@@ -118,7 +116,7 @@ void setup() {
 void loop() {
 
   String input = Serial2.readStringUntil('!');
-  input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
+  //input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
   Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
 
@@ -267,7 +265,7 @@ void forward(int distance) {
   while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
-    //directionCorrection(initialHeading);
+    directionCorrection(initialHeading);
     checkForStop();
   }
   stop();
@@ -321,19 +319,30 @@ void stop() {
 
 void directionCorrection(int initialHeading) {
 
+  car.update();
+  
   int currentHeading = car.getHeading();
-  int headingOffset = (initialHeading - currentHeading) % 360;
+  int headingOffset = (initialHeading - currentHeading);
+  headingOffset = mod(headingOffset, 360); 
+  
+  Serial2.print("Current heading: ");
+  Serial2.println(currentHeading);
 
+  Serial2.print("Initial Heading: ");
+  Serial2.println(initialHeading);
+  
+  Serial2.print("Heading offset: ");
   Serial2.println(headingOffset);
 
   if (headingOffset == 0) {
     car.overrideMotorSpeed(speed, speed);
-  } else if (headingOffset < 180) {
-    car.overrideMotorSpeed((speed - 5), speed);
   } else if (headingOffset > 180) {
-    car.overrideMotorSpeed(speed, (speed - 5));
+    Serial2.println("Correcting to the LEFT");
+    car.overrideMotorSpeed((speed - 7), (speed + 7));
+  } else if (headingOffset < 180) {
+    Serial2.println("Correcting to the RIGHT");
+    car.overrideMotorSpeed((speed + 7), (speed - 7));
   }
-  car.update();
 }
 
 /*
@@ -413,6 +422,15 @@ void checkForStart() {
   }
 }
 
+/*
+ *********************************************
+     UTILITY
+ *********************************************
+**/
+
+int mod( int x, int y ){
+   return x<0 ? ((x+1)%y)+y-1 : x%y;
+}
 
 /*
  *********************************************
