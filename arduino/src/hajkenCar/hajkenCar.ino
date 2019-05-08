@@ -96,7 +96,6 @@ void setup() {
   odometer2.attach(ODOMETER2_PIN, []() {
     odometer2.update();
   });
-  //go();
 
   while (!Serial2.available()) {
     //Do nothing until Serial2 receives something
