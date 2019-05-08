@@ -5,21 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkBackground"
-    >
+    android:background="@color/darkBackground">
 
     <Button
         android:id="@+id/stop_vehicle_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/stop_vehicle_button"
+        android:layout_marginBottom="68dp"
         android:background="@drawable/button"
+        android:text="@string/stop_vehicle_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <TextView
         android:id="@+id/device_collectionFragment"
@@ -58,6 +56,41 @@
 
 
     </LinearLayout>
+
+
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/stop_vehicle_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/someId">
+
+        <RadioButton
+            android:id="@+id/speed_low"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/speed_low" />
+
+        <RadioButton
+            android:id="@+id/speed_med"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_med" />
+
+        <RadioButton
+            android:id="@+id/speed_high"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_high" />
+
+    </RadioGroup>
 
 
 </android.support.constraint.ConstraintLayout>

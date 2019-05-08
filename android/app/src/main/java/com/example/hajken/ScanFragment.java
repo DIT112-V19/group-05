@@ -1,6 +1,5 @@
 package com.example.hajken;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -80,8 +79,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
                     mBluetoothConnection = BluetoothConnection.getInstance(getContext());
                     mBluetoothConnection.startClient(mBluetoothdevices.get(i), MY_UUID_INSECURE );
                     Log.i(TAG, " connected to " + deviceName);
-
-
                 }
             }});
 

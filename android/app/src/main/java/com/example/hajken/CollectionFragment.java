@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +29,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private Button stopVehicleButton;
     private RecyclerView recyclerView;
     private boolean vehicleOn = false;
-    private Bluetooth mBluetooth = Bluetooth.getInstance();
-    private BluetoothConnection mBluetoothConnection;
     private TextView textView;
+    private RadioGroup radioGroup;
+    private RadioButton radioButton;
     private OurData ourData = new OurData();
     private CoordinateConverter coordinateConverter;
 
@@ -37,6 +39,10 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private final String circleRouteData = ""; // to be fixed
     private final String squareRouteData = "<F*30*R*90*F*30*R*90*F*30*R*90*F*30*R*90>";
     private String input;
+
+    private final int LOW = 1;
+    private final int MED = 2;
+    private final int HIGH = 3;
 
     //Changes the input to users choice
     public void setInput(String input) {
@@ -54,8 +60,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     public void controlVehicle(Boolean execute) {
         Log.e(TAG, "controlVehicle: found incoming input");
 
-
-
         //when vehicle is running
         if (isVehicleOn()){
             //when user chooses to stop the vehicle
@@ -63,7 +67,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 if (input == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                 } else { // if there is route data
-                    mBluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
+                    BluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = false;
                     Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
                 }
@@ -76,7 +80,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 if (input == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                 } else {
-                    mBluetoothConnection.getInstance(getContext()).startCar("g"); // <<<<----- here is the bluetooth activation/starting the vehicle
+                    BluetoothConnection.getInstance(getContext()).startCar("g"); // <<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = true;
                     Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
                 }
@@ -88,10 +92,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBluetoothConnection = BluetoothConnection.getInstance(getContext());
-        coordinateConverter = new CoordinateConverter();
-
-
     }
 
     //occurs after onCreate
@@ -99,12 +99,26 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Inflates the collFragment
-        View view = inflater.inflate(R.layout.fragment_collection,container,false);
+        final View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
         //Creates the buttons, listOfXCoordinates and image of the collFragment
         stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
         textView = view.findViewById(R.id.device_collectionFragment);
 
+        //Speed changing
+        radioGroup = view.findViewById(R.id.radiogroup);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton checkedRadioButton = group.findViewById(checkedId);
+                boolean isChecked = checkedRadioButton.isChecked();
+
+                if (isChecked){
+                    checkButton(view);
+                }
+            }
+        });
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
@@ -138,19 +152,35 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                             Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
 
                         }
-
                     }
-
                     @Override
                     public void onLongItemClick(View view, int position) {
 
                     }
-                })
-        );
-
-
-
+                }));
         return view;
+    }
+
+    public void checkButton(View view){
+        int radioId = radioGroup.getCheckedRadioButtonId();
+        radioButton = view.findViewById(radioId);
+
+        switch (radioButton.getText().toString()){
+            case "Low" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(LOW);
+                break;
+            }
+
+            case "Medium" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(MED);
+                break;
+            }
+
+            case "High" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(HIGH);
+                break;
+            }
+        }
     }
 
     //calls before onCreate, used to instantiate the interface
@@ -159,8 +189,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     public void onAttach(Context context) {
         super.onAttach(context);
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
-
-
     }
 
     @Override
@@ -178,12 +206,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 Log.d(TAG, "onClick: Clicked Stop Vehicle");
                 break;
             }
-
-
-
-
-
-
 
         }
     }

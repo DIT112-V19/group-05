@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         }
         transaction.commit();
     }
-
 
 
     //this method is responsible to start fragmentTransactions

@@ -24,6 +24,10 @@
     <string name="start_draw_button">StartDraw</string>
     <string name="stop_vehicle_button">Stop Vehicle</string>
     <string name="clear_draw_button">Clear</string>
+    <string name="speed_low">Low</string>
+    <string name="speed_med">Medium</string>
+    <string name="speed_high">High</string>
+
 
     <!--Images-->
     <string name="bluetooth_symbol_description">Bluetooth</string>
