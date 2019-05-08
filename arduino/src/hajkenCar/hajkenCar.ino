@@ -6,7 +6,7 @@
 //**********
 //ultraSonicSensor
 float carDistanceToObstacle; //actual distance to next obstacle, in cm
-float stopDistanceToObstacle = 5; //distance that triggers to stop, in cm
+float stopDistanceToObstacle = 10; //distance that triggers to stop, in cm
 
 //ultraSonicSensor Pin connection
 const int USS1_TRIGGER_PIN = 6; //Trigger Pin
@@ -24,7 +24,7 @@ const int gyroOffset = 11;
 //distanceCar
 //**********
 float speed = 50;
-int turningSpeed = 35;
+int turningSpeed = 50;
 int stopSpeed = 0;
 boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
 boolean stopFromDriving; //boolean to stop car
@@ -97,6 +97,11 @@ void setup() {
     odometer2.update();
   });
 
+  //forward(200);
+  rotate(90);
+  delay(1000);
+  rotate(-90);
+  
   while (!Serial2.available()) {
     //Do nothing until Serial2 receives something
   }
@@ -113,12 +118,12 @@ void setup() {
 void loop() {
 
   String input = Serial2.readStringUntil('!');
-  //input = "<l,12,v,3,r,3,f,100,t,90,f,100,t,-90>"; //Test input
+  input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
   Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
 
   while (!Serial2.available()) {
-
+  //Waiting for new command
   }
 
 }
@@ -262,7 +267,7 @@ void forward(int distance) {
   while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
-    directionCorrection(initialHeading);
+    //directionCorrection(initialHeading);
     checkForStop();
   }
   stop();
@@ -400,7 +405,7 @@ void checkForStart() {
   while (true) {
     if (Serial2.available()) {
       inputToStart = Serial2.read();
-      if (inputToStart == 'g') {
+      if (inputToStart == 'c') {
         car.setSpeed(speed);
         return;
       }
