@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-import com.example.hajken.helpers.BluetoothConnection;
+import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;

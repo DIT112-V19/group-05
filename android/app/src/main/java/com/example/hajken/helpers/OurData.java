@@ -1,6 +1,8 @@
-package com.example.hajken;
+package com.example.hajken.helpers;
 
 import android.graphics.PointF;
+
+import com.example.hajken.R;
 
 import java.util.ArrayList;
 

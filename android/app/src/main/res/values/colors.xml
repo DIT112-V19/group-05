@@ -10,6 +10,7 @@
     <!-- Button -->
     <color name="button_non_active">#7a7d84</color>
     <color name="button_active">#21768f</color>
+    <color name="button_corners">#ffffff</color>
 
     <!-- ListView -->
     <color name="device_list_border">#717171</color>
@@ -19,6 +20,8 @@
 
     <!-- TextColour -->
     <color name="deviceNameColour">#717171</color>
+    <color name="button_text_color_non_active">#4F4F52</color>
+    <color name="button_text_color_active">#ffffff</color>
 
     <!-- SymbolColour -->
     <color name="symbolColour">#894941</color>

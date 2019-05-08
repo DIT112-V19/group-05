@@ -17,8 +17,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hajken.helpers.BluetoothConnection;
-import com.example.hajken.CanvasView;
+import com.example.hajken.bluetooth.BluetoothConnection;
+import com.example.hajken.helpers.CanvasView;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.R;

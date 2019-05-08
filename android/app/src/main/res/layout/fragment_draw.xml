@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/canvasView"
         app:layout_constraintVertical_bias="0.796" />
 
-    <com.example.hajken.CanvasView
+    <com.example.hajken.helpers.CanvasView
         android:id="@+id/canvasView"
         android:layout_width="300dp"
         android:layout_height="300dp"

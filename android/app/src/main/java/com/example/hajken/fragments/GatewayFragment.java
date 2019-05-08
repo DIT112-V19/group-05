@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.hajken.helpers.BluetoothConnection;
+import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 
@@ -21,10 +21,10 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "GatewayFragment";
     private InterfaceMainActivity interfaceMainActivity;
 
-    private Button collectionButton, drawButton;
+    private Button collectionRouteButton, designRouteButton;
     private ImageView vehicleSymbol;
     private TextView textView;
-    private Button GoogleMapsButton;
+    private Button mapsRouteButton;
 
     //occurs after onAttach
     @Override
@@ -40,11 +40,11 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_gateway,container,false);
 
         //Creates the buttons, listOfXCoordinates and image of the collFragment
-        collectionButton = view.findViewById(R.id.collection_button);
-        drawButton = view.findViewById(R.id.draw_button);
-        vehicleSymbol = view.findViewById(R.id.vehicle_symbol);
+        collectionRouteButton = view.findViewById(R.id.collection_button);
+        designRouteButton = view.findViewById(R.id.draw_button);
+        mapsRouteButton = view.findViewById(R.id.GoogleMapsButton);
+
         textView = view.findViewById(R.id.device_gatewayFragment);
-        GoogleMapsButton = view.findViewById(R.id.GoogleMapsButton);
 
         if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
             textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
@@ -53,9 +53,9 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
         }
 
         //Enables functions to buttons
-        collectionButton.setOnClickListener(this);
-        drawButton.setOnClickListener(this);
-        GoogleMapsButton.setOnClickListener(this);
+        collectionRouteButton.setOnClickListener(this);
+        designRouteButton.setOnClickListener(this);
+        mapsRouteButton.setOnClickListener(this);
 
         return view;
     }

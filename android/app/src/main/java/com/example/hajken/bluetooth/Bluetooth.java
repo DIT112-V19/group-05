@@ -1,4 +1,4 @@
-package com.example.hajken.helpers;
+package com.example.hajken.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.example.hajken.MainActivity;
 import com.example.hajken.fragments.ScanFragment;
+import com.example.hajken.helpers.ListOfDevices;
 
 import java.util.ArrayList;
 import java.util.UUID;
