@@ -32,6 +32,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
 
         //Creates the buttons and image of the collFragment
         ScanFragmentButton = view.findViewById(R.id.find_vehicle_button);
+
         radar = view.findViewById(R.id.radar_symbol);
 
         //Enables functions to buttons
@@ -40,11 +41,19 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         return view;
     }
 
-    public void onClick(View view){
-        //This is the events that are associated with the buttons
-        interfaceMainActivity.inflateFragment(getString(R.string.scan_fragment));
-    }
+    public void onClick(View view) {
 
+
+        switch (view.getId()) {
+
+            //These are the events that are associated with clicking of the buttons
+
+            case R.id.find_vehicle_button: {
+                interfaceMainActivity.inflateFragment(getString(R.string.scan_fragment));
+
+            }
+        }
+    }
     //calls before onCreate, used to instantiate the interface
     //part of the collFragment to activity communication
     @Override
