@@ -65,21 +65,4 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="@color/deviceNameColour"/>
 
-    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/recycler_view"
-        android:layout_width="335dp"
-        android:layout_height="338dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:scrollbars="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/stop_vehicle_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:itemCount="5"
-        tools:spanCount="5" />
-
 </android.support.constraint.ConstraintLayout>
