@@ -109,7 +109,6 @@ void loop() {
   String input = Serial2.readStringUntil('!');
   //input = "<l,12,v,3,r,3,f,100,t,90,f,100,t,-90>"; //Test input
   Serial.print(input);// Checking input string in serial monitor
-<<<<<<< HEAD
   //stringToArray(input);
 
 
@@ -122,9 +121,7 @@ void loop() {
   while(true){
   gpsFunction();
   }
-=======
-  stringToArray(input);
->>>>>>> master
+
 
   while (true) {
 
