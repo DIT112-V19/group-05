@@ -1,5 +1,6 @@
 package com.example.hajken.helpers;
 
+import android.content.Context;
 import android.graphics.PointF;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
@@ -10,6 +11,19 @@ import java.util.ArrayList;
 public class MathUtility {
 
     private static final String TAG = "MathUtility";
+    private static MathUtility mInstance = null;
+    private Context myContext;
+
+    private MathUtility(Context context){
+        myContext = context;
+    }
+
+    public static MathUtility getInstance(Context context){
+        if (mInstance == null){
+            mInstance = new MathUtility(context);
+        }
+        return mInstance;
+    }
 
     private double perpendicularDistance (PointF point, PointF lineStart, PointF lineEnd){
         double dx = lineEnd.x - lineStart.x;

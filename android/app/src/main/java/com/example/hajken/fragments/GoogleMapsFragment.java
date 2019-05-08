@@ -74,8 +74,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public void onAttach(Context context){
         super.onAttach(context);
 
-        bluetoothConnection = BluetoothConnection.getInstance(getContext());
-        bluetoothConnection.startCar("g!"); //small g to request GPS
+        //bluetoothConnection = BluetoothConnection.getInstance(getContext());
+        //bluetoothConnection.startCar("g!"); //small g to request GPS
         Log.d(TAG, "Request for GPS-message sent");
 
         /*
