@@ -41,7 +41,6 @@ dependencies {
     //Google Maps
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
 
-
     // design libary for circluar images
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
@@ -51,4 +50,6 @@ dependencies {
     // Cardview
     implementation 'com.android.support:cardview-v7:27.1.1'
 
+    // design library for using segmentedButtonGroup
+    implementation 'com.github.ceryle:SegmentedButton:v2.0.2'
 }

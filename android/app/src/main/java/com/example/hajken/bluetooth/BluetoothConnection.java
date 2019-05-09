@@ -20,16 +20,10 @@ public class BluetoothConnection {
 
     private static final String TAG = "BluetoothConnection ";
     private final String APPNAME = "HAJKEN";
-
     private final static UUID MY_UUID_INSECURE = Bluetooth.getMyUuidInsecure();
-
     private final BluetoothAdapter myBluetoothAdapter = Bluetooth.getInstance().getmBluetoothAdapter();
-
     private Context myContext;
-
-
     private AcceptThread myInsecureAcceptThread;
-
     private boolean isConnected = false;
     private ConnectThread myConnectThread;
     private BluetoothDevice mBluetoothDevice;
@@ -38,10 +32,7 @@ public class BluetoothConnection {
     private InputStream mInputStream;
     private BluetoothServerSocket mServerSocket;
     private BluetoothSocket mSocket = null;
-
-
     private ConnectedThread myConnectedThread;
-
     private static BluetoothConnection mInstance = null;
 
     private BluetoothConnection(Context context) {

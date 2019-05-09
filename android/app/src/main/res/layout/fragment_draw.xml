@@ -106,4 +106,57 @@
 
     </RadioGroup>
 
+    <co.ceryle.segmentedbutton.SegmentedButtonGroup
+        android:id="@+id/segmentedButtonGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:sbg_animateSelector="bounce"
+        app:sbg_animateSelectorDuration="500"
+        app:sbg_backgroundColor="@color/darkBackground"
+        app:sbg_dividerColor="#e91e63"
+        app:sbg_dividerPadding="10dp"
+        app:sbg_dividerSize="1dp"
+        app:sbg_position="1"
+        app:sbg_radius="2dp"
+        app:sbg_ripple="true"
+        app:sbg_rippleColor="#e91e63"
+        app:sbg_selectorColor="#e91e63"
+        app:sbg_selectorTextColor="#FFFFFF"
+        app:sbg_shadow="true"
+        app:sbg_shadowElevation="3dp"
+        app:sbg_shadowMargin="4dp"
+        tools:layout_editor_absoluteY="111dp">
+
+        <Button
+            android:id="@+id/speed_low2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="10dp"
+            android:text="Low"
+            android:textAllCaps="true" />
+
+        <Button
+            android:id="@+id/speed_med2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="10dp"
+            android:text="Medium"
+            android:textAllCaps="true" />
+
+        <Button
+            android:id="@+id/speed_high2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="10dp"
+            android:text="High"
+            android:textAllCaps="true" />
+
+    </co.ceryle.segmentedbutton.SegmentedButtonGroup>
+
 </android.support.constraint.ConstraintLayout>
