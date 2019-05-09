@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.helpers;
 
 import android.content.Context;
 import android.graphics.PointF;

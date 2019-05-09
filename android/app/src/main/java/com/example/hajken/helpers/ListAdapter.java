@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.helpers;
 
 import android.graphics.PointF;
 import android.support.annotation.NonNull;
@@ -8,9 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
+import com.example.hajken.R;
+import com.example.hajken.helpers.OurData;
+
 import java.util.ArrayList;
 
 public class ListAdapter extends RecyclerView.Adapter {

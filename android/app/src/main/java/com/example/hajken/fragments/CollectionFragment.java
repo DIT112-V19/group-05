@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.fragments;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -13,16 +13,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
+import com.example.hajken.helpers.ListAdapter;
+import com.example.hajken.helpers.OurData;
+import com.example.hajken.helpers.RecyclerItemClickListener;
+import com.example.hajken.bluetooth.BluetoothConnection;
+import com.example.hajken.helpers.CustomDialogFragment;
+import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.R;
 import java.util.ArrayList;
 
-public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface  {
+public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
+
 
     private static final String TAG = "CollectionFragment";
     private InterfaceMainActivity interfaceMainActivity;

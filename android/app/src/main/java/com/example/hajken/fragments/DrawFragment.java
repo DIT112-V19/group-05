@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.fragments;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -16,6 +16,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.hajken.bluetooth.BluetoothConnection;
+import com.example.hajken.helpers.CanvasView;
+import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.helpers.MathUtility;
+import com.example.hajken.R;
 
 import java.util.ArrayList;
 
