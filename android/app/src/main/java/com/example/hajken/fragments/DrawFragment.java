@@ -20,12 +20,13 @@ import android.widget.Toast;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CanvasView;
 import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.R;
 import java.util.ArrayList;
 
-public class DrawFragment extends Fragment implements View.OnClickListener {
+public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface{
 
     private final int SLOW = 1;
     private final int MED = 2;
@@ -40,6 +41,14 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     private String instructions;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
+    private String input;
+    private CustomDialogFragment mCustomDialogFragment;
+
+
+    private boolean vehicleOn = false;
+
+
+
     private TextView amountOfLoops;
     private SeekBar seekBar;
 
@@ -47,6 +56,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mCustomDialogFragment = new CustomDialogFragment();
+
     }
 
     //occurs after onCreate
@@ -164,13 +175,15 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             case R.id.start_car_button: {
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
-
-                    Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
                     ArrayList<PointF> validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(canvasView.getListOfCoordinates(), 65.0);
                     Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
                     instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
                     Log.d(TAG, "Instruction coordinates: " + instructions.toString());
-                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+                    mCustomDialogFragment.setDialogHeading("Are you ready?");
+                    mCustomDialogFragment.setAction("Start");
+                    mCustomDialogFragment.setTargetFragment(DrawFragment.this,1);
+                    mCustomDialogFragment.show(getFragmentManager(),"DIALOG");
+
                     break;
 
                 } else {
@@ -181,5 +194,50 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             }
         }
 
+    }
+
+
+
+
+    @Override
+    public void controlVehicle(Boolean execute) {
+        Log.e(TAG, "controlVehicle: found incoming input");
+
+        //when vehicle is running
+        if (isVehicleOn()){
+            //when user chooses to stop the vehicle
+            if (execute){
+                if (instructions == null){
+                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
+                } else { // if there is route data
+                    BluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
+                    vehicleOn = false;
+                    Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
+                }
+            }
+
+            //when vehicle is not running
+        } else {
+            //Change button state
+            if (execute){
+                if (instructions == null){
+                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
+                } else {
+
+                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+                    Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show(); // <<<<----- here is the bluetooth activation/starting the vehicle
+                    vehicleOn = true;
+                    Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+
+
+
+
+    public boolean isVehicleOn() {
+        return vehicleOn;
     }
 }

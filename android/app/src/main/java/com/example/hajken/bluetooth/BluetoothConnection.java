@@ -32,6 +32,10 @@ public class BluetoothConnection {
     private InputStream mInputStream;
     private BluetoothServerSocket mServerSocket;
     private BluetoothSocket mSocket = null;
+    private boolean isFinished = false;
+
+
+
     private ConnectedThread myConnectedThread;
     private static BluetoothConnection mInstance = null;
 
@@ -48,6 +52,14 @@ public class BluetoothConnection {
         }
         return mInstance;
     }
+
+    private onBluetoothConnectionListener mListener;
+
+    public void registerListener(onBluetoothConnectionListener listener) {
+        mListener = listener;
+    }
+
+
 
     private class AcceptThread extends Thread {
 
@@ -200,7 +212,8 @@ public class BluetoothConnection {
 
             mInputStream = tempInputStream;
             mOutputStream = tempOutputStream;
-            isConnected = true;
+            setIsConnected(true);
+
 
         }
 
@@ -248,17 +261,22 @@ public class BluetoothConnection {
         myConnectedThread = new ConnectedThread(socket);
         myConnectedThread.start();
         Log.d(TAG, "Connected to " + device);
-        if (isConnected) {
+        if (getIsConnected()) {
             MainActivity.getThis().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    Log.i(TAG, "run: connected to " + device.getName());
                     Toast.makeText(myContext, "Paired with " + device.getName(), Toast.LENGTH_LONG).show();
+                    isFinished = true;
+                    mListener.onConnect();
+
 
                 }
             });
         }
 
     }
+
 
 
     public void writeToDevice(String input) {
@@ -285,10 +303,10 @@ public class BluetoothConnection {
     public void unPair(BluetoothDevice device) {
 
                 try {
-                    isConnected = false;
                     Method m = device.getClass()
                             .getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
+                    mListener.onUnpair();
                 } catch (Exception e) {
                     Log.e(TAG, "Removing has been failed." + e.getMessage());
                 }
@@ -329,6 +347,8 @@ public class BluetoothConnection {
     }
 
 
+
+
     public boolean getIsConnected(){
         return isConnected;
     }
@@ -341,7 +361,23 @@ public class BluetoothConnection {
         return mBluetoothDevice.getName();
     }
 
+    public BluetoothAdapter getMyBluetoothAdapter() {
+        return myBluetoothAdapter;
+    }
 
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    public interface onBluetoothConnectionListener {
+        void onConnect();
+
+
+        void onUnpair();
+
+        void onNotConnected();
+
+    }
 }
 
 
