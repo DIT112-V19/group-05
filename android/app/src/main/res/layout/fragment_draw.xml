@@ -90,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/speed_low" />
+            android:text="@string/speed_slow" />
 
         <RadioButton
             android:id="@+id/speed_med"
@@ -99,10 +99,10 @@
             android:text="@string/speed_med" />
 
         <RadioButton
-            android:id="@+id/speed_high"
+            android:id="@+id/speed_fast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/speed_high" />
+            android:text="@string/speed_fast" />
 
     </RadioGroup>
 

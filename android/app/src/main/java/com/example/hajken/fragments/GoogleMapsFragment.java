@@ -10,8 +10,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.R;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,11 +35,20 @@ import static android.content.ContentValues.TAG;
 
 public class GoogleMapsFragment extends Fragment  implements View.OnClickListener, OnMapReadyCallback {
 
+    private final int SLOW = 1;
+    private final int MED = 2;
+    private final int FAST = 3;
+
     private MapView mMapView;
     private BluetoothConnection bluetoothConnection;
+    private Button startCarButton;
+    private RadioGroup radioGroup;
+    private RadioButton radioButton;
+    private TextView textView;
+    private String instructions;
 
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
-
+    private InterfaceMainActivity interfaceMainActivity;
 
     public GoogleMapsFragment() {
         // Required empty public constructor
@@ -43,7 +58,32 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       View view = inflater.inflate(R.layout.fragment_google_maps, container, false);
+       final View view = inflater.inflate(R.layout.fragment_google_maps, container, false);
+
+        //Creates the buttons
+        startCarButton = view.findViewById(R.id.start_car_button);
+        textView = view.findViewById(R.id.device_mapFragment);
+
+        //Speed changing
+        radioGroup = view.findViewById(R.id.radiogroup3);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton checkedRadioButton = group.findViewById(checkedId);
+                boolean isChecked = checkedRadioButton.isChecked();
+
+                if (isChecked){
+                    checkButton(view);
+                }
+            }
+        });
+
+        if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
+            textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
+        } else {
+            textView.setText("Connected Device: None");
+        }
 
        mMapView = new MapView(getContext());
        mMapView = view.findViewById(R.id.mapView);
@@ -65,6 +105,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         //SupportMapFragment mapFragment =    (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
         //mapFragment.getMapAsync(this);
 
+        startCarButton.setOnClickListener(this);
+
 
 
         return view;
@@ -77,7 +119,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         //bluetoothConnection = BluetoothConnection.getInstance(getContext());
         //bluetoothConnection.startCar("g!"); //small g to request GPS
         Log.d(TAG, "Request for GPS-message sent");
-
+        interfaceMainActivity = (InterfaceMainActivity) getActivity();
         /*
         String GPS = bluetoothConnection.readGPS();
         Log.d(TAG, "Received this GPS-message from car: " + GPS);
@@ -97,10 +139,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -138,7 +176,54 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
     }
 
+    public void checkButton(View view) {
+        int radioId = radioGroup.getCheckedRadioButtonId();
+        radioButton = view.findViewById(radioId);
 
+        switch (radioButton.getText().toString()) {
+            case "Slow": {
+                CoordinateConverter.getInstance(getContext()).setSpeed(SLOW);
+                break;
+            }
+
+            case "Medium": {
+                CoordinateConverter.getInstance(getContext()).setSpeed(MED);
+                break;
+            }
+
+            case "High": {
+                CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
+                break;
+            }
+        }
+
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()) {
+
+            //This is the events that are associated with the buttons
+
+            case R.id.start_car_button: {
+
+                if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
+
+                    Toast.makeText(getActivity(), "Starting Car. No funcion yet.", Toast.LENGTH_SHORT).show();
+
+                    break;
+
+                } else {
+                    Toast.makeText(getActivity(), "Not connected to a device. No funcion yet.", Toast.LENGTH_LONG).show();
+                    break;
+
+                }
+            }
+
+        }
+
+    }
     @Override
 
     public void onResume() {
