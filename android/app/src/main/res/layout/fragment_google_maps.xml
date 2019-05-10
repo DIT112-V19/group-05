@@ -9,8 +9,8 @@
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
-        android:layout_width="346dp"
-        android:layout_height="349dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -36,6 +36,66 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.129" />
+
+    <TextView
+        android:id="@+id/device_mapFragment"
+        android:layout_width="280dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/canvasView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/deviceNameColour"/>
+
+    <Button
+        android:id="@+id/start_car_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button"
+        android:text="START CAR"
+        app:layout_constraintEnd_toEndOf="@+id/radiogroup3"
+        app:layout_constraintStart_toStartOf="@+id/radiogroup3"
+        app:layout_constraintTop_toBottomOf="@+id/radiogroup3" />
+
+    <RadioGroup
+        android:id="@+id/radiogroup3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mapView"
+        app:layout_constraintVertical_bias="0.013">
+
+        <RadioButton
+            android:id="@+id/speed_slow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/speed_slow" />
+
+        <RadioButton
+            android:id="@+id/speed_med"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_med" />
+
+        <RadioButton
+            android:id="@+id/speed_fast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_fast" />
+
+    </RadioGroup>
 
 </android.support.constraint.ConstraintLayout>
 

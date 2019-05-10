@@ -8,102 +8,122 @@
     android:layout_height="match_parent"
     tools:context="com.example.hajken.fragments.DrawFragment">
 
+    <TextView
+        android:id="@+id/amount_of_loops"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        android:text="0"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/seekbar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/canvasView" />
 
     <Button
         android:id="@+id/start_car_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/button"
-        android:text="START CAR"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/clear_draw_button"
-        app:layout_constraintHorizontal_bias="0.553"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/canvasView"
-        app:layout_constraintVertical_bias="0.791" />
-
-    <Button
-        android:id="@+id/clear_draw_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="96dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/button"
-        android:text="CLEAR"
+        android:text="@string/start_draw_button"
+        android:textColor="@drawable/button_text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/canvasView"
-        app:layout_constraintVertical_bias="0.796" />
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radiogroup2" />
 
     <com.example.hajken.helpers.CanvasView
         android:id="@+id/canvasView"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/device_list"
         android:padding="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/seekbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.381" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/device_drawFragment"
         android:layout_width="280dp"
         android:layout_height="34dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/deviceNameColour"
         app:layout_constraintBottom_toTopOf="@+id/canvasView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/deviceNameColour"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
         android:id="@+id/radiogroup2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/start_car_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/canvasView"
-        app:layout_constraintVertical_bias="0.013">
+        app:layout_constraintTop_toBottomOf="@+id/seekbar">
 
         <RadioButton
             android:id="@+id/speed_low"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:checked="true"
-            android:text="@string/speed_low" />
+            android:text="@string/speed_slow"
+            android:textAllCaps="true"/>
 
         <RadioButton
             android:id="@+id/speed_med"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/speed_med" />
+            android:layout_weight="1"
+            android:text="@string/speed_med"
+            android:textAllCaps="true"/>
 
         <RadioButton
-            android:id="@+id/speed_high"
+            android:id="@+id/speed_fast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/speed_high" />
+            android:layout_weight="1"
+            android:text="@string/speed_fast"
+            android:textAllCaps="true"/>
 
     </RadioGroup>
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/radiogroup2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/canvasView" />
 
 </android.support.constraint.ConstraintLayout>

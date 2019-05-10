@@ -96,10 +96,12 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
         }
     }
 
-    public void routesButtonState(){
-            routesButton.setClickable(true);
-            routesButton.setActivated(true);
+    public void routesButtonState() {
+        routesButton.setClickable(true);
+        routesButton.setActivated(true);
+
     }
+
 
     //onAttach is called before onCreate so that we instantiate the interface before using it
     @Override

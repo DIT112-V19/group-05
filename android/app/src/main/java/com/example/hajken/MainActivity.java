@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     private void init(){
         StartFragment fragment = new StartFragment();
         doFragmentTransaction(fragment,getString(R.string.start_fragment),false);
+
     }
 
     //used to be a string message here as well but we are not using that
