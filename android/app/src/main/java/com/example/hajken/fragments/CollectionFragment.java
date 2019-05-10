@@ -17,7 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.helpers.ListAdapter;
 import com.example.hajken.helpers.OurData;
 import com.example.hajken.helpers.RecyclerItemClickListener;
@@ -146,13 +146,11 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                         Log.d(TAG, "position is: "+position);
                         if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
 
-
                             Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
                             ArrayList<PointF> makeToString = ourData.getCoordinates(position);
-                            String instructions = coordinateConverter.returnString(makeToString);
+                            String instructions = coordinateConverter.returnInstructions(makeToString);
                             Log.d(TAG, "Instruction coordinates: " + instructions.toString());
                             BluetoothConnection.getInstance(getContext()).startCar(instructions);
-
 
                         } else {
                             Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
@@ -161,8 +159,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     }
                     @Override
                     public void onLongItemClick(View view, int position) {
-
-                    }
+                                            }
                 }));
         return view;
     }

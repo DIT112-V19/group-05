@@ -49,7 +49,4 @@ dependencies {
 
     // Cardview
     implementation 'com.android.support:cardview-v7:27.1.1'
-
-    // design library for using segmentedButtonGroup
-    implementation 'com.github.ceryle:SegmentedButton:v2.0.2'
 }
