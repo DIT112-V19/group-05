@@ -27,9 +27,9 @@ import java.util.ArrayList;
 
 public class DrawFragment extends Fragment implements View.OnClickListener {
 
-    private final int LOW = 1;
+    private final int SLOW = 1;
     private final int MED = 2;
-    private final int HIGH = 3;
+    private final int FAST = 3;
 
     private static final String TAG = "DrawFragment";
     private InterfaceMainActivity interfaceMainActivity;
@@ -127,8 +127,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
         radioButton = view.findViewById(radioId);
 
         switch (radioButton.getText().toString()) {
-            case "Low": {
-                CoordinateConverter.getInstance(getContext()).setSpeed(LOW);
+            case "Slow": {
+                CoordinateConverter.getInstance(getContext()).setSpeed(SLOW);
                 break;
             }
 
@@ -138,7 +138,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             }
 
             case "High": {
-                CoordinateConverter.getInstance(getContext()).setSpeed(HIGH);
+                CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
                 break;
             }
         }

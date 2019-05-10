@@ -23,9 +23,10 @@
     <string name="start_draw_button">START VEHICLE</string>
     <string name="stop_vehicle_button">Stop Vehicle</string>
     <string name="clear_draw_button">Clear</string>
-    <string name="speed_low">Slow</string>
+
+    <string name="speed_slow">Slow</string>
     <string name="speed_med">Medium</string>
-    <string name="speed_high">Fast</string>
+    <string name="speed_fast">Fast</string>
     <string name="google_maps_button">Maps-route</string>
 
     <!--Images-->

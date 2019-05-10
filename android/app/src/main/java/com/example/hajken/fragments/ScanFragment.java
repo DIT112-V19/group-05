@@ -115,8 +115,8 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
             routesButton.setClickable(true);
             routesButton.setActivated(true);
         } else {
-            routesButton.setClickable(false);
-            routesButton.setClickable(false);
+            routesButton.setClickable(true);
+            routesButton.setClickable(true);
         }
     }
 

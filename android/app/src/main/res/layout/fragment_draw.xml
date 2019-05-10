@@ -92,21 +92,24 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="@string/speed_low" />
+            android:text="@string/speed_slow"
+            android:textAllCaps="true"/>
 
         <RadioButton
             android:id="@+id/speed_med"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/speed_med" />
+            android:text="@string/speed_med"
+            android:textAllCaps="true"/>
 
         <RadioButton
-            android:id="@+id/speed_high"
+            android:id="@+id/speed_fast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/speed_high" />
+            android:text="@string/speed_fast"
+            android:textAllCaps="true"/>
 
     </RadioGroup>
 
