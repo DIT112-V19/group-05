@@ -3,17 +3,19 @@
     android:shape="rectangle">
 
     <!-- view background color -->
-    <shape>
-        <solid
-            android:color="@color/darkBackground">
-        </solid>
-        <stroke
-            android:color="@color/button_corners"
-            android:width="2dp">
-        </stroke>
-        <corners
-            android:radius="150dp">
-        </corners>
-    </shape>
+    <item>
+        <shape>
+            <solid
+                android:color="@color/darkBackground">
+            </solid>
+            <stroke
+                android:color="@color/button_corners"
+                android:width="2dp">
+            </stroke>
+            <corners
+                android:radius="150dp">
+            </corners>
+        </shape>
+    </item>
 
 </selector>
