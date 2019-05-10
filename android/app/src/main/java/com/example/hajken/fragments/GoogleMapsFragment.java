@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.fragments;
 
 
 import android.content.Context;
@@ -16,8 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+<<<<<<< HEAD:android/app/src/main/java/com/example/hajken/GoogleMapsFragment.java
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+=======
+import com.example.hajken.bluetooth.BluetoothConnection;
+import com.example.hajken.R;
+>>>>>>> master:android/app/src/main/java/com/example/hajken/fragments/GoogleMapsFragment.java
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -97,9 +102,15 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public void onAttach(Context context){
         super.onAttach(context);
 
+<<<<<<< HEAD:android/app/src/main/java/com/example/hajken/GoogleMapsFragment.java
        // bluetoothConnection = BluetoothConnection.getInstance(getContext());
        // bluetoothConnection.startCar("g!"); //small g to request GPS
        // Log.d(TAG, "Request for GPS-message sent");
+=======
+        //bluetoothConnection = BluetoothConnection.getInstance(getContext());
+        //bluetoothConnection.startCar("g!"); //small g to request GPS
+        Log.d(TAG, "Request for GPS-message sent");
+>>>>>>> master:android/app/src/main/java/com/example/hajken/fragments/GoogleMapsFragment.java
 
         /*
         String GPS = bluetoothConnection.readGPS();

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- button text color when not activated -->
+    <item android:state_activated="false"
+        android:color="@color/button_text_color_non_active" />
+
+    <!-- button text color when active -->
+    <item android:state_activated="true"
+        android:color="@color/button_text_color_active" />
+
+</selector>

@@ -40,16 +40,14 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    //design library for using toolbars
-    implementation 'com.android.support:design:27.1.1'
-
-
     // Google Location and Activity Recognition
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     //Google Maps
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
+    // design libary for circluar images
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 
     // design library for using recyclerview
     implementation 'com.android.support:recyclerview-v7:27.1.1'

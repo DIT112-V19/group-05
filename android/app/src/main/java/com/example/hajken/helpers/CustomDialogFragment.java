@@ -1,4 +1,4 @@
-package com.example.hajken;
+package com.example.hajken.helpers;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.hajken.R;
 
 //DialogFragment is similar to Fragment but it is shrunked
 public class CustomDialogFragment extends DialogFragment {
