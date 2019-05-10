@@ -1,13 +1,14 @@
-package com.example.hajken;
+package com.example.hajken.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Build;
 import android.util.Log;
+
+import com.example.hajken.MainActivity;
+import com.example.hajken.fragments.ScanFragment;
+import com.example.hajken.helpers.ListOfDevices;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class Bluetooth {
     private BluetoothConnection mBluetoothConnection;
 
 
-    protected Bluetooth(Context context){
+    public Bluetooth(Context context){
         context = context;
        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -140,7 +141,7 @@ public class Bluetooth {
         this.mBluetoothDevice = mBluetoothDevice;
     }
 
-    protected BluetoothAdapter getmBluetoothAdapter() {
+    public BluetoothAdapter getmBluetoothAdapter() {
         return mBluetoothAdapter;
     }
 

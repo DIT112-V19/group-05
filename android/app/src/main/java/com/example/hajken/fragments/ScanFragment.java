@@ -1,6 +1,5 @@
-package com.example.hajken;
+package com.example.hajken.fragments;
 
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,9 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.hajken.bluetooth.Bluetooth;
+import com.example.hajken.bluetooth.BluetoothConnection;
+import com.example.hajken.helpers.ListOfDevices;
+import com.example.hajken.MainActivity;
+import com.example.hajken.R;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -33,13 +37,11 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
     //buttons and entities in collFragment
     private Button scanButton, pairButton, unpairButton, routesButton;
     private ListView mListView;
-    Bluetooth mBluetooth = Bluetooth.getInstance();
     ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
     ListOfDevices mListAdapter;
     BluetoothDevice mPairedBluetoothDevice;
     BluetoothConnection mBluetoothConnection;
     private final static UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-
 
     //onCreate is called before onCreateView
     @Override
@@ -52,17 +54,22 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_scan,container,false);
 
-        //Creates the buttons, listOfXCoordinates and image of the collFragment
+        //Creates the buttons and listview of fragment
         scanButton = view.findViewById(R.id.scan_button);
-        pairButton = view.findViewById(R.id.pair_button);
         unpairButton = view.findViewById(R.id.unpair_button);
         routesButton = view.findViewById(R.id.routes_button);
         mListView = view.findViewById(R.id.device_list);
 
         //Enables functions to buttons
-        routesButton.setOnClickListener(this);
         scanButton.setOnClickListener(this);
+        routesButton.setOnClickListener(this);
         unpairButton.setOnClickListener(this);
+
+        //Changes states of buttons depending on current bluetooth connection
+        unPairButtonState();
+        routesButtonState();
+
+        //Enables connect possibilities of bluetooth devices and displays devices
         mListAdapter = new ListOfDevices(getContext(), R.layout.listview_item, mBluetoothdevices);
         mListView.setAdapter(mListAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -76,16 +83,41 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
                 //the bond can only be created if the API are correct
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
                     mBluetoothdevices.get(i).createBond();
-                     mPairedBluetoothDevice = mBluetoothdevices.get(i);
+                    mPairedBluetoothDevice = mBluetoothdevices.get(i);
                     mBluetoothConnection = BluetoothConnection.getInstance(getContext());
                     mBluetoothConnection.startClient(mBluetoothdevices.get(i), MY_UUID_INSECURE );
                     Log.i(TAG, " connected to " + deviceName);
 
+                    //changes the states of the button when the connection is completed (correct location?)
+                    unPairButtonState();
+                    routesButtonState();
 
                 }
             }});
 
         return view;
+    }
+
+    public void unPairButtonState(){
+
+        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+            unpairButton.setClickable(true);
+            unpairButton.setActivated(true);
+        } else {
+            unpairButton.setClickable(false);
+            unpairButton.setClickable(false);
+        }
+    }
+
+    public void routesButtonState(){
+
+        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+            routesButton.setClickable(true);
+            routesButton.setActivated(true);
+        } else {
+            routesButton.setClickable(false);
+            routesButton.setClickable(false);
+        }
     }
 
     //onAttach is called before onCreate so that we instantiate the interface before using it
@@ -104,17 +136,14 @@ public class ScanFragment extends Fragment implements View.OnClickListener{
                 mBluetoothdevices.clear();
                 Bluetooth.getInstance().enableBluetooth();
                 discover();
+                unPairButtonState();
+                routesButtonState();
                 Toast.makeText(getActivity(), "Scanning...", Toast.LENGTH_LONG).show();
                 break;
             }
-            case R.id.pair_button:{
-
-                break;
-            }
             case R.id.unpair_button:{
-                BluetoothConnection.getInstance(getContext()).unPair(mPairedBluetoothDevice);
-                Toast.makeText(getActivity(), "Closed connection...", Toast.LENGTH_LONG).show();
-
+                    BluetoothConnection.getInstance(getContext()).unPair(mPairedBluetoothDevice);
+                    Toast.makeText(getActivity(), "Closed connection...", Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.routes_button:{

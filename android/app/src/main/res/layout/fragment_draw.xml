@@ -6,7 +6,7 @@
     android:background="@color/darkBackground"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.hajken.DrawFragment">
+    tools:context="com.example.hajken.fragments.DrawFragment">
 
 
     <Button
@@ -21,9 +21,10 @@
         android:text="START CAR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/clear_draw_button"
+        app:layout_constraintHorizontal_bias="0.553"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.917" />
+        app:layout_constraintTop_toBottomOf="@+id/canvasView"
+        app:layout_constraintVertical_bias="0.791" />
 
     <Button
         android:id="@+id/clear_draw_button"
@@ -36,10 +37,10 @@
         android:text="CLEAR"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.917" />
+        app:layout_constraintTop_toBottomOf="@+id/canvasView"
+        app:layout_constraintVertical_bias="0.796" />
 
-    <com.example.hajken.CanvasView
+    <com.example.hajken.helpers.CanvasView
         android:id="@+id/canvasView"
         android:layout_width="300dp"
         android:layout_height="300dp"
@@ -69,5 +70,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="@color/deviceNameColour"/>
+
+    <RadioGroup
+        android:id="@+id/radiogroup2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/canvasView"
+        app:layout_constraintVertical_bias="0.013">
+
+        <RadioButton
+            android:id="@+id/speed_low"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/speed_low" />
+
+        <RadioButton
+            android:id="@+id/speed_med"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_med" />
+
+        <RadioButton
+            android:id="@+id/speed_high"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/speed_high" />
+
+    </RadioGroup>
 
 </android.support.constraint.ConstraintLayout>

@@ -1,20 +1,18 @@
-package com.example.hajken;
+package com.example.hajken.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
-
+import com.example.hajken.MainActivity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Set;
 import java.util.UUID;
 
 public class BluetoothConnection {
