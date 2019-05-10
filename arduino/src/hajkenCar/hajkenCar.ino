@@ -109,22 +109,11 @@ void loop() {
   String input = Serial2.readStringUntil('!');
   //input = "<l,12,v,3,r,3,f,100,t,90,f,100,t,-90>"; //Test input
   Serial.print(input);// Checking input string in serial monitor
-<<<<<<< HEAD
   //stringToArray(input);
 
 
 
-  if(input.equals("g")){
-    GPS == true;
-    Serial.print("Got into setting GPS to True");
-  }
-  
-  while(true){
-  gpsFunction();
-  }
-=======
-  stringToArray(input);
->>>>>>> master
+
 
   while (true) {
 
@@ -385,7 +374,7 @@ void obstacleAvoidance() {
   }
 }
 
-void gpsFunction() {
+void gpsFunction2() {
 
   
   while (ss.available() > 0){

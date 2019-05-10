@@ -1,8 +1,5 @@
 <resources>
 
-    //This is the API-key for our
-    <string name="google_map_api_key">AIzaSyAg1zYybWjqZFlUrGVWZcg15JXqnvjbsW0</string>
-
     <!--General-->
     <string name="app_name">SurveillanceRoute</string>
     <string name="start_fragment">start fragment</string>

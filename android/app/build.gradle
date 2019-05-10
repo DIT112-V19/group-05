@@ -1,6 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.hajken"
@@ -9,17 +15,16 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
-        //manifestPlaceholders = [ facebookAppId:"someId..."]
+
     }
     buildTypes {
         debug {
-         //   resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
+
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-           // resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
+
         }
     }
 
@@ -43,8 +48,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     //Google Maps
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
-
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
 
     // design library for using recyclerview
@@ -52,5 +56,10 @@ dependencies {
 
     // Cardview
     implementation 'com.android.support:cardview-v7:27.1.1'
+
+    //Google Directions API
+    //Using version 0.2.11 due to problems with later versions
+    implementation 'com.google.maps:google-maps-services:0.2.11'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
 
 }
