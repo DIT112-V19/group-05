@@ -6,7 +6,7 @@
 //**********
 //ultraSonicSensor
 float carDistanceToObstacle; //actual distance to next obstacle, in cm
-float stopDistanceToObstacle = 5; //distance that triggers to stop, in cm
+float stopDistanceToObstacle = 10; //distance that triggers to stop, in cm
 
 //ultraSonicSensor Pin connection
 const int USS1_TRIGGER_PIN = 6; //Trigger Pin
@@ -24,7 +24,7 @@ const int gyroOffset = 11;
 //distanceCar
 //**********
 float speed = 50;
-int turningSpeed = 35;
+int turningSpeed = 50;
 int stopSpeed = 0;
 boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
 boolean stopFromDriving; //boolean to stop car
@@ -40,7 +40,7 @@ int rightMotorSpeedPin = 11;
 const unsigned short ODOMETER1_PIN = 2;
 const unsigned long PULSES_PER_METER_1 = 184;
 const unsigned short ODOMETER2_PIN = 3;
-const unsigned long PULSES_PER_METER_2 = 295;
+const unsigned long PULSES_PER_METER_2 = 258;
 
 //*create cars' motor's object*
 BrushedMotor leftMotor(leftMotorForwardPin, leftMotorBackwardPin, leftMotorSpeedPin);
@@ -96,7 +96,7 @@ void setup() {
   odometer2.attach(ODOMETER2_PIN, []() {
     odometer2.update();
   });
-
+  
   while (!Serial2.available()) {
     //Do nothing until Serial2 receives something
   }
@@ -113,14 +113,16 @@ void setup() {
 void loop() {
 
   String input = Serial2.readStringUntil('!');
-  //input = "<l,12,v,3,r,3,f,100,t,90,f,100,t,-90>"; //Test input
+
+  //input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
+  //input = "<l,18,v,1,r,0,f,50,t,90,f,50,t,90,f,50,t,90,f,50,t,90>"; //square
+
   Serial.print(input);// Checking input string in serial monitor
-  //stringToArray(input);
+  stringToArray(input);
 
 
-
-  while (true) {
-
+  while (!Serial2.available()) {
+  //Waiting for new command
   }
 
 }
@@ -191,14 +193,10 @@ void commands(String commands[], int arraySize) {
   if (commands[1].toInt() == 1) {
     speed = 50;
   } else if (commands[1].toInt() == 2) {
-    speed = 60;
-  } else if (commands[1].toInt() == 3) {
     speed = 70;
-  } else if (commands[1].toInt() == 4) {
-    speed = 80;
-  } else if (commands[1].toInt() == 5) {
+  } else if (commands[1].toInt() == 3) {
     speed = 90;
-  }
+  } 
 
   int k = 0;
   do {
@@ -259,13 +257,17 @@ void forward(int distance) {
 
   odometer1.reset(); //resets the car's driven distance
   odometer2.reset();
+
+  int initialHeading = car.getHeading(); // get heading to drive in straight line
+
   car.setSpeed(speed);
   car.update();
 
   while (car.getDistance() <= distance) {
     car.update();
     obstacleAvoidance();
-    // checkForStop();
+    directionCorrection(initialHeading);
+    checkForStop();
   }
   stop();
 }
@@ -277,7 +279,15 @@ void rotate(int angleToTurn) {
     return; // Dont do anything if angle to turn is 0
   }
 
-  angleToTurn %= 360;
+  //correction of overturn
+  /*if(angleToTurn > 180){
+    angleToTurn = angleToTurn * 0.97;
+    }
+  else{
+    angleToTurn = angleToTurn * 0.94;
+  }
+  */
+    angleToTurn %= 360;
 
   //Setting rotation
   if (angleToTurn > 0) {
@@ -311,6 +321,37 @@ void stop() {
   Serial2.write("Car stops\n ");
   car.setSpeed(stopSpeed);
   car.update();
+}
+
+
+//**CORRECTION TO DRIVE IN STRAGIHT LINE**
+
+void directionCorrection(int initialHeading) {
+
+  car.update();
+  
+  int currentHeading = car.getHeading();
+  int headingOffset = (initialHeading - currentHeading);
+  headingOffset = mod(headingOffset, 360); 
+  
+  Serial2.print("Current heading: ");
+  Serial2.println(currentHeading);
+
+  Serial2.print("Initial Heading: ");
+  Serial2.println(initialHeading);
+  
+  Serial2.print("Heading offset: ");
+  Serial2.println(headingOffset);
+
+  if (headingOffset == 0) {
+    car.overrideMotorSpeed(speed, speed);
+  } else if (headingOffset > 180) {
+    Serial2.println("Correcting to the LEFT");
+    car.overrideMotorSpeed((speed - 7), (speed + 7));
+  } else if (headingOffset < 180) {
+    Serial2.println("Correcting to the RIGHT");
+    car.overrideMotorSpeed((speed + 7), (speed - 7));
+  }
 }
 
 /*
@@ -364,19 +405,41 @@ void checkForStop() {
     Serial.read();
   }
   char inputToStop;  //input variable
-  while (true)
-  {
+
+  if (Serial2.available()) {
+    inputToStop = Serial2.read();
+    if (inputToStop == 's') {
+      stop();
+      checkForStart();
+    }
+  }
+}
+
+void checkForStart() {
+  while (Serial.available() > 0) { // empties input buffer
+    Serial.read();
+  }
+  char inputToStart;  //input variable
+  while (true) {
     if (Serial2.available()) {
-      inputToStop = Serial2.read();
-      if (inputToStop == 's') {
-        stop();
-        stopFromDriving = true;
+      inputToStart = Serial2.read();
+      if (inputToStart == 'c') {
+        car.setSpeed(speed);
         return;
       }
     }
   }
 }
 
+/*
+ *********************************************
+     UTILITY
+ *********************************************
+**/
+
+int mod( int x, int y ){
+   return x<0 ? ((x+1)%y)+y-1 : x%y;
+}
 
 /*
  *********************************************
@@ -400,23 +463,36 @@ void obstacleAvoidance() {
   }
 }
 
-void gpsFunction2() {
 
-  
-  while (ss.available() > 0){
- 
-  gps.encode(ss.read());
-  
-  if (gps.location.isUpdated()){
-  lat = gps.location.lat();
-  lng = gps.location.lng();
 
-  latitude = String(lat,6);
-  longitude = String(lng, 6);
-
-  Serial2.println(latitude + "*" + longitude);
-  //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
-
+void gpsLoop(String input){
+  if (input.equals("g")) {
+    GPS == true;
+    Serial.print("Got into setting GPS to True");
   }
+
+  while (true) {
+    gpsFunction();
   }
 }
+
+void gpsFunction() {
+
+  while (ss.available() > 0) {
+
+    gps.encode(ss.read());
+
+    if (gps.location.isUpdated()) {
+      lat = gps.location.lat();
+      lng = gps.location.lng();
+
+      latitude = String(lat, 6);
+      longitude = String(lng, 6);
+
+     Serial2.println(latitude + "*" + longitude);
+      //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
+
+    }
+  }
+}
+

@@ -46,9 +46,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private final String squareRouteData = "<F*30*R*90*F*30*R*90*F*30*R*90*F*30*R*90>";
     private String input;
 
-    private final int LOW = 1;
+    private final int SLOW = 1;
     private final int MED = 2;
-    private final int HIGH = 3;
+    private final int FAST = 3;
 
     //Changes the input to users choice
     public void setInput(String input) {
@@ -172,8 +172,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         radioButton = view.findViewById(radioId);
 
         switch (radioButton.getText().toString()){
-            case "Low" : {
-                CoordinateConverter.getInstance(getContext()).setSpeed(LOW);
+            case "Slow" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(SLOW);
                 break;
             }
 
@@ -182,8 +182,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 break;
             }
 
-            case "High" : {
-                CoordinateConverter.getInstance(getContext()).setSpeed(HIGH);
+            case "Fast" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
                 break;
             }
         }
