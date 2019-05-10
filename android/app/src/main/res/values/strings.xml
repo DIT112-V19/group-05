@@ -4,14 +4,13 @@
     <string name="google_map_api_key">AIzaSyAg1zYybWjqZFlUrGVWZcg15JXqnvjbsW0</string>
 
     <!--General-->
-    <string name="app_name">SurveillanceRoute</string>
+    <string name="app_name">RouteDesign</string>
     <string name="start_fragment">start fragment</string>
     <string name="scan_fragment">scan fragment</string>
     <string name="gateway_fragment">gateway fragment</string>
     <string name="collection_fragment">collection fragment</string>
     <string name="draw_fragment">draw fragment</string>
     <string name="googlemaps_fragment">googlemaps fragment</string>
-
 
     <!--Buttons-->
     <string name="find_vehicle_button">connect to vehicle</string>
@@ -21,9 +20,10 @@
     <string name="routes_button">Routes</string>
     <string name="draw_button">Design route</string>
     <string name="collection_button">Route collection</string>
-    <string name="start_draw_button">StartDraw</string>
+    <string name="start_draw_button">START VEHICLE</string>
     <string name="stop_vehicle_button">Stop Vehicle</string>
     <string name="clear_draw_button">Clear</string>
+
     <string name="speed_slow">Slow</string>
     <string name="speed_med">Medium</string>
     <string name="speed_fast">Fast</string>
@@ -35,13 +35,7 @@
     <string name="circle__symbol_description">Circle</string>
     <string name="square_symbol_description">Square</string>
 
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <!--Random Strings-->
     <string name="square">Square</string>
-
-
 
 </resources>

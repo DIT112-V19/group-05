@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.R;
+import com.example.hajken.helpers.CoordinateConverter;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;

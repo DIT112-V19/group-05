@@ -14,15 +14,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CanvasView;
 import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.R;
-
 import java.util.ArrayList;
 
 public class DrawFragment extends Fragment implements View.OnClickListener {
@@ -35,12 +35,13 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
     private InterfaceMainActivity interfaceMainActivity;
 
     private Button startCarButton;
-    private Button clearButton;
     private CanvasView canvasView;
     private TextView textView;
     private String instructions;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
+    private TextView amountOfLoops;
+    private SeekBar seekBar;
 
     //occurs after onAttach
     @Override
@@ -56,9 +57,10 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
 
         //Creates the buttons and canvasView
         startCarButton = view.findViewById(R.id.start_car_button);
-        clearButton = view.findViewById(R.id.clear_draw_button);
         canvasView = view.findViewById(R.id.canvasView);
         textView = view.findViewById(R.id.device_drawFragment);
+        amountOfLoops = view.findViewById(R.id.amount_of_loops);
+        seekBar = view.findViewById(R.id.seekbar);
 
         //Speed changing
         radioGroup = view.findViewById(R.id.radiogroup2);
@@ -75,11 +77,14 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+
+
         if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
             textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
         } else {
             textView.setText("Connected Device: None");
         }
+
 
         canvasView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -92,8 +97,27 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        seekBar.setMax(10);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
+                amountOfLoops.setText(Integer.toString(progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         startCarButton.setOnClickListener(this);
-        clearButton.setOnClickListener(this);
 
         return view;
     }
@@ -144,7 +168,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
                     Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
                     ArrayList<PointF> validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(canvasView.getListOfCoordinates(), 65.0);
                     Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
-                    instructions = CoordinateConverter.getInstance(getContext()).returnString(validPoints);
+                    instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
                     Log.d(TAG, "Instruction coordinates: " + instructions.toString());
                     BluetoothConnection.getInstance(getContext()).startCar(instructions);
                     break;
@@ -154,10 +178,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener {
                     break;
 
                 }
-            }
-            case R.id.clear_draw_button: {
-                canvasView.clearCanvas();
-
             }
         }
 
