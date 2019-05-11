@@ -4313,7 +4313,7 @@ CONN_05
 <part name="ODOMETER_2" library="SparkFun-Connectors" deviceset="CONN_03" device="" value="Right"/>
 <part name="SERIAL_2" library="SparkFun-Connectors" deviceset="CONN_02" device=""/>
 <part name="READY" library="SparkFun-LED" library_urn="urn:adsk.eagle:library:529" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:39353/1" value="green"/>
-<part name="DRIVING" library="SparkFun-LED" library_urn="urn:adsk.eagle:library:529" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:39353/1" value="blue"/>
+<part name="DRIVING_ON_ROUTE" library="SparkFun-LED" library_urn="urn:adsk.eagle:library:529" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:39353/1" value="blue"/>
 <part name="OBSTACLE" library="SparkFun-LED" library_urn="urn:adsk.eagle:library:529" deviceset="LED" device="5MM" package3d_urn="urn:adsk.eagle:package:39353/1" value="red"/>
 <part name="R1" library="SparkFun-Resistors" deviceset="220OHM" device="-0603-1/10W-1%" value="220"/>
 <part name="R2" library="SparkFun-Resistors" deviceset="220OHM" device="-0603-1/10W-1%" value="220"/>
@@ -4370,7 +4370,7 @@ CONN_05
 <attribute name="NAME" x="242.951" y="99.568" size="1.778" layer="95" font="vector" rot="R90"/>
 <attribute name="VALUE" x="248.285" y="99.568" size="1.778" layer="96" font="vector" rot="R90" align="top-left"/>
 </instance>
-<instance part="DRIVING" gate="G$1" x="256.54" y="104.14" smashed="yes">
+<instance part="DRIVING_ON_ROUTE" gate="G$1" x="256.54" y="104.14" smashed="yes">
 <attribute name="NAME" x="253.111" y="99.568" size="1.778" layer="95" font="vector" rot="R90"/>
 <attribute name="VALUE" x="258.445" y="99.568" size="1.778" layer="96" font="vector" rot="R90" align="top-left"/>
 </instance>
@@ -4613,7 +4613,7 @@ CONN_05
 </net>
 <net name="N$9" class="0">
 <segment>
-<pinref part="DRIVING" gate="G$1" pin="C"/>
+<pinref part="DRIVING_ON_ROUTE" gate="G$1" pin="C"/>
 <pinref part="R2" gate="G$1" pin="2"/>
 <wire x1="256.54" y1="99.06" x2="256.54" y2="93.98" width="0.1524" layer="91"/>
 </segment>
@@ -4637,7 +4637,7 @@ CONN_05
 </net>
 <net name="N$13" class="0">
 <segment>
-<pinref part="DRIVING" gate="G$1" pin="A"/>
+<pinref part="DRIVING_ON_ROUTE" gate="G$1" pin="A"/>
 <wire x1="256.54" y1="106.68" x2="256.54" y2="111.76" width="0.1524" layer="91"/>
 <wire x1="256.54" y1="111.76" x2="238.76" y2="111.76" width="0.1524" layer="91"/>
 <wire x1="238.76" y1="111.76" x2="238.76" y2="83.82" width="0.1524" layer="91"/>
