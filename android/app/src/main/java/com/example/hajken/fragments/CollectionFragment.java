@@ -17,7 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.helpers.ListAdapter;
 import com.example.hajken.helpers.OurData;
 import com.example.hajken.helpers.RecyclerItemClickListener;
@@ -46,9 +46,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private final String squareRouteData = "<F*30*R*90*F*30*R*90*F*30*R*90*F*30*R*90>";
     private String input;
 
-    private final int LOW = 1;
+    private final int SLOW = 1;
     private final int MED = 2;
-    private final int HIGH = 3;
+    private final int FAST = 3;
 
     //Changes the input to users choice
     public void setInput(String input) {
@@ -146,13 +146,11 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                         Log.d(TAG, "position is: "+position);
                         if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
 
-
                             Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
                             ArrayList<PointF> makeToString = ourData.getCoordinates(position);
-                            String instructions = coordinateConverter.returnString(makeToString);
+                            String instructions = coordinateConverter.returnInstructions(makeToString);
                             Log.d(TAG, "Instruction coordinates: " + instructions.toString());
                             BluetoothConnection.getInstance(getContext()).startCar(instructions);
-
 
                         } else {
                             Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
@@ -161,8 +159,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     }
                     @Override
                     public void onLongItemClick(View view, int position) {
-
-                    }
+                                            }
                 }));
         return view;
     }
@@ -172,8 +169,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         radioButton = view.findViewById(radioId);
 
         switch (radioButton.getText().toString()){
-            case "Low" : {
-                CoordinateConverter.getInstance(getContext()).setSpeed(LOW);
+            case "Slow" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(SLOW);
                 break;
             }
 
@@ -182,8 +179,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 break;
             }
 
-            case "High" : {
-                CoordinateConverter.getInstance(getContext()).setSpeed(HIGH);
+            case "Fast" : {
+                CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
                 break;
             }
         }
