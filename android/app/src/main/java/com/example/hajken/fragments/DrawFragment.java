@@ -114,7 +114,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
-                amountOfLoops.setText(Integer.toString(progress));
+                amountOfLoops.setText(amountOfLoops.getText()+" "+Integer.toString(progress));
             }
 
             @Override
