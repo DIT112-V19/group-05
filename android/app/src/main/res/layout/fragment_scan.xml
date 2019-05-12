@@ -65,14 +65,14 @@
 
     <ListView
         android:id="@+id/device_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:background="@drawable/device_list"
-        android:textColor="@color/deviceNameColour"
+        android:textColor="@color/device_name_color"
         app:layout_constraintBottom_toTopOf="@+id/scan_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
