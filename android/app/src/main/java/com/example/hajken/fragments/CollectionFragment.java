@@ -18,7 +18,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.hajken.helpers.CoordinateConverter;
+import com.example.hajken.helpers.CoordinatesHolder;
+import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.ListAdapter;
+import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.helpers.OurData;
 import com.example.hajken.helpers.RecyclerItemClickListener;
 import com.example.hajken.bluetooth.BluetoothConnection;
@@ -38,7 +41,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private TextView textView;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    private OurData ourData = new OurData();
+    private OurData ourData = OurData.getInstance(getContext());
     private CoordinateConverter coordinateConverter;
 
     //Data for the vehicle routes
@@ -128,14 +131,38 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-        final ListAdapter listAdapter = new ListAdapter();
+
+        final ListAdapter listAdapter = new ListAdapter(CoordinatesHolder.COORDINATES_LIST_ITEMS, new ListAdapter.onItemSelectedListener() {
+            @Override
+            public void onItemSelected(CoordinatesListItem coordinatesListItem) {
+
+                if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+                    Log.i(TAG, "onItemSelected: bitmap: " + coordinatesListItem.getmBitmap() );
+
+                    ArrayList<PointF> validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(coordinatesListItem.getListOfCoordinates(), 65.0);
+                    Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
+                    String instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
+                    Log.d(TAG, "Instruction coordinates: " + instructions.toString());
+                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+
+
+
+                } else {
+
+                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
+
+                }
+
+
+            }
+        });
         recyclerView.setAdapter(listAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
 
 
-        recyclerView.addOnItemTouchListener(
+      /*  recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
@@ -156,7 +183,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void onLongItemClick(View view, int position) {
                                             }
-                }));
+                }));*/
         return view;
     }
 
@@ -212,14 +239,18 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onConnect() {
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
 
-                textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-            }
-        });
+                    textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
+
+                }
+            });
+        }
+
 
     }
 
