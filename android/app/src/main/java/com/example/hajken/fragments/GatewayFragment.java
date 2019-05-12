@@ -21,7 +21,6 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     private InterfaceMainActivity interfaceMainActivity;
 
     private Button collectionRouteButton, designRouteButton, mapsRouteButton;
-    private TextView textView;
 
     //occurs after onAttach
     @Override
@@ -41,13 +40,6 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
         designRouteButton = view.findViewById(R.id.draw_button);
         mapsRouteButton = view.findViewById(R.id.GoogleMapsButton);
 
-        textView = view.findViewById(R.id.device_gateway_fragment);
-
-        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
-            textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
-        } else {
-            textView.setText("Connected Device: None");
-        }
 
         //Enables functions to buttons
         collectionRouteButton.setOnClickListener(this);

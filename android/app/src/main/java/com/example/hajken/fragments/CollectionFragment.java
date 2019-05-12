@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.hajken.helpers.CoordinateConverter;
@@ -32,14 +33,14 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
     private static final String TAG = "CollectionFragment";
     private InterfaceMainActivity interfaceMainActivity;
-    private Button stopVehicleButton;
     private RecyclerView recyclerView;
     private boolean vehicleOn = false;
-    private TextView textView;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
     private OurData ourData = new OurData();
     private CoordinateConverter coordinateConverter;
+    private SeekBar seekBar;
+    private TextView amountOfLoops;
 
     //Data for the vehicle routes
     private final String circleRouteData = ""; // to be fixed
@@ -107,11 +108,10 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         //Inflates the collFragment
         final View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
-        //Creates the buttons, listOfXCoordinates and image of the collFragment
-        textView = view.findViewById(R.id.device_collection_fragment);
-
         //Speed changing
         radioGroup = view.findViewById(R.id.radio_group);
+        amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
+        seekBar = view.findViewById(R.id.seekbar);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -125,18 +125,35 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             }
         });
 
+        //Set amount of repetitions beginning at zero
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+
+        seekBar.setMax(10);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
+                amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(progress)));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         final ListAdapter listAdapter = new ListAdapter();
         recyclerView.setAdapter(listAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
-        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
-            textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
-        } else {
-            textView.setText("Connected Device: None");
-        }
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {

@@ -37,7 +37,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
     private Button startCarButton;
     private CanvasView canvasView;
-    private TextView textView;
     private String instructions;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
@@ -46,9 +45,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
 
     private boolean vehicleOn = false;
-
-
-
     private TextView amountOfLoops;
     private SeekBar seekBar;
 
@@ -69,7 +65,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         //Creates the buttons and canvasView
         startCarButton = view.findViewById(R.id.start_car_button);
         canvasView = view.findViewById(R.id.canvasView);
-        textView = view.findViewById(R.id.device_draw_fragment);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
 
@@ -90,15 +85,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                 }
             }
         });
-
-
-
-        if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
-            textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
-        } else {
-            textView.setText("Connected Device: None");
-        }
-
 
         canvasView.setOnTouchListener(new View.OnTouchListener() {
             @Override
