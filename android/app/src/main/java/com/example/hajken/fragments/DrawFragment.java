@@ -41,14 +41,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private String instructions;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    private String input;
     private CustomDialogFragment mCustomDialogFragment;
-
-
     private boolean vehicleOn = false;
-
-
-
     private TextView amountOfLoops;
     private SeekBar seekBar;
 

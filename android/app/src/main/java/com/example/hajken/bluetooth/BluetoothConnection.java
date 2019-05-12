@@ -60,7 +60,6 @@ public class BluetoothConnection {
     }
 
 
-
     private class AcceptThread extends Thread {
 
         private final BluetoothServerSocket mServerSocket;

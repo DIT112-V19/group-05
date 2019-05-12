@@ -27,7 +27,7 @@ import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 import java.util.ArrayList;
 
-public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
+public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
 
 
     private static final String TAG = "CollectionFragment";
@@ -98,6 +98,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BluetoothConnection.getInstance(getContext()).registerListener(this);
     }
 
     //occurs after onCreate
@@ -133,11 +134,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
-            textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
-        } else {
-            textView.setText("Connected Device: None");
-        }
+
 
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
@@ -211,5 +208,38 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             }
 
         }
+    }
+
+    @Override
+    public void onConnect() {
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onUnpair() {
+
+    }
+
+    @Override
+    public void onNotConnected() {
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText("Connected Device: None");
+
+            }
+        });
+
+
     }
 }
