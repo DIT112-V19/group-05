@@ -28,6 +28,8 @@ import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.R;
 import java.util.ArrayList;
 
+import es.dmoral.toasty.Toasty;
+
 public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface{
 
     private final int SLOW = 1;
@@ -185,7 +187,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                     break;
 
                 } else {
-                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
+                    Toasty.error(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
                     break;
 
                 }

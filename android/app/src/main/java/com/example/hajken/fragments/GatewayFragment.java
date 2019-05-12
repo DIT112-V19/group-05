@@ -9,9 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
-import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 
@@ -69,7 +67,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
             //This is the events that are associated with the buttons
 
             case R.id.GoogleMapsButton: {
-                interfaceMainActivity.inflateFragment(getString(R.string.googlemaps_fragment));
+                interfaceMainActivity.inflateFragment(getString(R.string.google_maps_fragment));
                 break;
             }
 

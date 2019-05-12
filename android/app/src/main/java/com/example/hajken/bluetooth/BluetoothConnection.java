@@ -305,7 +305,7 @@ public class BluetoothConnection {
                     Method m = device.getClass()
                             .getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
-                    mListener.onUnpair();
+                    mListener.onUnPair();
                 } catch (Exception e) {
                     Log.e(TAG, "Removing has been failed." + e.getMessage());
                 }
@@ -372,7 +372,7 @@ public class BluetoothConnection {
         void onConnect();
 
 
-        void onUnpair();
+        void onUnPair();
 
         void onNotConnected();
 

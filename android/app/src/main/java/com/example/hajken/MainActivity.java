@@ -6,14 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.example.hajken.fragments.CollectionFragment;
 import com.example.hajken.fragments.DrawFragment;
 import com.example.hajken.fragments.GatewayFragment;
 import com.example.hajken.fragments.GoogleMapsFragment;
 import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.fragments.StartFragment;
-
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements InterfaceMainActivity {
@@ -72,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
             CollectionFragment fragment = new CollectionFragment();
             doFragmentTransaction(fragment,fragmentTag,true); //addToBackStack(true) makes it possible to go back without closing the app
 
-        } else if (fragmentTag.equals(getString(R.string.googlemaps_fragment))){
+        } else if (fragmentTag.equals(getString(R.string.google_maps_fragment))){
 
             GoogleMapsFragment fragment = new GoogleMapsFragment();
             doFragmentTransaction(fragment,fragmentTag,true);

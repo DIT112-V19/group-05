@@ -184,7 +184,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         recyclerView.setLayoutManager(layoutManager);
 
       /*  recyclerView.addOnItemTouchListener(
->>>>>>> features/control-car
                 new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
@@ -277,7 +276,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onUnpair() {
+    public void onUnPair() {
 
     }
 
