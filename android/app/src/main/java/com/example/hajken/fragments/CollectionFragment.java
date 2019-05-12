@@ -19,7 +19,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.hajken.helpers.CoordinateConverter;
+import com.example.hajken.helpers.CoordinatesHolder;
+import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.ListAdapter;
+import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.helpers.OurData;
 import com.example.hajken.helpers.RecyclerItemClickListener;
 import com.example.hajken.bluetooth.BluetoothConnection;
@@ -28,7 +31,7 @@ import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 import java.util.ArrayList;
 
-public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
+public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
 
 
     private static final String TAG = "CollectionFragment";
@@ -37,10 +40,11 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private boolean vehicleOn = false;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    private OurData ourData = new OurData();
+    private OurData ourData = OurData.getInstance(getContext());
     private CoordinateConverter coordinateConverter;
     private SeekBar seekBar;
     private TextView amountOfLoops;
+    private TextView textView;
 
     //Data for the vehicle routes
     private final String circleRouteData = ""; // to be fixed
@@ -99,6 +103,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BluetoothConnection.getInstance(getContext()).registerListener(this);
     }
 
     //occurs after onCreate
@@ -150,12 +155,36 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             }
         });
 
-        final ListAdapter listAdapter = new ListAdapter();
+        final ListAdapter listAdapter = new ListAdapter(CoordinatesHolder.COORDINATES_LIST_ITEMS, new ListAdapter.onItemSelectedListener() {
+            @Override
+            public void onItemSelected(CoordinatesListItem coordinatesListItem) {
+
+                if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+                    Log.i(TAG, "onItemSelected: bitmap: " + coordinatesListItem.getmBitmap() );
+
+                    ArrayList<PointF> validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(coordinatesListItem.getListOfCoordinates(), 65.0);
+                    Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
+                    String instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
+                    Log.d(TAG, "Instruction coordinates: " + instructions.toString());
+                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+
+
+
+                } else {
+
+                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
+
+                }
+
+
+            }
+        });
         recyclerView.setAdapter(listAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        recyclerView.addOnItemTouchListener(
+      /*  recyclerView.addOnItemTouchListener(
+>>>>>>> features/control-car
                 new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
@@ -176,7 +205,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void onLongItemClick(View view, int position) {
                                             }
-                }));
+                }));*/
         return view;
     }
 
@@ -227,5 +256,42 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             }
 
         }
+    }
+
+    @Override
+    public void onConnect() {
+
+
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
+
+                }
+            });
+        }
+
+
+    }
+
+    @Override
+    public void onUnpair() {
+
+    }
+
+    @Override
+    public void onNotConnected() {
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText("Connected Device: None");
+
+            }
+        });
+
+
     }
 }

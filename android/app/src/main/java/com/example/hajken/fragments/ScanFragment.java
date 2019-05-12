@@ -128,7 +128,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
             }
             case R.id.unpair_button:{
                     BluetoothConnection.getInstance(getContext()).unPair(mPairedBluetoothDevice);
-                    Toast.makeText(getActivity(), "Closed connection...", Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.routes_button:{
@@ -178,9 +177,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
                 final int state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR);
 
                 if (state == BluetoothDevice.BOND_BONDED) {
-                    Toast.makeText(context, "Paired", Toast.LENGTH_LONG);
+                    Toast.makeText(context, "Paired", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(context, "Not Paired", Toast.LENGTH_LONG);
+                    Toast.makeText(context, "Not Paired", Toast.LENGTH_LONG).show();
                 }
 
             }

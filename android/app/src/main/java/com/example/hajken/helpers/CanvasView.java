@@ -151,8 +151,21 @@ public class CanvasView extends View {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+
         canvas.drawBitmap(mBitmap, 0, 0, mPaint);
+
         canvas.drawPath(mPath, mPaint);
     }
 
+
+
+    public Bitmap getmBitmap() {
+         this.setDrawingCacheEnabled(true);
+         this.buildDrawingCache();
+         Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
+         this.setDrawingCacheEnabled(true);
+
+         return bmp;
+
+    }
 }
