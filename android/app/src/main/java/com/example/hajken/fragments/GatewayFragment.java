@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.hajken.bluetooth.BluetoothConnection;
@@ -42,7 +41,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
         designRouteButton = view.findViewById(R.id.draw_button);
         mapsRouteButton = view.findViewById(R.id.GoogleMapsButton);
 
-        textView = view.findViewById(R.id.device_gatewayFragment);
+        textView = view.findViewById(R.id.device_gateway_fragment);
 
         if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
             textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());

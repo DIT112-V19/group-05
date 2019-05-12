@@ -63,10 +63,10 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         //Creates the buttons
         startCarButton = view.findViewById(R.id.start_car_button);
-        textView = view.findViewById(R.id.device_mapFragment);
+        textView = view.findViewById(R.id.device_map_fragment);
 
         //Speed changing
-        radioGroup = view.findViewById(R.id.radiogroup3);
+        radioGroup = view.findViewById(R.id.radio_group);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
