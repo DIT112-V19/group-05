@@ -69,12 +69,15 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         //Creates the buttons and canvasView
         startCarButton = view.findViewById(R.id.start_car_button);
         canvasView = view.findViewById(R.id.canvasView);
-        textView = view.findViewById(R.id.device_drawFragment);
-        amountOfLoops = view.findViewById(R.id.amount_of_loops);
+        textView = view.findViewById(R.id.device_draw_fragment);
+        amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
 
         //Speed changing
-        radioGroup = view.findViewById(R.id.radiogroup2);
+        radioGroup = view.findViewById(R.id.radio_group);
+
+        //Set amount of repetitions beginning at zero
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -114,7 +117,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
-                amountOfLoops.setText(amountOfLoops.getText()+" "+Integer.toString(progress));
+                amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(progress)));
             }
 
             @Override

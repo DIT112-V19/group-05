@@ -37,7 +37,8 @@
 
     <!--Random Strings-->
     <string name="square">Square</string>
-    <string name="amount_of_repetitions">Amount of repetitions:</string>
+    <string name="amount_of_repetitions">Amount of repetitions: %1$s</string>
+
 
 
 </resources>

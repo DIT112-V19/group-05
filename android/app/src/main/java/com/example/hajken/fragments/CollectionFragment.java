@@ -108,11 +108,10 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         final View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
         //Creates the buttons, listOfXCoordinates and image of the collFragment
-        stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
-        textView = view.findViewById(R.id.device_collectionFragment);
+        textView = view.findViewById(R.id.device_collection_fragment);
 
         //Speed changing
-        radioGroup = view.findViewById(R.id.radiogroup);
+        radioGroup = view.findViewById(R.id.radio_group);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -200,7 +199,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         switch (view.getId()){
 
             //These are the events that are associated with clicking of the buttons
-            case R.id.stop_vehicle_button: {
+            case R.id.start_car_button: {
 
                 dialog.setDialogHeading("Are you sure you want to stop the vehicle?");
                 dialog.setAction("STOP");
