@@ -251,11 +251,13 @@ void reverseCommands(String commands[], int arraySize) {
 //**FORWARD DRIVING**
 
 void forward(int distance) {
+  if(distance == 0){
+    return;
+  }
   Serial2.write("Going forward\n"); //Printing status
   Serial.write("Going forward\n"); //Printing status
 
-  odometer1.reset(); //resets the car's driven distance
-  odometer2.reset();
+  distanceReset();
   boolean obstacleBypassed = false;
   int initialHeading = car.getHeading(); // get heading to drive in straight line
 
@@ -263,7 +265,7 @@ void forward(int distance) {
   car.update();
   while (car.getDistance() <= distance) {
     car.update();
-    distance = distance - obstacleAvoidance();
+    distance = distance - obstacleAvoidance(); //if Obstacle, reduce distance by distance before obstacle plus obstacle length
     directionCorrection(initialHeading);
     checkForStop();
   }
