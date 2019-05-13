@@ -7,6 +7,7 @@
 //ultraSonicSensor
 float carDistanceToObstacle; //actual distance to next obstacle, in cm
 float stopDistanceToObstacle = 10; //distance that triggers to stop, in cm
+float bypassDistanceObstacle = 15; //check distance to obstacle while bypassing
 
 //ultraSonicSensor Pin connection
 const int USS1_TRIGGER_PIN = 6; //Trigger Pin
@@ -96,7 +97,7 @@ void setup() {
   odometer2.attach(ODOMETER2_PIN, []() {
     odometer2.update();
   });
-  
+
   while (!Serial2.available()) {
     //Do nothing until Serial2 receives something
   }
@@ -120,7 +121,7 @@ void loop() {
   stringToArray(input);
 
   while (!Serial2.available()) {
-  //Waiting for new command
+    //Waiting for new command
   }
 
 }
@@ -194,7 +195,7 @@ void commands(String commands[], int arraySize) {
     speed = 70;
   } else if (commands[1].toInt() == 3) {
     speed = 90;
-  } 
+  }
 
   int k = 0;
   do {
@@ -255,15 +256,14 @@ void forward(int distance) {
 
   odometer1.reset(); //resets the car's driven distance
   odometer2.reset();
-
+  boolean obstacleBypassed = false;
   int initialHeading = car.getHeading(); // get heading to drive in straight line
 
   car.setSpeed(speed);
   car.update();
-
   while (car.getDistance() <= distance) {
     car.update();
-    obstacleAvoidance();
+    distance = distance - obstacleAvoidance();
     directionCorrection(initialHeading);
     checkForStop();
   }
@@ -281,11 +281,11 @@ void rotate(int angleToTurn) {
   /*if(angleToTurn > 180){
     angleToTurn = angleToTurn * 0.97;
     }
-  else{
+    else{
     angleToTurn = angleToTurn * 0.94;
-  }
+    }
   */
-    angleToTurn %= 360;
+  angleToTurn %= 360;
 
   //Setting rotation
   if (angleToTurn > 0) {
@@ -327,17 +327,17 @@ void stop() {
 void directionCorrection(int initialHeading) {
 
   car.update();
-  
+
   int currentHeading = car.getHeading();
   int headingOffset = (initialHeading - currentHeading);
-  headingOffset = mod(headingOffset, 360); 
-  
+  headingOffset = mod(headingOffset, 360);
+
   Serial2.print("Current heading: ");
   Serial2.println(currentHeading);
 
   Serial2.print("Initial Heading: ");
   Serial2.println(initialHeading);
-  
+
   Serial2.print("Heading offset: ");
   Serial2.println(headingOffset);
 
@@ -435,9 +435,15 @@ void checkForStart() {
  *********************************************
 **/
 
-int mod( int x, int y ){
-   return x<0 ? ((x+1)%y)+y-1 : x%y;
+int mod( int x, int y ) {
+  return x < 0 ? ((x + 1) % y) + y - 1 : x % y;
 }
+
+void distanceReset(){
+  odometer1.reset(); //resets the car's driven distance
+  odometer2.reset();
+}
+
 
 /*
  *********************************************
@@ -447,21 +453,69 @@ int mod( int x, int y ){
 
 //**STOPS IN FRONT OF OBSTACLE**
 
-void obstacleAvoidance() {
-  if (obstacleAvoidanceOn)
-  { car.update();
-    carDistanceToObstacle = USSensorFront.ping_cm(); // UltraSonicSound Sensor measures (0 = more than 100 cm distance)
-    if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) {
-      Serial2.write("Obstacle detected"); // Sending message to bluetooth
-      stop();
-      while (true) {
-        //Stops car
-      }
-    }
+int obstacleAvoidance() {
+  car.update();
+  carDistanceToObstacle = USSensorFront.ping_cm(); // UltraSonicSound Sensor measures (0 = more than 100 cm distance)
+  if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) {
+    Serial2.write("Obstacle detected"); // Sending message to bluetooth
+    stop();
+    return bypassObstacle();
+  }
+  else {
+    return 0;
   }
 }
 
-void gpsLoop(String input){
+int bypassObstacle() {
+  int widthObstacle;
+  int lengthObstacle;
+  int currentForward = car.getDistance(); //store distance before obstacle
+  
+  //Passing frontside of obstacle
+  rotate(-90);// turn
+  distanceReset();
+  //TODO add direction correction
+  car.setSpeed(speed); //drive
+  car.update();
+  checkingRightSide(); //check if obstacle still in the way
+  widthObstacle = car.getDistance() + 10; //store width of Obstacle
+  forward(10); //drive 10 cm extra to avoid crashing into obstacle
+  
+  //Passing left side of obstacle 
+  rotate(90); //turn
+  distanceReset();
+  car.setSpeed(speed); //drive //TODO direction correction 
+  car.update();
+  checkingRightSide(); //check if obstacle still in the way
+  lengthObstacle = car.getDistance() + 10; //store length of Obstacle
+  forward(10); //drive 10 cm extra to avoid crashing into obstacle
+
+  //Passing backside of obstacle
+  rotate(90); //turn
+  distanceReset(); 
+  forward(widthObstacle); //drive along backside, go stored width of obstacle
+  rotate(-90);
+  distanceReset();
+  return (lengthObstacle + currentForward); //return sum of distance before obstacle plus length of obstacle
+}
+
+//checkingRightSide method
+void checkingRightSide(){
+  int currentDistanceRightSide = USSensorFront.ping_cm(); //TODO should be sensor on right side
+  while (bypassDistanceObstacle >= currentDistanceRightSide && currentDistanceRightSide != 0) {
+    currentDistanceRightSide = USSensorFront.ping_cm(); //TODO should be sensor on right side
+    car.update();
+  }
+}
+
+
+/*
+ *********************************************
+     GPS FUNCTION AVOIDANCE
+ *********************************************
+**/
+
+void gpsLoop(String input) {
   if (input.equals("g")) {
     GPS == true;
     Serial.print("Got into setting GPS to True");
@@ -471,6 +525,8 @@ void gpsLoop(String input){
     gpsFunction();
   }
 }
+
+
 
 void gpsFunction() {
 
