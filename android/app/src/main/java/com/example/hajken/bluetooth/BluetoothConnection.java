@@ -6,8 +6,6 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-import com.example.hajken.MainActivity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,7 +19,7 @@ public class BluetoothConnection {
     private static final String TAG = "BluetoothConnection ";
     private final String APPNAME = "HAJKEN";
     private final static UUID MY_UUID_INSECURE = Bluetooth.getMyUuidInsecure();
-    private final BluetoothAdapter myBluetoothAdapter = Bluetooth.getInstance().getmBluetoothAdapter();
+    private BluetoothAdapter myBluetoothAdapter;
     private Context myContext;
     private AcceptThread myInsecureAcceptThread;
     private boolean isConnected = false;
@@ -33,15 +31,14 @@ public class BluetoothConnection {
     private BluetoothServerSocket mServerSocket;
     private BluetoothSocket mSocket = null;
     private boolean isFinished = false;
-
-
+    private boolean wasUnPaired;
 
     private ConnectedThread myConnectedThread;
     private static BluetoothConnection mInstance = null;
 
     private BluetoothConnection(Context context) {
+        myBluetoothAdapter = Bluetooth.getInstance(context).getmBluetoothAdapter();
         myContext = context;
-        start();
     }
 
     // CLASSIC singleton implementation
@@ -49,8 +46,20 @@ public class BluetoothConnection {
     public static BluetoothConnection getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new BluetoothConnection(context);
+            mInstance.start();
         }
         return mInstance;
+    }
+
+    public void disconnectMode(){
+        mListener.onNotConnected();
+        setWasUnPaired(false);
+        setIsConnected(false);
+    }
+
+    public void connectMode(){
+        setIsConnected(true);
+        mListener.onConnect();
     }
 
     private onBluetoothConnectionListener mListener;
@@ -59,8 +68,14 @@ public class BluetoothConnection {
         mListener = listener;
     }
 
+    public void setWasUnPaired(boolean wasUnPaired) {
+        this.wasUnPaired = wasUnPaired;
+    }
+
 
     private class AcceptThread extends Thread {
+
+
 
         private final BluetoothServerSocket mServerSocket;
 
@@ -200,7 +215,6 @@ public class BluetoothConnection {
             OutputStream tempOutputStream = null;
             Log.d(TAG, " Connected to : " + mBluetoothDevice.getName());
 
-
             try {
                 tempInputStream = mSocket.getInputStream();
                 tempOutputStream = mSocket.getOutputStream();
@@ -237,9 +251,6 @@ public class BluetoothConnection {
 
         //will send data to remote device
 
-
-
-
         public void cancel() {
             try {
                 mSocket.close();
@@ -247,33 +258,14 @@ public class BluetoothConnection {
                 Log.e(TAG, " failed to close socket" + e.getMessage());
             }
         }
-
-
     }
-
-
 
     private void connected(BluetoothSocket socket, final BluetoothDevice device) {
 
         Log.d(TAG, " started connected()");
-
         myConnectedThread = new ConnectedThread(socket);
         myConnectedThread.start();
         Log.d(TAG, "Connected to " + device);
-        if (getIsConnected()) {
-            MainActivity.getThis().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Log.i(TAG, "run: connected to " + device.getName());
-                    Toast.makeText(myContext, "Paired with " + device.getName(), Toast.LENGTH_LONG).show();
-                    isFinished = true;
-                    mListener.onConnect();
-
-
-                }
-            });
-        }
-
     }
 
 
@@ -297,6 +289,10 @@ public class BluetoothConnection {
         }
     }
 
+    public boolean getWasUnPaired(){
+        return wasUnPaired;
+    }
+
 
 
     public void unPair(BluetoothDevice device) {
@@ -305,7 +301,8 @@ public class BluetoothConnection {
                     Method m = device.getClass()
                             .getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
-                    mListener.onUnPair();
+                    setWasUnPaired(true);
+                    mListener.onNotConnected();
                 } catch (Exception e) {
                     Log.e(TAG, "Removing has been failed." + e.getMessage());
                 }
@@ -370,9 +367,6 @@ public class BluetoothConnection {
 
     public interface onBluetoothConnectionListener {
         void onConnect();
-
-
-        void onUnPair();
 
         void onNotConnected();
 

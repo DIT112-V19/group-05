@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -24,7 +23,6 @@ import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.ListAdapter;
 import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.helpers.OurData;
-import com.example.hajken.helpers.RecyclerItemClickListener;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.InterfaceMainActivity;
@@ -54,6 +52,14 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private final int SLOW = 1;
     private final int MED = 2;
     private final int FAST = 3;
+
+    //calls before onCreate, used to instantiate the interface
+    //part of the collFragment to activity communication
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        interfaceMainActivity = (InterfaceMainActivity) getActivity();
+    }
 
     //Changes the input to users choice
     public void setInput(String input) {
@@ -230,14 +236,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    //calls before onCreate, used to instantiate the interface
-    //part of the collFragment to activity communication
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        interfaceMainActivity = (InterfaceMainActivity) getActivity();
-    }
-
     @Override
     public void onClick(View view) {
 
@@ -260,23 +258,16 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onConnect() {
 
-
         if (getActivity() != null) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
 
                     textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
-
                 }
             });
         }
 
-
-    }
-
-    @Override
-    public void onUnPair() {
 
     }
 

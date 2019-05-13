@@ -1,11 +1,18 @@
 package com.example.hajken;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.fragments.CollectionFragment;
 import com.example.hajken.fragments.DrawFragment;
 import com.example.hajken.fragments.GatewayFragment;
@@ -14,7 +21,7 @@ import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.fragments.StartFragment;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements InterfaceMainActivity {
+public class MainActivity extends AppCompatActivity implements InterfaceMainActivity{
 
     private static final String TAG = "MainActivity";
     private static MainActivity mMainActivity;
@@ -23,7 +30,15 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+
         mMainActivity = this;
+
+        this.registerReceiver(mReceiver,filter);
         init(); // when mainActivity starts, it will inflate StartFragment first
     }
 
@@ -78,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     }
 
-
     //Override method to be able to adapt onBackPressed for fragments --- could this be done with just an if statement instead of loop?
     @Override
     public void onBackPressed(){
@@ -93,7 +107,32 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         }
     }
 
-    // hack to get activity passable in different fragments
+    public BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            Log.d(TAG, "onReceive: AAA");
+            
+            if (BluetoothAdapter.getDefaultAdapter() != null) {
+                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+                    Log.d(TAG, "onReceive: BBB");
+                    BluetoothConnection.getInstance(context).connectMode();
+                }
+
+                if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+                    BluetoothConnection.getInstance(context).disconnectMode();
+                }
+
+                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+                    if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_OFF){
+                        BluetoothConnection.getInstance(context).disconnectMode();
+                    }
+                }
+            }
+        }
+    };
+
     public static MainActivity getThis(){
         return mMainActivity;
     }

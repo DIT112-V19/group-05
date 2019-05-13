@@ -5,11 +5,8 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
 import com.example.hajken.MainActivity;
-import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.helpers.ListOfDevices;
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -18,8 +15,6 @@ public class Bluetooth {
     private static final String TAG = "BluetoothClass: ";
     private MainActivity mMainActivity = MainActivity.getThis();
     private final static UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    private ScanFragment mScanFragment;
-
     private BluetoothDevice mBluetoothDevice;
     private BluetoothAdapter mBluetoothAdapter;
     private ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
@@ -27,21 +22,17 @@ public class Bluetooth {
     private ListOfDevices mListAdapter;
     private BluetoothConnection mBluetoothConnection;
 
-
     public Bluetooth(Context context){
         context = context;
-       mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
-    public static Bluetooth getInstance(){
+    public static Bluetooth getInstance(Context context){
 
+        if (mInstance == null){
+            mInstance = new Bluetooth(context);
+        }
         return mInstance;
-    }
-
-    public static void initialize(Context context){
-
-        mInstance = new Bluetooth(context);
     }
 
     public void enableBluetooth(){
@@ -54,8 +45,8 @@ public class Bluetooth {
             Log.d(TAG, " is already enabled");
 
         } else{
-             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            mMainActivity.startActivity( intent );
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            mMainActivity.startActivity(intent);
         }
     }
 

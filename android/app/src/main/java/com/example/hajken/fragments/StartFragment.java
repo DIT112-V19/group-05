@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,6 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     public void onAttach(Context context){
         super.onAttach(context);
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
-
     }
 
     public void onCreate(@Nullable Bundle savedInstanceState){
@@ -52,6 +52,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
             case R.id.find_vehicle_button: {
 
                 //Inflates -> Scan fragment
+                Log.d(TAG, "onClick: ÖÖÖÖ");
                 interfaceMainActivity.inflateFragment(getString(R.string.scan_fragment));
             }
         }
