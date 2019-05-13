@@ -8,7 +8,7 @@
     <string name="collection_fragment">collection fragment</string>
     <string name="draw_fragment">draw fragment</string>
     <string name="googlemaps_fragment">googlemaps fragment</string>
-    
+
     <!--Google APi Key-->
     <string name="api_key_text">No API key found</string>
 
