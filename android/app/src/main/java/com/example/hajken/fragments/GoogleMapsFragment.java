@@ -33,6 +33,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.R;
+import com.example.hajken.helpers.CoordinateConverter;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -112,14 +113,14 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         //Creates the buttons
         startCarButton = view.findViewById(R.id.start_car_button);
-        textView = view.findViewById(R.id.device_mapFragment);
+        textView = view.findViewById(R.id.device_map_fragment);
 
         //TextView for API-key
         mApiKeyField = view.findViewById(R.id.apiKeyText);
         //mApiKeyField.setText("API key: " + BuildConfig.apiKey);
 
         //Speed changing
-        radioGroup = view.findViewById(R.id.radiogroup3);
+        radioGroup = view.findViewById(R.id.radio_group);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override

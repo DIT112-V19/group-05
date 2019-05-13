@@ -17,7 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.helpers.ListAdapter;
 import com.example.hajken.helpers.OurData;
 import com.example.hajken.helpers.RecyclerItemClickListener;
@@ -108,11 +108,10 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         final View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
         //Creates the buttons, listOfXCoordinates and image of the collFragment
-        stopVehicleButton = view.findViewById(R.id.stop_vehicle_button);
-        textView = view.findViewById(R.id.device_collectionFragment);
+        textView = view.findViewById(R.id.device_collection_fragment);
 
         //Speed changing
-        radioGroup = view.findViewById(R.id.radiogroup);
+        radioGroup = view.findViewById(R.id.radio_group);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -146,13 +145,11 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                         Log.d(TAG, "position is: "+position);
                         if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
 
-
                             Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
                             ArrayList<PointF> makeToString = ourData.getCoordinates(position);
-                            String instructions = coordinateConverter.returnString(makeToString);
+                            String instructions = coordinateConverter.returnInstructions(makeToString);
                             Log.d(TAG, "Instruction coordinates: " + instructions.toString());
                             BluetoothConnection.getInstance(getContext()).startCar(instructions);
-
 
                         } else {
                             Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
@@ -161,8 +158,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     }
                     @Override
                     public void onLongItemClick(View view, int position) {
-
-                    }
+                                            }
                 }));
         return view;
     }
@@ -203,7 +199,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         switch (view.getId()){
 
             //These are the events that are associated with clicking of the buttons
-            case R.id.stop_vehicle_button: {
+            case R.id.start_car_button: {
 
                 dialog.setDialogHeading("Are you sure you want to stop the vehicle?");
                 dialog.setAction("STOP");

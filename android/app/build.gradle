@@ -53,6 +53,7 @@ dependencies {
     //Google Maps
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
 
+
     // design libary for circluar images
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
@@ -69,5 +70,6 @@ dependencies {
 
     //Google Maps Android API Utility Library
     implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
 
 }
