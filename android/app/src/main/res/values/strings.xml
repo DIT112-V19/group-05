@@ -9,6 +9,8 @@
     <string name="draw_fragment">draw fragment</string>
     <string name="googlemaps_fragment">googlemaps fragment</string>
 
+    <!--Google APi Key-->
+    <string name="api_key_text">No API key found</string>
 
     <!--Buttons-->
     <string name="find_vehicle_button">connect to vehicle</string>

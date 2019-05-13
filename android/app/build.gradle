@@ -17,15 +17,22 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
-    buildTypes {
-        debug {
 
+
+    buildTypes {
+
+        debug {
+            buildConfigField 'String', 'apiKey', GoolgeAPIKey
+            resValue 'string', 'api_key', GoolgeAPIKey
         }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
+            buildConfigField 'String', 'apiKey', GoolgeAPIKey
+            resValue 'string', 'api_key', GoolgeAPIKey
         }
+
     }
 
 
@@ -59,5 +66,8 @@ dependencies {
     //Using version 0.2.11 due to problems with later versions
     implementation 'com.google.maps:google-maps-services:0.2.11'
     implementation 'org.slf4j:slf4j-simple:1.7.25'
+
+    //Google Maps Android API Utility Library
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
 
 }

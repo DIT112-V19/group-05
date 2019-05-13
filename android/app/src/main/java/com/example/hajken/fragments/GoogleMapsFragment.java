@@ -3,6 +3,9 @@ package com.example.hajken.fragments;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.PointF;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -20,7 +24,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import com.example.hajken.BuildConfig;
+import com.google.maps.android.SphericalUtil;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,6 +53,8 @@ import com.google.maps.model.TravelMode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static android.content.ContentValues.TAG;
 
@@ -71,6 +78,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     private RadioGroup radioGroup;
     private RadioButton radioButton;
     private TextView textView;
+    private TextView mApiKeyField;
     private String instructions;
 
 
@@ -85,6 +93,9 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     //Creating a Polyline
     Polyline polyline = null;
 
+    //Creating the map
+    GoogleMap map;
+
     //Creating an arrayList to hold coordinates of PolyLines
     List<LatLng> newDecodedPath = new ArrayList<>();
 
@@ -93,14 +104,19 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
 
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       final View view = inflater.inflate(R.layout.fragment_google_maps, container, false);
+        final View view = inflater.inflate(R.layout.fragment_google_maps, container, false);
 
         //Creates the buttons
         startCarButton = view.findViewById(R.id.start_car_button);
         textView = view.findViewById(R.id.device_mapFragment);
+
+        //TextView for API-key
+        mApiKeyField = view.findViewById(R.id.apiKeyText);
+        //mApiKeyField.setText("API key: " + BuildConfig.apiKey);
 
         //Speed changing
         radioGroup = view.findViewById(R.id.radiogroup3);
@@ -111,7 +127,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                 RadioButton checkedRadioButton = group.findViewById(checkedId);
                 boolean isChecked = checkedRadioButton.isChecked();
 
-                if (isChecked){
+                if (isChecked) {
                     checkButton(view);
                 }
             }
@@ -123,15 +139,15 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             textView.setText("Connected Device: None");
         }
 
-       mMapView = new MapView(getContext());
-       mMapView = view.findViewById(R.id.mapView);
+        mMapView = new MapView(getContext());
+        mMapView = view.findViewById(R.id.mapView);
 
 
         Bundle mapViewBundle = null;
+
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
-
 
         mMapView.onCreate(mapViewBundle);
 
@@ -144,19 +160,17 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         startCarButton.setOnClickListener(this);
 
 
-
-
         return view;
     }
 
 
-    public void onAttach(Context context){
+    public void onAttach(Context context) {
         super.onAttach(context);
 
 
-       // bluetoothConnection = BluetoothConnection.getInstance(getContext());
-       // bluetoothConnection.startCar("g!"); //small g to request GPS
-       // Log.d(TAG, "Request for GPS-message sent");
+        // bluetoothConnection = BluetoothConnection.getInstance(getContext());
+        // bluetoothConnection.startCar("g!"); //small g to request GPS
+        // Log.d(TAG, "Request for GPS-message sent");
 
         //bluetoothConnection = BluetoothConnection.getInstance(getContext());
         //bluetoothConnection.startCar("g!"); //small g to request GPS
@@ -182,11 +196,17 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         */
 
 
-
         //This might be moved to another method
-        if(mGeoApiContext == null){
+        /*if (mGeoApiContext == null) {
             mGeoApiContext = new GeoApiContext.Builder()
                     .apiKey(getString(R.string.google_map_api_key))
+                    .build();
+        }
+        */
+
+        if (mGeoApiContext == null) {
+            mGeoApiContext = new GeoApiContext.Builder()
+                    .apiKey(BuildConfig.apiKey)
                     .build();
         }
     }
@@ -205,7 +225,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         mMapView.onSaveInstanceState(mapViewBundle);
     }
 
-    public void addCarOnMap(GoogleMap map){
+    public void addCarOnMap(GoogleMap map) {
         //Öppna en tråd som hela tiden kallar på GPS-datan
         //Har en while-loop som hela tiden uppdaterar
 
@@ -221,7 +241,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         //Adding car marker and adding on map
         carMarker = map.addMarker(new MarkerOptions().position(new LatLng(57.706931, 11.938822)).title("THE HAJKEN CAR"));
 
-       //This moves the camera and zooms in on myMarker
+        //This moves the camera and zooms in on myMarker
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
         //the include method will calculate the min and max bound.
@@ -236,6 +256,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
         map.animateCamera(cu);
+
+        //GPSCoordinatesToCarInstructions();
     }
 
     public void checkButton(View view) {
@@ -286,6 +308,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         }
 
     }
+
     @Override
 
     public void onResume() {
@@ -293,7 +316,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         mMapView.onResume();
 
     }
-
 
 
     @Override
@@ -305,14 +327,12 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
 
-
     @Override
     public void onStop() {
         super.onStop();
         mMapView.onStop();
 
     }
-
 
 
     @Override
@@ -330,24 +350,22 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                 markerOptions.title(latLng.latitude + " : " + latLng.longitude);
                 map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                if(destinationMarker == null){
+                if (destinationMarker == null) {
                     destinationMarker = map.addMarker(markerOptions);
-                }
-                else{
+                } else {
                     destinationMarker.remove();
                     destinationMarker = map.addMarker(markerOptions);
                 }
 
                 Log.d(TAG, "Getting to calculateDirections()");
 
-               //calculateDirections(destinationMarker);
-               calcluateDirections2(map, destinationMarker);
+                //calculateDirections(destinationMarker);
+                calcluateDirections2(map, destinationMarker);
 
             }
         });
 
     }
-
 
 
     @Override
@@ -360,7 +378,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
 
-
     @Override
     public void onDestroy() {
 
@@ -369,7 +386,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         super.onDestroy();
 
     }
-
 
 
     @Override
@@ -383,7 +399,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
 
-    private void calcluateDirections2(GoogleMap map, Marker destinationMarker){
+    private void calcluateDirections2(GoogleMap map, Marker destinationMarker) {
 
         DirectionsApiRequest apiRequest = DirectionsApi.newRequest(mGeoApiContext);
         apiRequest.origin(new com.google.maps.model.LatLng(carMarker.getPosition().latitude, carMarker.getPosition().longitude));
@@ -403,7 +419,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             public void onResult(DirectionsResult result) {
                 DirectionsRoute[] routes = result.routes;
 
-                Log.d(TAG, "onResult: "+result.routes[0].toString());
+                Log.d(TAG, "onResult: " + result.routes[0].toString());
 
                 System.out.println("Result of routeObject is" + routes[0].toString());
 
@@ -421,8 +437,9 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
 
+    private void addPolylinesToMap(final DirectionsResult result, GoogleMap map) {
 
-    private void addPolylinesToMap(final DirectionsResult result, GoogleMap map){
+
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
 
@@ -432,7 +449,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
                 Log.d(TAG, "run: result routes: " + result.routes.length);
 
-                for(DirectionsRoute route: result.routes){
+                for (DirectionsRoute route : result.routes) {
 
                     Log.d(TAG, "run: leg: " + route.legs[0].toString());
 
@@ -442,22 +459,30 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
 
                     if (polyline != null) {
-                        if(polyline.isClickable()){
+                        if (polyline.isClickable()) {
                             polyline.remove();
                         }
                     }
 
 
                     //Here Polyline gets put onto the Map
-                     polyline = map.addPolyline(new PolylineOptions().addAll(getDecodedPath()));
+                    polyline = map.addPolyline(new PolylineOptions().addAll(getDecodedPath()));
 
+                    polyline.setColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
 
-                   polyline.setColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
-
-                   polyline.setClickable(true);
+                    polyline.setClickable(true);
 
                     printDecodedPath();
 
+                    //This moves the camera to show the entire polyline on the screen
+                    moveToBounds(polyline, map);
+
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //printPoints(map);
 
                 }
 
@@ -467,42 +492,39 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
     }
 
-public void setDecodedPath(List<com.google.maps.model.LatLng> decodedPath){
+    public void setDecodedPath(List<com.google.maps.model.LatLng> decodedPath) {
 
         newDecodedPath.clear();
 
-    // This loops through all the LatLng coordinates of ONE polyline.
-    for(com.google.maps.model.LatLng latLng: decodedPath){
+        // This loops through all the LatLng coordinates of ONE polyline.
+        for (com.google.maps.model.LatLng latLng : decodedPath) {
 
-        newDecodedPath.add(new LatLng(
-                latLng.lat,
-                latLng.lng
-        ));
+            newDecodedPath.add(new LatLng(
+                    latLng.lat,
+                    latLng.lng
+            ));
+        }
+
     }
 
-}
 
+    public void printDecodedPath() {
 
-public void printDecodedPath(){
+        //Printing coordinates in console
+        for (LatLng lg : newDecodedPath) {
+            System.out.println("PRINTING : Latitude " + lg.latitude + " Longitude + " + lg.longitude);
+        }
 
-    //Printing coordinates in console
-    for(LatLng lg : newDecodedPath){
-        System.out.println("PRINTING : Latitude " + lg.latitude + " Longitude + " + lg.longitude);
     }
 
-}
+    public List<LatLng> getDecodedPath() {
 
-public List<LatLng> getDecodedPath(){
-
-    return newDecodedPath;
-}
-
-
-
+        return newDecodedPath;
+    }
 
 
     //The marker should be retrieved from the onMapClick Event
-    private void calculateDirections(Marker marker){
+    private void calculateDirections(Marker marker) {
 
         Log.d(TAG, "calculateDirections: calculating directions.");
 
@@ -572,12 +594,11 @@ public List<LatLng> getDecodedPath(){
             }
 
 
-
             @Override
 
             public void onFailure(Throwable e) {
 
-                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage() );
+                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
 
             }
 
@@ -586,5 +607,23 @@ public List<LatLng> getDecodedPath(){
     }
 
 
+
+
+
+
+    //Move camera of Maps fit the screen
+    private void moveToBounds(Polyline p, GoogleMap map){
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for(int i = 0; i < p.getPoints().size();i++){
+            builder.include(p.getPoints().get(i));
+        }
+
+        LatLngBounds bounds = builder.build();
+        int padding = 50; // offset from edges of the map in pixels
+
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        map.animateCamera(cu);
+    }
 
 }
