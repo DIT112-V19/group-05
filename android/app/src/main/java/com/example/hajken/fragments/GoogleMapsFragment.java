@@ -79,7 +79,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     private RadioGroup radioGroup;
     private RadioButton radioButton;
     private TextView textView;
-    private TextView mApiKeyField;
+    //private TextView mApiKeyField;
     private String instructions;
 
 
@@ -116,7 +116,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         textView = view.findViewById(R.id.device_map_fragment);
 
         //TextView for API-key
-        mApiKeyField = view.findViewById(R.id.apiKeyText);
+        //mApiKeyField = view.findViewById(R.id.apiKeyText);
         //mApiKeyField.setText("API key: " + BuildConfig.apiKey);
 
         //Speed changing
