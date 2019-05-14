@@ -20,7 +20,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.example.hajken.InterfaceMainActivity;
-import com.example.hajken.MainActivity;
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.ListOfDevices;
@@ -34,7 +33,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
     private static final String TAG = "ScanFragment";
     private Button scanButton, unPairButton, routesButton;
     private ListView mListView;
-    private MainActivity mMainActivity;
     private Context mContext;
     private ArrayList<BluetoothDevice> mBluetoothDevices = new ArrayList<>();
     private ListOfDevices mListAdapter;
@@ -45,27 +43,42 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
 
     @Override
     public void onAttach(Context context) {
+        Log.d(TAG, "TAG scanFragment - onAttach");
+
+
         super.onAttach(context);
         mContext = context;
         mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
-        mMainActivity = (MainActivity) getActivity();
-        Log.d(TAG, "onAttach: after bluetooth initialize ");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState){
+        Log.d(TAG, "TAG scanFragment - onCreate");
+
         super.onCreate(savedInstanceState);
-        if (Bluetooth.getInstance(getContext()).getmBluetoothAdapter().isEnabled()){
-            BluetoothConnection.getInstance(getContext()).registerListener(this);
-            Log.d(TAG, "onCreate: after register Listener");
+
+
+        /// THE FOLLOWING SHOULD BE CLEANED UP the following check
+
+        
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(getContext(),"No bluetooth,",Toast.LENGTH_LONG).show();
         } else {
-            Log.d(TAG, "onCreate: no registered Listener");
+            if (!mBluetoothAdapter.isEnabled()) {
+                Toast.makeText(getContext(),"Turn on bluetooth,",Toast.LENGTH_LONG).show();
+            } else {
+                BluetoothConnection.getInstance(getContext()).registerListener(this);
+            }
         }
+
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+        Log.d(TAG, "TAG scanFragment - onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_scan,container,false);
 
         //Creates the buttons and listview of fragment
@@ -86,33 +99,44 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
     }
 
     public void checkStateOfButtons(){
-        Log.d(TAG, "checkStateOfButtons: in checkState");
+        Log.d(TAG, "TAG scanFragment - checkStateOfButtons");
+
 
         //RoutesButton always active
         routesButton.setClickable(true);
         routesButton.setActivated(true);
 
-        //Changes the state of the buttons whether or not there is bluetooth connected
-        if (BluetoothAdapter.getDefaultAdapter().isEnabled()){
-            Log.d(TAG, "checkStateOfButtons: KENT");
-            if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
-                Log.d(TAG, "checkStateOfButtons: after first check of bluetooth");
-                unPairButton.setClickable(true);
-                unPairButton.setActivated(true);
-                scanButton.setClickable(false);
-                scanButton.setActivated(false);
+        /// THE FOLLOWING SHOULD BE CLEANED UP the following check
+
+
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(getContext(),"No bluetooth,",Toast.LENGTH_LONG).show();
+        } else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Toast.makeText(getContext(),"Turn on bluetooth,",Toast.LENGTH_LONG).show();
             } else {
-                Log.d(TAG, "checkStateOfButtons: in check state else");
-                unPairButton.setClickable(false);
-                unPairButton.setActivated(false);
-                scanButton.setClickable(true);
-                scanButton.setActivated(true);
-            }
+                //Changes the state of the buttons whether or not there is bluetooth connected
+                if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+                    unPairButton.setClickable(true);
+                    unPairButton.setActivated(true);
+                    scanButton.setClickable(false);
+                    scanButton.setActivated(false);
+                } else {
+                    unPairButton.setClickable(false);
+                    unPairButton.setActivated(false);
+                    scanButton.setClickable(true);
+                    scanButton.setActivated(true);
+                }            }
         }
+
+
     }
 
     @Override
     public void onClick(View view) {
+        Log.d(TAG, "TAG scanFragment - onClick");
+
 
         //These are the events that are associated with the buttons
         switch (view.getId()){
@@ -143,6 +167,8 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
     public BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "TAG scanFragment - Broadcast receiver onReceive");
+
             String action = intent.getAction();
 
             if (BluetoothDevice.ACTION_FOUND.equals(action)){
@@ -195,8 +221,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
 
     @Override
     public void onConnect() {
+        Log.d(TAG, "TAG scanFragment - onConnect");
+
         if (BluetoothAdapter.getDefaultAdapter() != null){
-            Log.d(TAG, "onConnect: EEEE");
             mInterfaceMainActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -210,21 +237,20 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
 
     @Override
     public void onNotConnected() {
-        if (BluetoothAdapter.getDefaultAdapter() != null) {
-            Log.d(TAG, "onNotConnected: DDD");
-            mInterfaceMainActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    BluetoothConnection.getInstance(getContext()).setIsConnected(false);
-                    checkStateOfButtons();
+        Log.d(TAG, "TAG scanFragment - onNotConnected");
 
-                    if (BluetoothConnection.getInstance(getContext()).getWasUnPaired()) {
-                        Toasty.info(mContext, "Unpaired with " + mPairedBluetoothDevice.getName(), Toast.LENGTH_LONG).show();
-                    } else {
-                        Toasty.error(mContext, "Lost connection with " + mPairedBluetoothDevice.getName(), Toast.LENGTH_LONG).show();
-                    }
+        mInterfaceMainActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                BluetoothConnection.getInstance(getContext()).setIsConnected(false);
+                checkStateOfButtons();
+
+                if (BluetoothConnection.getInstance(getContext()).getWasUnPaired()) {
+                    Toasty.info(mContext, "Unpaired with " + mPairedBluetoothDevice.getName(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toasty.error(mContext, "Lost connection with " + mPairedBluetoothDevice.getName(), Toast.LENGTH_LONG).show();
                 }
-            });
-        }
+            }
+        });
     }
 }

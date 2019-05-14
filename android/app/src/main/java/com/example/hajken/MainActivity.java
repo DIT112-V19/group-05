@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d(TAG, "TAG MAINACTIVITY - onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -38,11 +41,16 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
         mMainActivity = this;
 
-        this.registerReceiver(mReceiver,filter);
+        if (TAG == null){
+            this.registerReceiver(mReceiver,filter);
+        }
+
         init(); // when mainActivity starts, it will inflate StartFragment first
     }
 
     private void init(){
+        Log.d(TAG, "TAG MAINACTIVITY - init");
+
         StartFragment fragment = new StartFragment();
         doFragmentTransaction(fragment,getString(R.string.start_fragment),false);
 
@@ -50,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     //used to be a string message here as well but we are not using that
     private void doFragmentTransaction(Fragment fragment, String tag, boolean addToBackStack){
+
+        Log.d(TAG, "TAG MAINACTIVITY - doFragmentTransaction");
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.main_container,fragment,tag);
@@ -64,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     //this method is responsible to start fragmentTransactions
     @Override
     public void inflateFragment(String fragmentTag) {
+
+        Log.d(TAG, "TAG MAINACTIVITY - inflateFragment");
+
 
         if (fragmentTag.equals(getString(R.string.scan_fragment))){
 
@@ -108,26 +122,25 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            Log.d(TAG, "TAG MAINACTIVITY - BroadcastReceiver onReceive");
+
             String action = intent.getAction();
 
-            Log.d(TAG, "onReceive: AAA");
-            
-            if (BluetoothAdapter.getDefaultAdapter() != null) {
-                if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
-                    Log.d(TAG, "onReceive: BBB");
-                    BluetoothConnection.getInstance(context).connectMode();
-                }
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+                BluetoothConnection.getInstance(context).connectMode();
+            }
 
-                if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+            if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+                BluetoothConnection.getInstance(context).disconnectMode();
+            }
+
+            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+                if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_OFF){
                     BluetoothConnection.getInstance(context).disconnectMode();
-                }
-
-                if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
-                    if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_OFF){
-                        BluetoothConnection.getInstance(context).disconnectMode();
-                    }
                 }
             }
         }

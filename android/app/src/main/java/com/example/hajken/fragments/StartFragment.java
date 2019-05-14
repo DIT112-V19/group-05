@@ -21,17 +21,23 @@ public class StartFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onAttach(Context context){
+        Log.d(TAG, "TAG STARTFRAGMENT - onAttach");
+
         super.onAttach(context);
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
     }
 
     public void onCreate(@Nullable Bundle savedInstanceState){
+        Log.d(TAG, "TAG STARTFRAGMENT - onCreate");
+
         super.onCreate(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "TAG STARTFRAGMENT - onCreateView");
+
 
         //Inflates this fragment
         View view = inflater.inflate(R.layout.fragment_start,container,false);
@@ -45,6 +51,8 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     }
 
     public void onClick(View view) {
+        Log.d(TAG, "TAG STARTFRAGMENT - onClick");
+
 
         switch (view.getId()) {
 
@@ -52,7 +60,6 @@ public class StartFragment extends Fragment implements View.OnClickListener{
             case R.id.find_vehicle_button: {
 
                 //Inflates -> Scan fragment
-                Log.d(TAG, "onClick: ÖÖÖÖ");
                 interfaceMainActivity.inflateFragment(getString(R.string.scan_fragment));
             }
         }
