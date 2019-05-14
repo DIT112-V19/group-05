@@ -1,35 +1,56 @@
 package com.example.hajken;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
+import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.fragments.CollectionFragment;
 import com.example.hajken.fragments.DrawFragment;
 import com.example.hajken.fragments.GatewayFragment;
 import com.example.hajken.fragments.GoogleMapsFragment;
 import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.fragments.StartFragment;
-
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements InterfaceMainActivity {
+public class MainActivity extends AppCompatActivity implements InterfaceMainActivity{
 
     private static final String TAG = "MainActivity";
     private static MainActivity mMainActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d(TAG, "TAG MAINACTIVITY - onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+
         mMainActivity = this;
+
+        if (TAG == null){
+            this.registerReceiver(mReceiver,filter);
+        }
+
         init(); // when mainActivity starts, it will inflate StartFragment first
     }
 
     private void init(){
+        Log.d(TAG, "TAG MAINACTIVITY - init");
+
         StartFragment fragment = new StartFragment();
         doFragmentTransaction(fragment,getString(R.string.start_fragment),false);
 
@@ -37,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     //used to be a string message here as well but we are not using that
     private void doFragmentTransaction(Fragment fragment, String tag, boolean addToBackStack){
+
+        Log.d(TAG, "TAG MAINACTIVITY - doFragmentTransaction");
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.main_container,fragment,tag);
@@ -51,6 +75,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     //this method is responsible to start fragmentTransactions
     @Override
     public void inflateFragment(String fragmentTag) {
+
+        Log.d(TAG, "TAG MAINACTIVITY - inflateFragment");
+
 
         if (fragmentTag.equals(getString(R.string.scan_fragment))){
 
@@ -72,14 +99,13 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
             CollectionFragment fragment = new CollectionFragment();
             doFragmentTransaction(fragment,fragmentTag,true); //addToBackStack(true) makes it possible to go back without closing the app
 
-        } else if (fragmentTag.equals(getString(R.string.googlemaps_fragment))){
+        } else if (fragmentTag.equals(getString(R.string.google_maps_fragment))){
 
             GoogleMapsFragment fragment = new GoogleMapsFragment();
             doFragmentTransaction(fragment,fragmentTag,true);
         }
 
     }
-
 
     //Override method to be able to adapt onBackPressed for fragments --- could this be done with just an if statement instead of loop?
     @Override
@@ -95,7 +121,31 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         }
     }
 
-    // hack to get activity passable in different fragments
+    public BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.d(TAG, "TAG MAINACTIVITY - BroadcastReceiver onReceive");
+
+            String action = intent.getAction();
+
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+                BluetoothConnection.getInstance(context).connectMode();
+            }
+
+            if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+                BluetoothConnection.getInstance(context).disconnectMode();
+            }
+
+            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+                if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_OFF){
+                    BluetoothConnection.getInstance(context).disconnectMode();
+                }
+            }
+        }
+    };
+
     public static MainActivity getThis(){
         return mMainActivity;
     }

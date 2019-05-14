@@ -30,7 +30,7 @@ public class CoordinateConverter {
         instructions = "<";
         Log.d(TAG, "returnInstructions: ");
 
-        //Set length of string (for encoding purposes in arduino)
+        //Set length of string (for encoding purposes in Arduino)
         instructions = instructions.concat("l,"+(((validPoints.size()-1)*4)+4));
 
         //Set speed of vehicle for route
@@ -39,7 +39,7 @@ public class CoordinateConverter {
         //Set amount of loops of vehicle
         instructions = instructions.concat("r,"+getNrOfLoops()+","); // amount of loops - needs to be adaptable later
 
-        ArrayList<Float> angles = new ArrayList<>();
+        ArrayList<Float> angles;
         float prevAngle = 0;
 
         for(int i = 0; i < validPoints.size()-1;i++){

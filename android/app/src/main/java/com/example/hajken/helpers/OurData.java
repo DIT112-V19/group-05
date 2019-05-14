@@ -1,5 +1,6 @@
 package com.example.hajken.helpers;
 
+import android.content.Context;
 import android.graphics.PointF;
 
 import com.example.hajken.R;
@@ -7,6 +8,39 @@ import com.example.hajken.R;
 import java.util.ArrayList;
 
 public class OurData {
+
+    private Context myContext;
+
+    private static OurData mInstance = null;
+
+    private OurData(Context context) {
+        myContext = context;
+    }
+
+    public static OurData getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new OurData(context);
+        }
+        return mInstance;
+    }
+
+    public ArrayList<String> imageNames = new ArrayList<>();
+    public ArrayList<Integer> images = new ArrayList<>();
+
+    public void addToArrays(){
+        imageNames.add("Square");
+        imageNames.add("Circle");
+        imageNames.add("Triangle");
+        imageNames.add("Z");
+        imageNames.add("Cat");
+
+        images.add(R.drawable.square_symbol);
+        images.add(R.drawable.circle_symbol);
+        images.add(R.drawable.triangle_symbol);
+        images.add(R.drawable.z_symbol);
+        images.add(R.drawable.cat_symbol);
+
+    }
 
     public static String[] imageName = new String[]{
             "Square",

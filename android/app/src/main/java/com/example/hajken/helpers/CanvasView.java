@@ -23,6 +23,8 @@ public class CanvasView extends View {
     private Canvas mCanvas;
     private Path mPath;
     private Paint mPaint;
+    private Path mStartPoint;
+    private Paint mStartPointPaint;
 
     private static final String TAG = "CanvasView";
 
@@ -44,11 +46,20 @@ public class CanvasView extends View {
         mPath = new Path();
         mPaint = new Paint();
 
-        mPaint.setAntiAlias(true); // ????
+        mPaint.setAntiAlias(true);
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(10f);
+
+        mStartPoint = new Path();
+        mStartPointPaint = new Paint();
+
+        mStartPointPaint.setAntiAlias(true);
+        mStartPointPaint.setColor(Color.RED);
+        mStartPointPaint.setStyle(Paint.Style.STROKE);
+        mStartPointPaint.setStrokeJoin(Paint.Join.ROUND);
+        mStartPointPaint.setStrokeWidth(10f);
 
         setDrawingCacheEnabled(true);
     }
@@ -66,6 +77,7 @@ public class CanvasView extends View {
 
     private void startTouch(float x, float y) {
         mPath.moveTo(x, y);
+        mStartPoint.moveTo(x,y);
         mX = x;
         mY = y;
         Log.d(TAG, "startTouch: " + "X:" + x + "y" + y);
@@ -91,6 +103,7 @@ public class CanvasView extends View {
 
     public void clearCanvas(){
         mPath.reset();
+        mStartPoint.reset();
         invalidate();
 
     }
@@ -153,6 +166,19 @@ public class CanvasView extends View {
 
         canvas.drawBitmap(mBitmap, 0, 0, mPaint);
         canvas.drawPath(mPath, mPaint);
+
+        canvas.drawPath(mStartPoint,mStartPointPaint);
     }
 
+
+
+    public Bitmap getmBitmap() {
+         this.setDrawingCacheEnabled(true);
+         this.buildDrawingCache();
+         Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
+         this.setDrawingCacheEnabled(true);
+
+         return bmp;
+
+    }
 }

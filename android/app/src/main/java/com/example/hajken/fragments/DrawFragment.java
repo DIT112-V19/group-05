@@ -20,11 +20,15 @@ import android.widget.Toast;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CanvasView;
 import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.helpers.CoordinatesHolder;
+import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.R;
 import java.util.ArrayList;
+
+import es.dmoral.toasty.Toasty;
 
 public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface{
 
@@ -37,18 +41,11 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
     private Button startCarButton;
     private CanvasView canvasView;
-    private TextView textView;
     private String instructions;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    private String input;
     private CustomDialogFragment mCustomDialogFragment;
-
-
     private boolean vehicleOn = false;
-
-
-
     private TextView amountOfLoops;
     private SeekBar seekBar;
 
@@ -69,7 +66,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         //Creates the buttons and canvasView
         startCarButton = view.findViewById(R.id.start_car_button);
         canvasView = view.findViewById(R.id.canvasView);
-        textView = view.findViewById(R.id.device_draw_fragment);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
 
@@ -90,15 +86,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                 }
             }
         });
-
-
-
-        if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
-            textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
-        } else {
-            textView.setText("Connected Device: None");
-        }
-
 
         canvasView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -178,6 +165,16 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
             case R.id.start_car_button: {
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
+
+                    // create a java object to hold the bitmap with its respective coordinates
+                    // will later be displayed in the recycler view
+                    CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
+                    coordinatesListItem.setListOfCoordinates(canvasView.getListOfCoordinates());
+                    coordinatesListItem.setmBitmap(canvasView.getmBitmap());
+                    Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getmBitmap());
+
+                    // added to a holder class which binds the bitmap together with its coordinates
+                    CoordinatesHolder.COORDINATES_LIST_ITEMS.add(coordinatesListItem);
                     ArrayList<PointF> validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(canvasView.getListOfCoordinates(), 65.0);
                     Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
                     instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
@@ -190,7 +187,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                     break;
 
                 } else {
-                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
+                    Toasty.error(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
                     break;
 
                 }
@@ -198,9 +195,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         }
 
     }
-
-
-
 
     @Override
     public void controlVehicle(Boolean execute) {
@@ -243,4 +237,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     public boolean isVehicleOn() {
         return vehicleOn;
     }
+
+
+
+
 }

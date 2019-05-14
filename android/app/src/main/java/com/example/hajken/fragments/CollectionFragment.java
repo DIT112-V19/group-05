@@ -12,34 +12,37 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.hajken.helpers.CoordinateConverter;
+import com.example.hajken.helpers.CoordinatesHolder;
+import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.ListAdapter;
+import com.example.hajken.helpers.MathUtility;
 import com.example.hajken.helpers.OurData;
-import com.example.hajken.helpers.RecyclerItemClickListener;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 import java.util.ArrayList;
 
-public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
+public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
 
 
     private static final String TAG = "CollectionFragment";
     private InterfaceMainActivity interfaceMainActivity;
-    private Button stopVehicleButton;
     private RecyclerView recyclerView;
     private boolean vehicleOn = false;
-    private TextView textView;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    private OurData ourData = new OurData();
+    private OurData ourData = OurData.getInstance(getContext());
     private CoordinateConverter coordinateConverter;
+    private SeekBar seekBar;
+    private TextView amountOfLoops;
+    private TextView textView;
 
     //Data for the vehicle routes
     private final String circleRouteData = ""; // to be fixed
@@ -49,6 +52,14 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private final int SLOW = 1;
     private final int MED = 2;
     private final int FAST = 3;
+
+    //calls before onCreate, used to instantiate the interface
+    //part of the collFragment to activity communication
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        interfaceMainActivity = (InterfaceMainActivity) getActivity();
+    }
 
     //Changes the input to users choice
     public void setInput(String input) {
@@ -98,6 +109,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BluetoothConnection.getInstance(getContext()).registerListener(this);
     }
 
     //occurs after onCreate
@@ -107,11 +119,10 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         //Inflates the collFragment
         final View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
-        //Creates the buttons, listOfXCoordinates and image of the collFragment
-        textView = view.findViewById(R.id.device_collection_fragment);
-
         //Speed changing
         radioGroup = view.findViewById(R.id.radio_group);
+        amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
+        seekBar = view.findViewById(R.id.seekbar);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -125,20 +136,59 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             }
         });
 
+        //Set amount of repetitions beginning at zero
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
+
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
 
-        final ListAdapter listAdapter = new ListAdapter();
+        seekBar.setMax(10);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
+                amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(progress)));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        final ListAdapter listAdapter = new ListAdapter(CoordinatesHolder.COORDINATES_LIST_ITEMS, new ListAdapter.onItemSelectedListener() {
+            @Override
+            public void onItemSelected(CoordinatesListItem coordinatesListItem) {
+
+                if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+                    Log.i(TAG, "onItemSelected: bitmap: " + coordinatesListItem.getmBitmap() );
+                    ArrayList<PointF> validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(coordinatesListItem.getListOfCoordinates(), 65.0);
+                    Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
+                    String instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
+                    Log.d(TAG, "Instruction coordinates: " + instructions.toString());
+                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+
+
+
+                } else {
+
+                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
+
+                }
+
+
+            }
+        });
         recyclerView.setAdapter(listAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
-            textView.setText("Connected Device:"+BluetoothConnection.getInstance(getContext()).getDeviceName());
-        } else {
-            textView.setText("Connected Device: None");
-        }
-
-        recyclerView.addOnItemTouchListener(
+      /*  recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
@@ -159,7 +209,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void onLongItemClick(View view, int position) {
                                             }
-                }));
+                }));*/
         return view;
     }
 
@@ -185,14 +235,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    //calls before onCreate, used to instantiate the interface
-    //part of the collFragment to activity communication
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        interfaceMainActivity = (InterfaceMainActivity) getActivity();
-    }
-
     @Override
     public void onClick(View view) {
 
@@ -206,9 +248,42 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");
                 Log.d(TAG, "onClick: Clicked Stop Vehicle");
+
                 break;
             }
 
         }
+    }
+
+    @Override
+    public void onConnect() {
+
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
+                }
+            });
+        }
+
+
+    }
+
+    @Override
+    public void onNotConnected() {
+
+        if(getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    textView.setText("Connected Device: None");
+
+                }
+            });
+        }
+
+
     }
 }
