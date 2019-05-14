@@ -127,9 +127,9 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
                     unPairButton.setActivated(false);
                     scanButton.setClickable(true);
                     scanButton.setActivated(true);
-                }            }
+                }
+            }
         }
-
 
     }
 

@@ -167,7 +167,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
                     Log.i(TAG, "onItemSelected: bitmap: " + coordinatesListItem.getmBitmap() );
-
                     ArrayList<PointF> validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(coordinatesListItem.getListOfCoordinates(), 65.0);
                     Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
                     String instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
@@ -249,6 +248,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");
                 Log.d(TAG, "onClick: Clicked Stop Vehicle");
+
                 break;
             }
 
@@ -274,13 +274,15 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onNotConnected() {
 
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText("Connected Device: None");
+        if(getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    textView.setText("Connected Device: None");
 
-            }
-        });
+                }
+            });
+        }
 
 
     }
