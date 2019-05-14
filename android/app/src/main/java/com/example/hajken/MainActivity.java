@@ -41,9 +41,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
         mMainActivity = this;
 
-        if (TAG == null){
-            this.registerReceiver(mReceiver,filter);
-        }
+        this.registerReceiver(mReceiver,filter);
 
         init(); // when mainActivity starts, it will inflate StartFragment first
     }
@@ -143,6 +141,13 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
                     BluetoothConnection.getInstance(context).disconnectMode();
                 }
             }
+
+            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+                if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_ON){
+                    BluetoothConnection.getInstance(context).connectMode();
+                }
+            }
+
         }
     };
 

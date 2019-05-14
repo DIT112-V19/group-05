@@ -31,4 +31,12 @@
     <color name="thumb_color">#ab4336</color>
     <color name="progress_color">#FFFFFF</color>
 
+    <!-- CanvasView colors -->
+    <color name="start_point_color">#ab4336</color>
+    <color name="drawn_path_color">#114F63</color>
+    <color name="actual_path_color">#FFFFFF</color>
+
+
+
+
 </resources>
