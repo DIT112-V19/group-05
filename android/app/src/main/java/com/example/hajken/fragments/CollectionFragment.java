@@ -1,5 +1,6 @@
 package com.example.hajken.fragments;
 
+import android.animation.PointFEvaluator;
 import android.content.Context;
 import android.graphics.PointF;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -38,11 +40,14 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private boolean vehicleOn = false;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    private OurData ourData = OurData.getInstance(getContext());
-    private CoordinateConverter coordinateConverter;
     private SeekBar seekBar;
+    private ArrayList<PointF> validPoints;
     private TextView amountOfLoops;
     private TextView textView;
+    private String instructions;
+    private Button start_car_button;
+    CustomDialogFragment dialog;
+
 
     //Data for the vehicle routes
     private final String circleRouteData = ""; // to be fixed
@@ -71,18 +76,19 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         return vehicleOn;
     }
 
-    CustomDialogFragment dialog = new CustomDialogFragment();
 
     @Override
     public void controlVehicle(Boolean execute) {
         Log.e(TAG, "controlVehicle: found incoming input");
 
+        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
+
         //when vehicle is running
         if (isVehicleOn()){
             //when user chooses to stop the vehicle
             if (execute){
-                if (input == null){
-                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
+                if (instructions == null){
+                    Toast.makeText(getActivity(),"Something went wrong 1",Toast.LENGTH_LONG).show();
                 } else { // if there is route data
                     BluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = false;
@@ -94,10 +100,10 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         } else {
             //Change button state
             if (execute){
-                if (input == null){
-                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
+                if (instructions == null){
+                    Toast.makeText(getActivity(),"Something went wrong 2",Toast.LENGTH_LONG).show();
                 } else {
-                    BluetoothConnection.getInstance(getContext()).startCar("g"); // <<<<----- here is the bluetooth activation/starting the vehicle
+                    BluetoothConnection.getInstance(getContext()).startCar(instructions); // <<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = true;
                     Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
                 }
@@ -110,6 +116,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         BluetoothConnection.getInstance(getContext()).registerListener(this);
+        dialog = new CustomDialogFragment();
+
     }
 
     //occurs after onCreate
@@ -123,6 +131,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         radioGroup = view.findViewById(R.id.radio_group);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
+        start_car_button = view.findViewById(R.id.start_car_button);
+        start_car_button.setClickable(true);
+        start_car_button.setActivated(true);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -166,12 +177,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             public void onItemSelected(CoordinatesListItem coordinatesListItem) {
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
-                    Log.i(TAG, "onItemSelected: bitmap: " + coordinatesListItem.getmBitmap() );
-                    ArrayList<PointF> validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(coordinatesListItem.getListOfCoordinates(), 65.0);
-                    Log.d(TAG, "coordinateHandling: " + validPoints.toString() + " SIZE:" + validPoints.size());
-                    String instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
-                    Log.d(TAG, "Instruction coordinates: " + instructions.toString());
-                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+                    Log.i(TAG, "onItemSelected: bitmap: " + coordinatesListItem.getmBitmap());
+                    Log.d(TAG, "coordinateHandling: " + coordinatesListItem.getListOfCoordinates().toString() + " SIZE:" + coordinatesListItem.getListOfCoordinates().size());
+                    validPoints = coordinatesListItem.getListOfCoordinates();
 
 
 
@@ -210,6 +218,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     public void onLongItemClick(View view, int position) {
                                             }
                 }));*/
+        start_car_button.setOnClickListener(this);
         return view;
     }
 
@@ -243,11 +252,11 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             //These are the events that are associated with clicking of the buttons
             case R.id.start_car_button: {
 
-                dialog.setDialogHeading("Are you sure you want to stop the vehicle?");
-                dialog.setAction("STOP");
+
+                dialog.setDialogHeading("Are you ready?");
+                dialog.setAction("Start");
                 dialog.setTargetFragment(CollectionFragment.this,1);
                 dialog.show(getFragmentManager(),"DIALOG");
-                Log.d(TAG, "onClick: Clicked Stop Vehicle");
 
                 break;
             }
