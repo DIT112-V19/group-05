@@ -12,8 +12,9 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.ArrayList;
+import com.example.hajken.R;
 
+import java.util.ArrayList;
 
 public class CanvasView extends View {
 
@@ -25,10 +26,11 @@ public class CanvasView extends View {
     private Paint mPaint;
     private Path mStartPoint;
     private Paint mStartPointPaint;
-
+    private Path mActualPath;
+    private Paint mActualPathPaint;
     private static final String TAG = "CanvasView";
-
     private float mX, mY;
+    private ArrayList<PointF> validPoints;
     private static final int ZERO = 0;
     private static final float TOLERANCE = 5; /// ???????
 
@@ -43,23 +45,32 @@ public class CanvasView extends View {
         super(context, attributeSet);
         this.context = context;
 
+        //Settings for the drawn path
         mPath = new Path();
         mPaint = new Paint();
-
         mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.BLACK);
+        mPaint.setColor(getResources().getColor(R.color.actual_path_color));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(10f);
 
+        //Settings for the starting point
         mStartPoint = new Path();
         mStartPointPaint = new Paint();
-
         mStartPointPaint.setAntiAlias(true);
-        mStartPointPaint.setColor(Color.RED);
+        mStartPointPaint.setColor(getResources().getColor(R.color.start_point_color));
         mStartPointPaint.setStyle(Paint.Style.STROKE);
         mStartPointPaint.setStrokeJoin(Paint.Join.ROUND);
         mStartPointPaint.setStrokeWidth(10f);
+
+        //Settings for the actual path
+        mActualPath = new Path();
+        mActualPathPaint = new Paint();
+        mActualPathPaint.setAntiAlias(true);
+        mActualPathPaint.setColor(getResources().getColor(R.color.actual_path_color));
+        mActualPathPaint.setStyle(Paint.Style.STROKE);
+        mActualPathPaint.setStrokeJoin(Paint.Join.ROUND);
+        mActualPathPaint.setStrokeWidth(10f);
 
         setDrawingCacheEnabled(true);
     }
@@ -77,20 +88,17 @@ public class CanvasView extends View {
 
     private void startTouch(float x, float y) {
         mPath.moveTo(x, y);
-        mStartPoint.moveTo(x,y);
+        mStartPoint.addCircle(x,y,30,Path.Direction.CW);
         mX = x;
         mY = y;
-        Log.d(TAG, "startTouch: " + "X:" + x + "y" + y);
     }
 
     private void moveTouch(float x, float y) {
         float dx = Math.abs(x - mX);
         float dy = Math.abs(y - mY);
 
-        Log.d(TAG, "moveTouch: " + "x:" + x + "y:" + y);
-
-        if (dx >= TOLERANCE || dy >= TOLERANCE) { // kolla upp detta
-            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2); // kolla upp detta
+        if (dx >= TOLERANCE || dy >= TOLERANCE) {
+            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
             mX = x;
             mY = y;
         }
@@ -98,12 +106,14 @@ public class CanvasView extends View {
 
     private void upTouch() {
         mPath.lineTo(mX, mY);
-        Log.d(TAG, "upTouch: " + "X:" + mX + "Y:" + mY);
+        //Changes the color of the current drawn path after upTouch
+        mPaint.setColor(getResources().getColor(R.color.drawn_path_color));
     }
 
     public void clearCanvas(){
         mPath.reset();
         mStartPoint.reset();
+        mActualPath.reset();
         invalidate();
 
     }
@@ -123,14 +133,17 @@ public class CanvasView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                Log.d(TAG, "onTouchEvent: STEP A");
 
                 //Reset/clear canvas and lists of coordinates
                 clearCanvas();
                 listOfCoordinates.clear();
+                if (validPoints != null){
+                    validPoints.clear();
+                }
                 startTouch(x, y);
                 PointF downPoint = new PointF();
                 downPoint.set(x, invertedY);
-                Log.d(TAG, "onTouchEvent floatPoint: firstpoint" + downPoint.toString());
                 listOfCoordinates.add(downPoint);
                 invalidate();
                 break;
@@ -141,7 +154,6 @@ public class CanvasView extends View {
                 moveTouch(x, y);
                 PointF movePoint = new PointF();
                 movePoint.set(x, invertedY);
-                Log.d(TAG, "onTouchEvent: Floatpoint MOVE" + movePoint.toString());
                 listOfCoordinates.add(movePoint);
                 invalidate();
                 break;
@@ -153,7 +165,8 @@ public class CanvasView extends View {
                 PointF upPoint = new PointF();
                 upPoint.set(x, invertedY);
                 listOfCoordinates.add(upPoint);
-                Log.d(TAG, "onTouchEvent: COORDINATES " + listOfCoordinates.toString());
+                validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(getListOfCoordinates(), 100.0);
+                displayActualPath(validPoints);
                 invalidate();
                 break;
         }
@@ -166,19 +179,48 @@ public class CanvasView extends View {
 
         canvas.drawBitmap(mBitmap, 0, 0, mPaint);
         canvas.drawPath(mPath, mPaint);
-
         canvas.drawPath(mStartPoint,mStartPointPaint);
+        canvas.drawPath(mActualPath,mActualPathPaint); // actual draw on canvas
+
     }
 
-
-
-    public Bitmap getmBitmap() {
+    public Bitmap getBitmap() {
          this.setDrawingCacheEnabled(true);
          this.buildDrawingCache();
          Bitmap bmp = Bitmap.createBitmap(this.getDrawingCache());
          this.setDrawingCacheEnabled(true);
 
          return bmp;
-
     }
+
+    public void displayActualPath(ArrayList<PointF> validPoints){
+        //Inverts all y-values so that it is the correct rotation for bitMap :)
+        for (int i = 0; i < validPoints.size();i++){
+            validPoints.get(i).set(validPoints.get(i).x,mBitmap.getHeight()-validPoints.get(i).y);
+        }
+
+        //Draw path
+        mActualPath.moveTo(validPoints.get(0).x,validPoints.get(0).y);
+        float bX = validPoints.get(0).x;
+        float bY = validPoints.get(0).y;
+
+        float dx;
+        float dy;
+
+        for (int i = 1; i < validPoints.size(); i++){ // draw the rest of the points
+            dx = Math.abs(bX - mX);
+            dy = Math.abs(bY - mY);
+            if (dx >= TOLERANCE || dy >= TOLERANCE) {
+                mActualPath.quadTo(bX, bY, (validPoints.get(i).x + bX) / 2, (validPoints.get(i).y + bY) / 2);
+                bX = validPoints.get(i).x;
+                bY = validPoints.get(i).y;
+            }
+        }
+        mActualPath.lineTo(validPoints.get(validPoints.size()-1).x,validPoints.get(validPoints.size()-1).y);
+    }
+
+    public ArrayList<PointF> getValidPoints() {
+        return validPoints;
+    }
+
 }
