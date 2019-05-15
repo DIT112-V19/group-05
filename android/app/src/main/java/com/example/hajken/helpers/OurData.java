@@ -92,9 +92,6 @@ public class OurData {
     public ArrayList<PointF> getCoordinates(int position){
 
             return imageCoordinates.get(position);
-
-
-
     }
 
     public ArrayList<ArrayList<PointF>> getImageCoordinates (){
