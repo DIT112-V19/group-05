@@ -251,7 +251,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
                 break;
             }
-
         }
     }
 
@@ -267,8 +266,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 }
             });
         }
-
-
     }
 
     @Override
@@ -283,7 +280,5 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 }
             });
         }
-
-
     }
 }
