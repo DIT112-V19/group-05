@@ -67,10 +67,10 @@ double lat;
 double lng;
 String latitude;
 String longitude;
-boolean GPS = false;
+boolean GPSreceiving = true;
 
 //GPS pin connection
-static const int RXPin = 12, TXPin = 13;
+static const int RXPin = 52, TXPin = 51;
 static const uint32_t GPSBaud = 9600;
 
 SoftwareSerial ss(RXPin, TXPin);
@@ -83,9 +83,9 @@ SoftwareSerial ss(RXPin, TXPin);
  *********************************************
 **/
 void setup() {
+  ss.begin(GPSBaud); //GPS
   Serial.begin(9600);
   Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
-  ss.begin(GPSBaud); //GPS
 
   Serial2.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
   Serial.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
@@ -98,9 +98,9 @@ void setup() {
     odometer2.update();
   });
 
-  while (!Serial2.available()) {
-    //Do nothing until Serial2 receives something
-  }
+  gpsFunction();
+  Serial2.println("Got out");
+  waitingForInput();
 }
 
 /*
@@ -112,18 +112,25 @@ void setup() {
 
 
 void loop() {
+  /*String modeInput = Serial2.readStringUntil('!');
+    if(modeInput == "g"){
+    gpsFunction();
 
-  String input = Serial2.readStringUntil('!');
-  //input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
-  //input = "<l,18,v,1,r,0,f,50,t,90,f,50,t,90,f,50,t,90,f,50,t,90>"; //square
+    }
+    else if(modeInput == "d")
+    {}
 
-  Serial.print(input);// Checking input string in serial monitor
-  stringToArray(input);
 
-  while (!Serial2.available()) {
-    //Waiting for new command
-  }
 
+    String input = Serial2.readStringUntil('!');
+    //input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
+    //input = "<l,18,v,1,r,0,f,50,t,90,f,50,t,90,f,50,t,90,f,50,t,90>"; //square
+
+    Serial.print(input);// Checking input string in serial monitor
+    stringToArray(input);
+
+    waitingForInput();
+  */
 }
 
 /*
@@ -251,7 +258,7 @@ void reverseCommands(String commands[], int arraySize) {
 //**FORWARD DRIVING**
 
 void forward(int distance) {
-  if(distance == 0){
+  if (distance == 0) {
     return;
   }
   Serial2.write("Going forward\n"); //Printing status
@@ -441,11 +448,16 @@ int mod( int x, int y ) {
   return x < 0 ? ((x + 1) % y) + y - 1 : x % y;
 }
 
-void distanceReset(){
+void distanceReset() {
   odometer1.reset(); //resets the car's driven distance
   odometer2.reset();
 }
 
+void waitingForInput() {
+  while (!Serial2.available()) {
+    //Do nothing until Serial2 receives something
+  }
+}
 
 /*
  *********************************************
@@ -472,7 +484,7 @@ int bypassObstacle() {
   int widthObstacle;
   int lengthObstacle;
   int currentForward = car.getDistance(); //store distance before obstacle
-  
+
   //Passing frontside of obstacle
   rotate(-90);// turn
   distanceReset();
@@ -482,11 +494,11 @@ int bypassObstacle() {
   checkingRightSide(); //check if obstacle still in the way
   widthObstacle = car.getDistance() + 10; //store width of Obstacle
   forward(10); //drive 10 cm extra to avoid crashing into obstacle
-  
-  //Passing left side of obstacle 
+
+  //Passing left side of obstacle
   rotate(90); //turn
   distanceReset();
-  car.setSpeed(speed); //drive //TODO direction correction 
+  car.setSpeed(speed); //drive //TODO direction correction
   car.update();
   checkingRightSide(); //check if obstacle still in the way
   lengthObstacle = car.getDistance() + 10; //store length of Obstacle
@@ -494,7 +506,7 @@ int bypassObstacle() {
 
   //Passing backside of obstacle
   rotate(90); //turn
-  distanceReset(); 
+  distanceReset();
   forward(widthObstacle); //drive along backside, go stored width of obstacle
   rotate(-90);
   distanceReset();
@@ -502,7 +514,7 @@ int bypassObstacle() {
 }
 
 //checkingRightSide method
-void checkingRightSide(){
+void checkingRightSide() {
   int currentDistanceRightSide = USSensorFront.ping_cm(); //TODO should be sensor on right side
   while (bypassDistanceObstacle >= currentDistanceRightSide && currentDistanceRightSide != 0) {
     currentDistanceRightSide = USSensorFront.ping_cm(); //TODO should be sensor on right side
@@ -513,40 +525,32 @@ void checkingRightSide(){
 
 /*
  *********************************************
-     GPS FUNCTION AVOIDANCE
+     GPS FUNCTION
  *********************************************
 **/
 
-void gpsLoop(String input) {
-  if (input.equals("g")) {
-    GPS == true;
-    Serial.print("Got into setting GPS to True");
-  }
-
-  while (true) {
-    gpsFunction();
-  }
-}
-
-
-
 void gpsFunction() {
 
+  do {
+    while (ss.available() > 0) {
+      gps.encode(ss.read());
+      if (gps.location.isUpdated()) {
+        lat = gps.location.lat();
+        lng = gps.location.lng();
 
-  while (ss.available() > 0) {
+        latitude = String(lat, 6);
+        longitude = String(lng, 6);
 
-    gps.encode(ss.read());
-
-    if (gps.location.isUpdated()) {
-      lat = gps.location.lat();
-      lng = gps.location.lng();
-
-      latitude = String(lat, 6);
-      longitude = String(lng, 6);
-
-      Serial2.println(latitude + "*" + longitude);
-      //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
-
+        Serial2.println(latitude + "*" + longitude);
+        //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
+        GPSreceiving = false;
+      }
+      String input = Serial2.readStringUntil('!');
+      
+      if (input == "gs"){
+        Serial2.println("gs successful");
+        return;
+      }
     }
-  }
+  }while (GPSreceiving);
 }
