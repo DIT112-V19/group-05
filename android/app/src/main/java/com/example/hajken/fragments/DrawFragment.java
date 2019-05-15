@@ -153,7 +153,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                     // create a java object to hold the bitmap with its respective coordinates
                     // will later be displayed in the recycler view
                     CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
-                    coordinatesListItem.setListOfCoordinates(canvasView.getListOfCoordinates());
+                    coordinatesListItem.setListOfCoordinates(canvasView.getValidPoints());
                     coordinatesListItem.setmBitmap(canvasView.getBitmap());
                     Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getBitmap());
 
