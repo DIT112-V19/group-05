@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkBackground"
+    android:background="@color/background_color"
     tools:context=".fragments.GoogleMapsFragment">
 
     <com.google.android.gms.maps.MapView
@@ -16,11 +16,12 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/device_list"
-        app:layout_constraintBottom_toTopOf="@+id/amount_of_repetitions"
+        app:layout_constraintBottom_toTopOf="@+id/seekbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/device_map_fragment" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.19" />
 
     <TextView
         android:id="@+id/amount_of_repetitions"
@@ -32,7 +33,7 @@
         android:layout_marginBottom="10dp"
         android:text="@string/amount_of_repetitions"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-        android:textColor="@color/button_text_color_active"
+        android:textColor="@color/active_button_text_color"
         app:layout_constraintBottom_toTopOf="@+id/seekbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,78 +46,64 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/button"
         android:text="@string/start_draw_button"
         android:textColor="@drawable/button_text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radio_group" />
-
-    <TextView
-        android:id="@+id/device_map_fragment"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-        app:layout_constraintBottom_toTopOf="@+id/mapView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="spread_inside" />
+        app:layout_constraintVertical_bias="0.9" />
 
     <RadioGroup
         android:id="@+id/radio_group"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="70dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/border"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/start_car_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekbar">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8">
 
         <RadioButton
             android:id="@+id/speed_low"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:buttonTint="@color/default_radio_button_color"
             android:checked="true"
-            android:buttonTint="@color/default_radio_button"
             android:text="@string/speed_slow"
-            android:textColor="@color/button_text_color_active"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+            android:textColor="@color/active_button_text_color" />
 
         <RadioButton
             android:id="@+id/speed_med"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:buttonTint="@color/default_radio_button_color"
             android:text="@string/speed_med"
-            android:buttonTint="@color/default_radio_button"
-            android:textColor="@color/button_text_color_active"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+            android:textColor="@color/active_button_text_color" />
 
         <RadioButton
             android:id="@+id/speed_fast"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:buttonTint="@color/default_radio_button_color"
             android:text="@string/speed_fast"
-            android:buttonTint="@color/default_radio_button"
-            android:textColor="@color/button_text_color_active"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+            android:textColor="@color/active_button_text_color" />
 
     </RadioGroup>
 
@@ -125,16 +112,17 @@
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="80dp"
         android:background="@drawable/border"
-        android:progressTint="@color/progess_color"
+        android:progressTint="@color/progress_color"
         android:thumbTint="@color/thumb_color"
-        app:layout_constraintBottom_toTopOf="@+id/radio_group"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/amount_of_repetitions" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.7" />
 
 </android.support.constraint.ConstraintLayout>
 

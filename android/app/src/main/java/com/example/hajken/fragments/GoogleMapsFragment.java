@@ -19,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hajken.BuildConfig;
@@ -73,9 +76,13 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     private Button startCarButton;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
+
     private TextView textView;
     //private TextView mApiKeyField;
+
     private String instructions;
+    private TextView amountOfLoops;
+    private SeekBar seekBar;
 
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private InterfaceMainActivity interfaceMainActivity;
@@ -105,7 +112,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         //Creates the buttons
         startCarButton = view.findViewById(R.id.start_car_button);
-        textView = view.findViewById(R.id.device_map_fragment);
+        amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
+        seekBar = view.findViewById(R.id.seekbar);
 
         //TextView for API-key
         //mApiKeyField = view.findViewById(R.id.apiKeyText);
@@ -113,6 +121,9 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         //Speed changing
         radioGroup = view.findViewById(R.id.radio_group);
+
+        //Set amount of repetitions beginning at zero
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -126,6 +137,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             }
         });
 
+
         if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
             textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
         } else {
@@ -134,6 +146,11 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         mMapView = new MapView(getContext());
         mMapView = view.findViewById(R.id.mapView);
+
+       mMapView = new MapView(getContext());
+       mMapView = view.findViewById(R.id.mapView);
+
+
 
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
@@ -144,6 +161,27 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         mMapView.getMapAsync(this);
 
         startCarButton.setOnClickListener(this);
+
+        seekBar.setMax(10);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
+                amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(progress)));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
 
         return view;

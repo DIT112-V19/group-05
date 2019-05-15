@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="white">#ffffff</color>
 
-    <!-- Button -->
-    <color name="button_non_active">#7a7d84</color>
-    <color name="button_active">#21768f</color>
-    <color name="button_corners">#ffffff</color>
+    <!-- Button colors -->
+    <color name="non_active_button_color">#7a7d84</color>
+    <color name="active_button_color">#21768f</color>
+    <color name="button_corner_color">#ffffff</color>
+    <color name="default_radio_button_color">#FFFFFF</color>
 
-    <!-- ListView -->
-    <color name="device_list_border">#717171</color>
+    <!-- ListView colors -->
+    <color name="list_border_color">#717171</color>
 
-    <!-- Backgrounds -->
-    <color name="darkBackground">#21768f</color>
+    <!-- Background colors -->
+    <color name="background_color">#21768f</color>
 
-    <!-- TextColour -->
-    <color name="device_name_color">#FFFFFF</color>
-    <color name="button_text_color_non_active">#4F4F52</color>
-    <color name="button_text_color_active">#ffffff</color>
+    <!-- Text colors -->
+    <color name="default_text_color">#FFFFFF</color>
+    <color name="non_active_button_text_color">#4F4F52</color>
+    <color name="active_button_text_color">#ffffff</color>
 
-    <!-- SymbolColour -->
-    <color name="symbolColour">#114F63</color>
+    <!-- Symbol colors -->
+    <color name="symbol_color">#114F63</color>
 
-    <!-- Radio button color -->
-    <color name="default_radio_button">#FFFFFF</color>
-
-    <!-- Seek bar color -->
+    <!-- Seek bar colors -->
     <color name="thumb_color">#ab4336</color>
-    <color name="progess_color">#FFFFFF</color>
+    <color name="progress_color">#FFFFFF</color>
+
+    <!-- CanvasView colors -->
+    <color name="start_point_color">#ab4336</color>
+    <color name="drawn_path_color">#114F63</color>
+    <color name="actual_path_color">#FFFFFF</color>
+
+
 
 
 </resources>
