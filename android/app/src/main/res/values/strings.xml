@@ -15,7 +15,7 @@
     <string name="api_key_text">No API key found</string>
 
     <!-- Buttons -->
->>>>>>> master
+
     <string name="find_vehicle_button">connect to vehicle</string>
     <string name="scan_button">scan</string>
     <string name="unpair_button">unpair</string>
