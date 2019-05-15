@@ -67,7 +67,7 @@ dependencies {
     implementation 'com.android.support:cardview-v7:28.0.0'
 
     // Cardview
-    implementation 'com.android.support:cardview-v7:28.1.1'
+    //implementation 'com.android.support:cardview-v7:28.1.1'
 
     //Google Directions API
     //Using version 0.2.11 due to problems with later versions

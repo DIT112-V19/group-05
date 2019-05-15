@@ -21,10 +21,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hajken.BuildConfig;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.maps.android.SphericalUtil;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -90,6 +90,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     //Marker for the destination of the car
     private Marker destinationMarker = null;
     private Marker carMarker = null;
+    private static final float carMarkerColor = 260f;
 
     //Creating a Polyline
     Polyline polyline = null;
@@ -100,10 +101,12 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     //Creating an arrayList to hold coordinates of PolyLines
     List<LatLng> newDecodedPath = new ArrayList<>();
 
+    //ArrayList to hold xy-coordinates of path
+    ArrayList<PointF> pathToPointF;
+
     public GoogleMapsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -138,19 +141,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         });
 
 
-        if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
-            textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
-        } else {
-            textView.setText("Connected Device: None");
-        }
-
         mMapView = new MapView(getContext());
         mMapView = view.findViewById(R.id.mapView);
-
-       mMapView = new MapView(getContext());
-       mMapView = view.findViewById(R.id.mapView);
-
-
 
         Bundle mapViewBundle = null;
         if (savedInstanceState != null) {
@@ -182,8 +174,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             }
         });
 
-
-
         return view;
     }
 
@@ -205,29 +195,9 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         }
 
 
-
-        //For tesing purposes
-        //String rawData = "57.707005*11.939065";
-
-        String latitude = GPS.substring(0, 8);
-        String longitude = GPS.substring(9, 18);
-
-        Double lng = Double.parseDouble(longitude);
-        Log.d(TAG, "Longitude is: " + lng);
-
-        Double lat = Double.parseDouble(latitude);
-        Log.d(TAG, "Latitude is: " + lat);
-
         */
 
         //This might be moved to another method
-        /*if (mGeoApiContext == null) {
-            mGeoApiContext = new GeoApiContext.Builder()
-                    .apiKey(getString(R.string.google_map_api_key))
-                    .build();
-        }
-        */
-
         if (mGeoApiContext == null) {
             mGeoApiContext = new GeoApiContext.Builder()
                     .apiKey(BuildConfig.apiKey)
@@ -250,18 +220,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
     public void addCarOnMap(GoogleMap map) {
-        //Öppna en tråd som hela tiden kallar på GPS-datan
-        //Har en while-loop som hela tiden uppdaterar
 
         BluetoothConnection.getInstance(getContext());
-
-        //String latitude = call for latitude;
-        //String longitude = call car for longitude;
-
-        //Double lat = Double.parseDouble(latitude);
-        //Double lng = Double.parseDouble(longitude);
-
-
         //Example String
         String latLang = "57.706931*11.938822";
 
@@ -271,13 +231,13 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         String lgn = latLang.substring(index + 1);
 
         //Setting the CarMarker to its LatLgn Position
-        carMarker = map.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(lat), Double.parseDouble(lgn))).title("THE HAJKEN CAR"));
+        carMarker = map.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(lat), Double.parseDouble(lgn)))
+                .title("THE HAJKEN CAR").icon(BitmapDescriptorFactory.defaultMarker(carMarkerColor)));
 
-        //Zooming the camera to zoom value 19
+        //Moving the camera to zoom-value 19
         CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(carMarker.getPosition(), 19.0f);
 
         map.animateCamera(cu);
-
     }
 
     public void checkButton(View view) {
@@ -295,7 +255,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                 break;
             }
 
-            case "High": {
+            case "Fast": {
                 CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
                 break;
             }
@@ -309,8 +269,10 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         switch (view.getId()) {
 
             //This is the events that are associated with the buttons
-
             case R.id.start_car_button: {
+
+                instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(getPathToPointFList());
+                System.out.println("Instruction coordinates i Maps är: " + instructions);
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
                     BluetoothConnection.getInstance(getContext()).startCar(instructions);
@@ -474,24 +436,32 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                         }
                     }
 
-                    //Here Polyline gets put onto the Map
-                    polyline = map.addPolyline(new PolylineOptions().addAll(getDecodedPath()));
+                    //Only works if the route chosen is below 100 meters
+                    if(SphericalUtil.computeLength(getDecodedPath()) < 100){
 
-                    polyline.setColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
+                        //Here Polyline gets put onto the Map
+                        polyline = map.addPolyline(new PolylineOptions().addAll(getDecodedPath()));
 
-                    polyline.setClickable(true);
+                        polyline.setColor(ContextCompat.getColor(getActivity(), R.color.background_color));
 
-                    printDecodedPath();
+                        polyline.setClickable(true);
 
-                    //This moves the camera to show the entire polyline on the screen
-                    moveToBounds(polyline, map);
+                        //Only for developing
+                        printDecodedPath();
 
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        //This moves the camera to show the entire polyline on the screen
+                        moveToBounds(polyline, map);
+
+                        try {
+                            TimeUnit.SECONDS.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        convertLatLangToPoints(map);
+
+                    }else{
+                        Toast.makeText(getActivity(), "Please choose a destination within 100 meters to create a route for the car", Toast.LENGTH_LONG).show();
                     }
-                    convertLatLangToPoints(map);
 
                 }
             }
@@ -548,12 +518,11 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         List<LatLng> decodedPath = getDecodedPath();
 
-        ArrayList<PointF> pathToPointF = new ArrayList<>();
-
         //Getting the distance of of the entire map
         LatLng farLeft = map.getProjection().getVisibleRegion().farLeft;
         LatLng farRight = map.getProjection().getVisibleRegion().farRight;
 
+        //Only for developing
         double distanceOfRoute = SphericalUtil.computeDistanceBetween(decodedPath.get(0), decodedPath.get(1));
         //System.out.println("The distance of the map in meters is " + distanceOfMap);
         System.out.println("Distansen på rutten är " + distanceOfRoute);
@@ -563,6 +532,9 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         double xCoordinate = 0;
         double yCoordinate = 0;
+
+        //Initializing the ArrayList
+        pathToPointF = new ArrayList<>();
 
         for(int i = 0; i<decodedPath.size(); i++){
 
@@ -580,32 +552,26 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
             pathToPointF.add(convertedPoint);
 
-
         }
-
-        /*LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
-        LatLng northeast = bounds.northeast;
-        LatLng southwest = bounds.southwest;
-        */
-
 
         for(int i = 0; i<pathToPointF.size(); i++){
             System.out.println("Mina slutgiltiga koordinater är nu: x = " + pathToPointF.get(i).x + " och y = " + pathToPointF.get(i).y);
         }
 
-        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(pathToPointF);
-        System.out.println("Instruction coordinates i Maps är: " + instructions);
-
     }
 
 
-
     public void  setCarMarker(){
-
     }
 
     public Marker getCarMarker(){
         return carMarker;
+    }
+
+
+
+    public ArrayList<PointF> getPathToPointFList(){
+        return pathToPointF;
     }
 
 }

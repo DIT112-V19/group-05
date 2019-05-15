@@ -45,7 +45,7 @@ before_script:
     # Set `gradlew` as executable
     - chmod +x $TRAVIS_BUILD_DIR/android/gradlew
     - cp $TRAVIS_BUILD_DIR/android/gradle.properties.no.git $TRAVIS_BUILD_DIR/android/gradle.properties
-    - sed -i "s/mykey/$API_KEY/g" $TRAVIS_BUILD_DIR/android/gradle.properties
+    - sed -i "s/myKey/$GoolgeAPIKey/g" $TRAVIS_BUILD_DIR/android/gradle.properties
    # - wget https://github.com/mikalhart/TinyGPSPlus/archive/v1.0.2.tar.gz
    # - tar -xzvf v1.0.2.tar.gz
    # - export PATH=$PATH:$PWD/TinyGPSPlus/src/
