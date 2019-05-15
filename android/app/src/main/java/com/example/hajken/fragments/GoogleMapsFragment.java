@@ -2,10 +2,8 @@ package com.example.hajken.fragments;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -21,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hajken.BuildConfig;
@@ -46,7 +43,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
-import com.google.maps.PendingResult;
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
@@ -54,7 +50,6 @@ import com.google.maps.model.TravelMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static android.content.ContentValues.TAG;
@@ -82,10 +77,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     //private TextView mApiKeyField;
     private String instructions;
 
-
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private InterfaceMainActivity interfaceMainActivity;
-
 
     //Marker for the destination of the car
     private Marker destinationMarker = null;
@@ -103,7 +96,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public GoogleMapsFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -143,20 +135,13 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         mMapView = new MapView(getContext());
         mMapView = view.findViewById(R.id.mapView);
 
-
         Bundle mapViewBundle = null;
-
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY);
         }
 
         mMapView.onCreate(mapViewBundle);
-
         mMapView.getMapAsync(this);
-
-
-        //SupportMapFragment mapFragment =    (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapView);
-        //mapFragment.getMapAsync(this);
 
         startCarButton.setOnClickListener(this);
 
@@ -168,20 +153,20 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public void onAttach(Context context) {
         super.onAttach(context);
 
-
-        // bluetoothConnection = BluetoothConnection.getInstance(getContext());
-        // bluetoothConnection.startCar("g!"); //small g to request GPS
-        // Log.d(TAG, "Request for GPS-message sent");
-
-        //bluetoothConnection = BluetoothConnection.getInstance(getContext());
-        //bluetoothConnection.startCar("g!"); //small g to request GPS
+      /*  bluetoothConnection = BluetoothConnection.getInstance(getContext());
+        bluetoothConnection.startCar("g!"); //small g to request GPS
         Log.d(TAG, "Request for GPS-message sent");
 
         interfaceMainActivity = (InterfaceMainActivity) getActivity();
 
-        /*
         String GPS = bluetoothConnection.readGPS();
         Log.d(TAG, "Received this GPS-message from car: " + GPS);
+
+        if(GPS != null){
+            System.out.println("GPS position from Car is " + GPS);
+        }
+
+
 
         //For tesing purposes
         //String rawData = "57.707005*11.939065";
@@ -194,8 +179,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         Double lat = Double.parseDouble(latitude);
         Log.d(TAG, "Latitude is: " + lat);
-        */
 
+        */
 
         //This might be moved to another method
         /*if (mGeoApiContext == null) {
@@ -239,26 +224,22 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         //Double lng = Double.parseDouble(longitude);
 
 
-        //Adding car marker and adding on map
-        carMarker = map.addMarker(new MarkerOptions().position(new LatLng(57.706931, 11.938822)).title("THE HAJKEN CAR"));
+        //Example String
+        String latLang = "57.706931*11.938822";
 
-        //This moves the camera and zooms in on myMarker
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        int index = latLang.indexOf("*");
 
-        //the include method will calculate the min and max bound.
-        builder.include(carMarker.getPosition());
+        String lat = latLang.substring(0,index);
+        String lgn = latLang.substring(index + 1);
 
-        LatLngBounds bounds = builder.build();
+        //Setting the CarMarker to its LatLgn Position
+        carMarker = map.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(lat), Double.parseDouble(lgn))).title("THE HAJKEN CAR"));
 
-        int width = getResources().getDisplayMetrics().widthPixels;
-        int height = getResources().getDisplayMetrics().heightPixels;
-        int padding = (int) (width * 0.10); // offset from edges of the map 10% of screen
-
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+        //Zooming the camera to zoom value 19
+        CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(carMarker.getPosition(), 19.0f);
 
         map.animateCamera(cu);
 
-        //GPSCoordinatesToCarInstructions();
     }
 
     public void checkButton(View view) {
@@ -294,9 +275,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             case R.id.start_car_button: {
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
-
-                    Toast.makeText(getActivity(), "Starting Car. No funcion yet.", Toast.LENGTH_SHORT).show();
-
+                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
                     break;
 
                 } else {
@@ -349,7 +328,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-                map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
                 if (destinationMarker == null) {
                     destinationMarker = map.addMarker(markerOptions);
@@ -361,7 +339,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                 Log.d(TAG, "Getting to calculateDirections()");
 
                 //calculateDirections(destinationMarker);
-                calcluateDirections2(map, destinationMarker);
+                calculateDirections(map, destinationMarker);
 
             }
         });
@@ -400,14 +378,13 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
 
-    private void calcluateDirections2(GoogleMap map, Marker destinationMarker) {
+    private void calculateDirections(GoogleMap map, Marker destinationMarker) {
 
         DirectionsApiRequest apiRequest = DirectionsApi.newRequest(mGeoApiContext);
         apiRequest.origin(new com.google.maps.model.LatLng(carMarker.getPosition().latitude, carMarker.getPosition().longitude));
         apiRequest.destination(new com.google.maps.model.LatLng(destinationMarker.getPosition().latitude, destinationMarker.getPosition().latitude));
         apiRequest.mode(TravelMode.BICYCLING); //set travelling mode
         apiRequest.alternatives(false);
-
 
         //Creating a LatLng object to hold destination coordinates
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
@@ -422,11 +399,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
                 Log.d(TAG, "onResult: " + result.routes[0].toString());
 
-                System.out.println("Result of routeObject is" + routes[0].toString());
-
                 //Passing a DirectionResult
                 addPolylinesToMap(result, map);
-
             }
 
             @Override
@@ -439,8 +413,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
 
     private void addPolylinesToMap(final DirectionsResult result, GoogleMap map) {
-
-
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
 
@@ -458,13 +430,11 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
                     setDecodedPath(decodedPath);
 
-
                     if (polyline != null) {
                         if (polyline.isClickable()) {
                             polyline.remove();
                         }
                     }
-
 
                     //Here Polyline gets put onto the Map
                     polyline = map.addPolyline(new PolylineOptions().addAll(getDecodedPath()));
@@ -483,14 +453,11 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    //printPoints(map);
+                    convertLatLangToPoints(map);
 
                 }
-
             }
-
         });
-
     }
 
     public void setDecodedPath(List<com.google.maps.model.LatLng> decodedPath) {
@@ -509,107 +476,18 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
 
+    //Only for developing
     public void printDecodedPath() {
 
         //Printing coordinates in console
         for (LatLng lg : newDecodedPath) {
             System.out.println("PRINTING : Latitude " + lg.latitude + " Longitude + " + lg.longitude);
         }
-
     }
 
     public List<LatLng> getDecodedPath() {
-
         return newDecodedPath;
     }
-
-
-    //The marker should be retrieved from the onMapClick Event
-    private void calculateDirections(Marker marker) {
-
-        Log.d(TAG, "calculateDirections: calculating directions.");
-
-        //Destination is the position where the car should be driving
-        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
-
-                marker.getPosition().latitude,
-                marker.getPosition().longitude
-
-        );
-
-        Log.d(TAG, "Position of latitide: " + marker.getPosition().latitude);
-
-
-        DirectionsApiRequest directions = new DirectionsApiRequest(mGeoApiContext);
-
-        // This shows all possible routes. If its set to false, only one route will show
-        directions.alternatives(true);
-
-        //Declaring for testing below
-        double latitude = 57.42254;
-        double longitude = 11.56120;
-
-        //This is from where the user is coming from. Needs to be where the car is located.
-        directions.origin(
-
-                new com.google.maps.model.LatLng(
-
-
-                        //Latitude, hardcoded above
-                        latitude,
-                        //Longitude, hardcoded above
-                        longitude
-
-                        //Example code to be deleted
-
-                        //Getting from Firebase
-                        //mUserPosition.getGeo_point().getLatitude(),
-                        //mUserPosition.getGeo_point().getLongitude()
-
-                )
-
-        );
-
-
-        //Calculating directions
-        Log.d(TAG, "calculateDirections: destination: " + destination.toString());
-        System.out.println("Calculating Directions");
-
-        //Something like this to set the MODE
-        // apiRequest.mode(TravelMode.DRIVING); //set travelling mode
-
-        directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
-
-            @Override
-
-            public void onResult(DirectionsResult result) {
-
-                Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
-
-                Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
-
-                Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
-
-                Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
-
-            }
-
-
-            @Override
-
-            public void onFailure(Throwable e) {
-
-                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
-
-            }
-
-        });
-
-    }
-
-
-
-
 
 
     //Move camera of Maps fit the screen
@@ -625,6 +503,71 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
         map.animateCamera(cu);
+    }
+
+
+    public void convertLatLangToPoints(GoogleMap map){
+
+        List<LatLng> decodedPath = getDecodedPath();
+
+        ArrayList<PointF> pathToPointF = new ArrayList<>();
+
+        //Getting the distance of of the entire map
+        LatLng farLeft = map.getProjection().getVisibleRegion().farLeft;
+        LatLng farRight = map.getProjection().getVisibleRegion().farRight;
+
+        double distanceOfRoute = SphericalUtil.computeDistanceBetween(decodedPath.get(0), decodedPath.get(1));
+        //System.out.println("The distance of the map in meters is " + distanceOfMap);
+        System.out.println("Distansen på rutten är " + distanceOfRoute);
+
+        //Converting the distance between the entire map into a scale
+        double scale = SphericalUtil.computeDistanceBetween(farLeft, farRight) / 9;
+
+        double xCoordinate = 0;
+        double yCoordinate = 0;
+
+        for(int i = 0; i<decodedPath.size(); i++){
+
+            //System.out.println("Printing point for coordinate number " + i+1 + map.getProjection().toScreenLocation(decodedPath.get(i)) + " LATLGNG is: " + decodedPath.get(i));
+
+            //Creating coordinates that works in a scale 1:1  -  1x = 1 cm in reality
+            Point point = map.getProjection().toScreenLocation(decodedPath.get(i));
+            xCoordinate = point.x * scale;
+            yCoordinate = 900-point.y * scale;
+
+            int x = (int) xCoordinate;
+            int y = (int) yCoordinate;
+
+            PointF convertedPoint = new PointF(x, y);
+
+            pathToPointF.add(convertedPoint);
+
+
+        }
+
+        /*LatLngBounds bounds = map.getProjection().getVisibleRegion().latLngBounds;
+        LatLng northeast = bounds.northeast;
+        LatLng southwest = bounds.southwest;
+        */
+
+
+        for(int i = 0; i<pathToPointF.size(); i++){
+            System.out.println("Mina slutgiltiga koordinater är nu: x = " + pathToPointF.get(i).x + " och y = " + pathToPointF.get(i).y);
+        }
+
+        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(pathToPointF);
+        System.out.println("Instruction coordinates i Maps är: " + instructions);
+
+    }
+
+
+
+    public void  setCarMarker(){
+
+    }
+
+    public Marker getCarMarker(){
+        return carMarker;
     }
 
 }
