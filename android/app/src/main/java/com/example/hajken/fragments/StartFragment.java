@@ -38,7 +38,6 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "TAG STARTFRAGMENT - onCreateView");
 
-
         //Inflates this fragment
         View view = inflater.inflate(R.layout.fragment_start,container,false);
 

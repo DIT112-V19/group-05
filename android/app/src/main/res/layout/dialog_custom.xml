@@ -9,39 +9,42 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="10dp"
-        >
+        android:layout_height="100dp"
+        android:background="@drawable/custom_dialog_border"
+        android:padding="10dp">
 
         <TextView
+            android:id="@+id/heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Your Custom Dialog Heading"
-            android:textSize="18sp"
-            android:textColor="#000"
-            android:id="@+id/heading"/>
+            android:gravity="center"
+            android:text="@string/dialog_heading"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+            android:textColor="@color/custom_dialog_text_color" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="START"
-            android:layout_alignParentBottom="true"
+            android:id="@+id/action_execute"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
             android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginRight="20dp"
-            android:textSize="18sp"
-            android:textColor="#33bbff"
-            android:id="@+id/action_ok"/>
+            android:gravity="center"
+            android:text="@string/action_execute"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+            android:textColor="@color/custom_dialog_text_color" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CANCEL"
-            android:layout_alignParentBottom="true"
+            android:id="@+id/action_cancel"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
-            android:layout_marginRight="20dp"
-            android:textSize="18sp"
-            android:textColor="#33bbff"
-            android:id="@+id/action_cancel"/>
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:text="@string/action_cancel"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+            android:textColor="@color/custom_dialog_text_color" />
 
     </RelativeLayout>
 

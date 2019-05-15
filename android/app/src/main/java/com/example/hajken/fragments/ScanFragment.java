@@ -200,7 +200,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                //Bluetooth.getInstance().addToListView(getContext(),i);
                 Bluetooth.getInstance(getContext()).getmBluetoothAdapter().cancelDiscovery();
                 String deviceName = mBluetoothDevices.get(i).getName();
 

@@ -39,4 +39,11 @@
     <string name="square">Square</string>
     <string name="amount_of_repetitions">Amount of repetitions: %1$s</string>
 
+    <!-- Custom Dialog strings -->
+    <string name="action_cancel">Cancel</string>
+    <string name="action_execute">Execute</string>
+    <string name="dialog_heading">Heading</string>
+
+
+
 </resources>

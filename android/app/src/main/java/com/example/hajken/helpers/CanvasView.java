@@ -135,7 +135,7 @@ public class CanvasView extends View {
             case MotionEvent.ACTION_DOWN:
                 Log.d(TAG, "onTouchEvent: STEP A");
 
-                //Reset/clear canvas and lists of coordinates
+                //Clear canvas and coordinates
                 clearCanvas();
                 listOfCoordinates.clear();
                 if (validPoints != null){
@@ -180,7 +180,7 @@ public class CanvasView extends View {
         canvas.drawBitmap(mBitmap, 0, 0, mPaint);
         canvas.drawPath(mPath, mPaint);
         canvas.drawPath(mStartPoint,mStartPointPaint);
-        canvas.drawPath(mActualPath,mActualPathPaint); // actual draw on canvas
+        canvas.drawPath(mActualPath,mActualPathPaint);
 
     }
 
@@ -216,7 +216,7 @@ public class CanvasView extends View {
                 bY = validPoints.get(i).y;
             }
         }
-        mActualPath.lineTo(validPoints.get(validPoints.size()-1).x,validPoints.get(validPoints.size()-1).y);
+        mActualPath.lineTo(validPoints.get(validPoints.size()-1).x,validPoints.get(validPoints.size()-1).y); // finish path
     }
 
     public ArrayList<PointF> getValidPoints() {

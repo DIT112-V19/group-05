@@ -42,7 +42,7 @@ public class CustomDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_custom, container, false);
 
         dialogHeading = view.findViewById(R.id.heading);
-        actionOk = view.findViewById(R.id.action_ok);
+        actionOk = view.findViewById(R.id.action_execute);
         actionCancel = view.findViewById(R.id.action_cancel);
 
         //Event of cancel

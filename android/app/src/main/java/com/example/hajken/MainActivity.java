@@ -123,10 +123,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             Log.d(TAG, "TAG MAINACTIVITY - BroadcastReceiver onReceive");
-
             String action = intent.getAction();
+            //
 
             if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
                 BluetoothConnection.getInstance(context).connectMode();

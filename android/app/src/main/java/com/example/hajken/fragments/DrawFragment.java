@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -31,6 +32,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private final int SLOW = 1;
     private final int MED = 2;
     private final int FAST = 3;
+    private final int ZERO = 0;
     private static final String TAG = "DrawFragment";
     private Button startCarButton;
     private CanvasView canvasView;
@@ -67,8 +69,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         //Speed changing
         radioGroup = view.findViewById(R.id.radio_group);
 
-        //Set amount of repetitions beginning at zero
-        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
+        //Set amount of repetitions on inflation to zero
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(ZERO)));
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -88,7 +90,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     startCarButton.setActivated(true);
                 }
-
                 return false;
             }
         });
@@ -161,7 +162,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                     Log.d(TAG, "coordinateHandling: " + canvasView.getValidPoints().toString() + " SIZE:" + canvasView.getValidPoints().size());
                     instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(canvasView.getValidPoints());
                     Log.d(TAG, "Instruction coordinates: " + instructions.toString());
-                    mCustomDialogFragment.setDialogHeading("Are you ready?");
+                    mCustomDialogFragment.setDialogHeading("Would you like to start the vehicle?");
                     mCustomDialogFragment.setAction("Start");
                     mCustomDialogFragment.setTargetFragment(DrawFragment.this,1);
                     mCustomDialogFragment.show(getFragmentManager(),"DIALOG");
@@ -200,7 +201,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                 if (instructions == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                 } else {
-
                     BluetoothConnection.getInstance(getContext()).startCar(instructions);
                     Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show(); // <<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = true;
