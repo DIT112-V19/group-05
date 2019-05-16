@@ -1,7 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
     compileSdkVersion 28
+
     defaultConfig {
         applicationId "com.example.hajken"
         minSdkVersion 17
@@ -9,18 +18,24 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
-        //manifestPlaceholders = [ facebookAppId:"someId..."]
+
     }
+
+
     buildTypes {
+
         debug {
-         //   resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
+            buildConfigField 'String', 'apiKey', GoolgeAPIKey
+            resValue 'string', 'api_key', GoolgeAPIKey
         }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-           // resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
+            buildConfigField 'String', 'apiKey', GoolgeAPIKey
+            resValue 'string', 'api_key', GoolgeAPIKey
         }
+
     }
 }
 
@@ -37,8 +52,10 @@ dependencies {
     // Google Location and Activity Recognition
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
+
     // Google Maps
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
+
 
     // design library for circular images
     implementation 'de.hdodenhof:circleimageview:3.0.0'
@@ -49,6 +66,18 @@ dependencies {
     // design library for cardView
     implementation 'com.android.support:cardview-v7:28.0.0'
 
+    // Cardview
+    //implementation 'com.android.support:cardview-v7:28.1.1'
+
+    //Google Directions API
+    //Using version 0.2.11 due to problems with later versions
+    implementation 'com.google.maps:google-maps-services:0.2.11'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
+
+    //Google Maps Android API Utility Library
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
     // design library for custom toasts - Toasty
     implementation 'com.github.GrenderG:Toasty:1.4.2'
+
 }
