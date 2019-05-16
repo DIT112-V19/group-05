@@ -1,7 +1,6 @@
 #include <NewPing.h>
 #include <Smartcar.h>
 #include "TinyGPS++.h"
-#include <SoftwareSerial.h>
 
 //**********
 //ultraSonicSensor
@@ -70,10 +69,8 @@ String longitude;
 boolean GPSreceiving = true;
 
 //GPS pin connection
-static const int RXPin = 52, TXPin = 51;
 static const uint32_t GPSBaud = 9600;
 
-SoftwareSerial ss(RXPin, TXPin);
 
 //*********
 
@@ -83,7 +80,7 @@ SoftwareSerial ss(RXPin, TXPin);
  *********************************************
 **/
 void setup() {
-  ss.begin(GPSBaud); //GPS
+  Serial1.begin(GPSBaud); //GPS
   Serial.begin(9600);
   Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
 
@@ -532,8 +529,8 @@ void checkingRightSide() {
 void gpsFunction() {
 
   do {
-    while (ss.available() > 0) {
-      gps.encode(ss.read());
+    while (Serial1.available() > 0) {
+      gps.encode(Serial1.read());
       if (gps.location.isUpdated()) {
         lat = gps.location.lat();
         lng = gps.location.lng();
