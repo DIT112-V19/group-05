@@ -6,14 +6,19 @@
 //ultraSonicSensor
 float carDistanceToObstacle; //actual distance to next obstacle, in cm
 float stopDistanceToObstacle = 10; //distance that triggers to stop, in cm
-float bypassDistanceObstacle = 15; //check distance to obstacle while bypassing
+float bypassDistanceObstacle = 30; //check distance to obstacle while bypassing
 
 //ultraSonicSensor Pin connection
 const int USS1_TRIGGER_PIN = 6; //Trigger Pin
 const int USS1_ECHO_PIN = 7; //Echo Pin
+const int USS2_TRIGGER_PIN = 52; //Trigger Pin
+const int USS2_ECHO_PIN = 51; //Echo Pin
+
 const unsigned int USS1_MAX_DISTANCE = 100; //max distance of an object to be detected, in cm
+const unsigned int USS2_MAX_DISTANCE = 100;
 //*create ultraSonicSensor Object*
 NewPing USSensorFront (USS1_TRIGGER_PIN, USS1_ECHO_PIN, USS1_MAX_DISTANCE);
+NewPing USSensorRight (USS2_TRIGGER_PIN, USS2_ECHO_PIN, USS2_MAX_DISTANCE);
 
 //Gyroscope
 const int gyroOffset = 11;
@@ -24,7 +29,7 @@ const int gyroOffset = 11;
 //distanceCar
 //**********
 float speed = 50;
-int turningSpeed = 50;
+int turningSpeed = 35;
 int stopSpeed = 0;
 boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
 boolean stopFromDriving; //boolean to stop car
@@ -94,7 +99,8 @@ void setup() {
   odometer2.attach(ODOMETER2_PIN, []() {
     odometer2.update();
   });
-  
+
+  forward(150);
   waitingForInput();
 }
 
@@ -510,9 +516,9 @@ int bypassObstacle() {
 
 //checkingRightSide method
 void checkingRightSide() {
-  int currentDistanceRightSide = USSensorFront.ping_cm(); //TODO should be sensor on right side
+  int currentDistanceRightSide = USSensorRight.ping_cm(); 
   while (bypassDistanceObstacle >= currentDistanceRightSide && currentDistanceRightSide != 0) {
-    currentDistanceRightSide = USSensorFront.ping_cm(); //TODO should be sensor on right side
+    currentDistanceRightSide = USSensorRight.ping_cm(); 
     car.update();
   }
 }
