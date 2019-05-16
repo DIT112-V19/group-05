@@ -37,7 +37,7 @@ public class BluetoothConnection {
     private static BluetoothConnection mInstance = null;
 
     private BluetoothConnection(Context context) {
-        myBluetoothAdapter = Bluetooth.getInstance(context).getmBluetoothAdapter();
+        myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         myContext = context;
     }
 

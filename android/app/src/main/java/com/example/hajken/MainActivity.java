@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.fragments.CollectionFragment;
 import com.example.hajken.fragments.DrawFragment;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     private static final String TAG = "MainActivity";
     private static MainActivity mMainActivity;
+    private Bluetooth mBluetooth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +43,11 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 
         mMainActivity = this;
+        InterfaceMainActivity mInterfaceMainActivity = (InterfaceMainActivity) this;
 
         this.registerReceiver(mReceiver,filter);
+
+        mBluetooth = Bluetooth.getInstance(this, mInterfaceMainActivity);
 
         init(); // when mainActivity starts, it will inflate StartFragment first
     }

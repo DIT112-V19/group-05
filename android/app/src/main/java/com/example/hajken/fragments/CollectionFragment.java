@@ -1,6 +1,5 @@
 package com.example.hajken.fragments;
 
-import android.animation.PointFEvaluator;
 import android.content.Context;
 import android.graphics.PointF;
 import android.os.Bundle;
@@ -19,12 +18,12 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.helpers.CoordinatesHolder;
 import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.ListAdapter;
-import com.example.hajken.helpers.MathUtility;
-import com.example.hajken.helpers.OurData;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.InterfaceMainActivity;
@@ -35,7 +34,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
 
 
     private static final String TAG = "CollectionFragment";
-    private InterfaceMainActivity interfaceMainActivity;
+    private InterfaceMainActivity mInterfaceMainActivity;
     private RecyclerView recyclerView;
     private boolean vehicleOn = false;
     private RadioGroup radioGroup;
@@ -47,6 +46,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     private String instructions;
     private Button start_car_button;
     CustomDialogFragment dialog;
+    private Bluetooth mBluetooth;
 
 
     //Data for the vehicle routes
@@ -63,7 +63,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        interfaceMainActivity = (InterfaceMainActivity) getActivity();
+        mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
+        mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
+
     }
 
     //Changes the input to users choice
@@ -90,7 +92,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 if (instructions == null){
                     Toast.makeText(getActivity(),"Something went wrong 1",Toast.LENGTH_LONG).show();
                 } else { // if there is route data
-                    BluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
+                    mBluetooth.stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = false;
                     Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
                 }
@@ -103,7 +105,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 if (instructions == null){
                     Toast.makeText(getActivity(),"Something went wrong 2",Toast.LENGTH_LONG).show();
                 } else {
-                    BluetoothConnection.getInstance(getContext()).startCar(instructions); // <<<<----- here is the bluetooth activation/starting the vehicle
+                    mBluetooth.startCar(instructions); // <<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = true;
                     Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
                 }
@@ -195,29 +197,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         recyclerView.setAdapter(listAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-
-      /*  recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(getContext(), recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        Log.d(TAG, "position is: "+position);
-                        if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
-
-                            Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show();
-                            ArrayList<PointF> makeToString = ourData.getCoordinates(position);
-                            String instructions = coordinateConverter.returnInstructions(makeToString);
-                            Log.d(TAG, "Instruction coordinates: " + instructions.toString());
-                            BluetoothConnection.getInstance(getContext()).startCar(instructions);
-
-                        } else {
-                            Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
-
-                        }
-                    }
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-                                            }
-                }));*/
         start_car_button.setOnClickListener(this);
         return view;
     }
@@ -271,7 +250,8 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                 @Override
                 public void run() {
 
-                    textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
+                    // previously used to display which device the phone was connected to, keep or throw away?
+                   // textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
                 }
             });
         }
@@ -284,7 +264,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    textView.setText("Connected Device: None");
+                    // previously used to display which device the phone was connected to, keep or throw away?
+
+                    // textView.setText("Connected Device: None");
 
                 }
             });
