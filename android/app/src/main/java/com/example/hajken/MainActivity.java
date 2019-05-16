@@ -44,10 +44,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 
         mMainActivity = this;
-        InterfaceMainActivity mInterfaceMainActivity = (InterfaceMainActivity) this;
-
+        InterfaceMainActivity mInterfaceMainActivity = this;
         this.registerReceiver(mReceiver,filter);
-
         mBluetooth = Bluetooth.getInstance(this, mInterfaceMainActivity);
 
         init(); // when mainActivity starts, it will inflate StartFragment first
@@ -127,34 +125,11 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
-
             Log.d(TAG, "TAG MAINACTIVITY - BroadcastReceiver onReceive");
-
             String action = intent.getAction();
-
-            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
-                BluetoothConnection.getInstance(context).connectMode();
-            }
-
-            if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
-                BluetoothConnection.getInstance(context).disconnectMode();
-            }
-
-            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
-                if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_OFF){
-                    BluetoothConnection.getInstance(context).disconnectMode();
-                }
-            }
-
-            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
-                if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_ON){
-                    BluetoothConnection.getInstance(context).connectMode();
-                }
-            }
-
+            mBluetooth.actOnAction(action, intent);
         }
     };
 

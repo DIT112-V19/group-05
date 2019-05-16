@@ -120,6 +120,30 @@ public class Bluetooth {
         }
     }
 
+    public void actOnAction(String action, Intent intent){
+
+
+        if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+            mBluetoothConnection.connectMode();
+        }
+
+        if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+            mBluetoothConnection.disconnectMode();
+        }
+
+        if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+            if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_OFF){
+                mBluetoothConnection.disconnectMode();
+            }
+        }
+
+        if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+            if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_ON){
+                mBluetoothConnection.connectMode();
+            }
+        }
+    }
+
     public void registerListenerBluetooth(BluetoothConnection.onBluetoothConnectionListener listener){
         mBluetoothConnection.registerListener(listener);
     }

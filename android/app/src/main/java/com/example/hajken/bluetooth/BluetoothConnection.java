@@ -31,7 +31,7 @@ public class BluetoothConnection {
     private BluetoothServerSocket mServerSocket;
     private BluetoothSocket mSocket = null;
     private boolean isFinished = false;
-    private boolean wasUnPaired;
+    private boolean wasUnPaired = false;
 
     private ConnectedThread myConnectedThread;
     private static BluetoothConnection mInstance = null;

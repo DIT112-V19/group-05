@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -29,8 +30,13 @@ import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 import java.util.ArrayList;
+import java.util.List;
 
-public class CollectionFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
+import es.dmoral.toasty.Toasty;
+
+public class CollectionFragment extends Fragment implements
+        View.OnClickListener, CustomDialogFragment.OnActionInterface,
+        BluetoothConnection.onBluetoothConnectionListener {
 
 
     private static final String TAG = "CollectionFragment";
@@ -65,6 +71,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         super.onAttach(context);
         mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
         mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
+
 
     }
 
@@ -120,12 +127,14 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         BluetoothConnection.getInstance(getContext()).registerListener(this);
         dialog = new CustomDialogFragment();
 
+
     }
 
     //occurs after onCreate
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Inflates the collFragment
         final View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
@@ -134,8 +143,12 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
         start_car_button = view.findViewById(R.id.start_car_button);
-        start_car_button.setClickable(true);
-        start_car_button.setActivated(true);
+        recyclerView = view.findViewById(R.id.recyclerView);
+        start_car_button.setOnClickListener(this);
+        start_car_button.setClickable(false);
+        start_car_button.setActivated(false);
+
+
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -152,7 +165,7 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         //Set amount of repetitions beginning at zero
         amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+
 
         seekBar.setMax(10);
 
@@ -182,11 +195,9 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     Log.i(TAG, "onItemSelected: bitmap: " + coordinatesListItem.getmBitmap());
                     Log.d(TAG, "coordinateHandling: " + coordinatesListItem.getListOfCoordinates().toString() + " SIZE:" + coordinatesListItem.getListOfCoordinates().size());
                     validPoints = coordinatesListItem.getListOfCoordinates();
-
-
-
+                    start_car_button.setClickable(true);
+                    start_car_button.setActivated(true);
                 } else {
-
                     Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
 
                 }
@@ -197,9 +208,10 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
         recyclerView.setAdapter(listAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        start_car_button.setOnClickListener(this);
         return view;
     }
+
+
 
     public void checkButton(View view){
         int radioId = radioGroup.getCheckedRadioButtonId();
@@ -267,7 +279,6 @@ public class CollectionFragment extends Fragment implements View.OnClickListener
                     // previously used to display which device the phone was connected to, keep or throw away?
 
                     // textView.setText("Connected Device: None");
-
                 }
             });
         }

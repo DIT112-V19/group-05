@@ -95,7 +95,6 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
     public void checkStateOfButtons(){
         Log.d(TAG, "TAG scanFragment - checkStateOfButtons");
 
-
         //RoutesButton always active
         routesButton.setClickable(true);
         routesButton.setActivated(true);
@@ -172,13 +171,10 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
     @Override
     public void onConnect() {
         Log.d(TAG, "TAG scanFragment - onConnect");
-            mInterfaceMainActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    BluetoothConnection.getInstance(getContext()).setIsConnected(true);
-                    checkStateOfButtons();
-                    Toasty.success(mContext, "Connected to " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
-                }
+            mInterfaceMainActivity.runOnUiThread(() -> {
+                BluetoothConnection.getInstance(getContext()).setIsConnected(true);
+                checkStateOfButtons();
+                Toasty.success(mContext, "Connected to " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
             });
     }
 
@@ -186,18 +182,15 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
     public void onNotConnected() {
         Log.d(TAG, "TAG scanFragment - onNotConnected");
 
-        mInterfaceMainActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                BluetoothConnection.getInstance(getContext()).setIsConnected(false);
-                checkStateOfButtons();
+        mInterfaceMainActivity.runOnUiThread(() -> {
+            BluetoothConnection.getInstance(getContext()).setIsConnected(false);
+            checkStateOfButtons();
 
-                if (BluetoothConnection.getInstance(getContext()).getWasUnPaired()) {
-                    Toasty.info(mContext, "Unpaired with " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
-                } else {
-                    if (mBluetoothAdapter.isEnabled()){
-                        Toasty.error(mContext, "Lost connection with " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
-                    }
+            if (BluetoothConnection.getInstance(getContext()).getWasUnPaired()) {
+                Toasty.info(mContext, "Unpaired with " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
+            } else {
+                if (mBluetoothAdapter.isEnabled()){
+                    Toasty.error(mContext, "Lost connection with " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
                 }
             }
         });
