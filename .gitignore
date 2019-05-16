@@ -14,6 +14,10 @@ local.properties
 
 .gradle/
 
+# Gradle properties
+
+gradle.properties
+
 # Signing files
 
 .signing/
@@ -276,6 +280,7 @@ local.properties
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+android/app/src/main/res/values/keys.xml
 
 # Gradle
 .idea/**/gradle.xml
