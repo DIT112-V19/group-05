@@ -1,36 +1,50 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+    compileSdkVersion 28
+
     defaultConfig {
         applicationId "com.example.hajken"
         minSdkVersion 17
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
-        //manifestPlaceholders = [ facebookAppId:"someId..."]
+
     }
+
+
     buildTypes {
+
         debug {
-         //   resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
+            buildConfigField 'String', 'apiKey', GoolgeAPIKey
+            resValue 'string', 'api_key', GoolgeAPIKey
         }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-           // resValue "string", "GOOGLE_MAPS_API", hajkenMapApi
+            buildConfigField 'String', 'apiKey', GoolgeAPIKey
+            resValue 'string', 'api_key', GoolgeAPIKey
         }
+
     }
-
-
 }
 
 dependencies {
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:support-v4:28.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -38,15 +52,32 @@ dependencies {
     // Google Location and Activity Recognition
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
-    //Google Maps
+
+    // Google Maps
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
 
-    // design libary for circluar images
+
+    // design library for circular images
     implementation 'de.hdodenhof:circleimageview:3.0.0'
 
-    // design library for using recyclerview
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    // design library for using recyclerView
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+
+    // design library for cardView
+    implementation 'com.android.support:cardview-v7:28.0.0'
 
     // Cardview
-    implementation 'com.android.support:cardview-v7:27.1.1'
+    //implementation 'com.android.support:cardview-v7:28.1.1'
+
+    //Google Directions API
+    //Using version 0.2.11 due to problems with later versions
+    implementation 'com.google.maps:google-maps-services:0.2.11'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
+
+    //Google Maps Android API Utility Library
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
+    // design library for custom toasts - Toasty
+    implementation 'com.github.GrenderG:Toasty:1.4.2'
+
 }

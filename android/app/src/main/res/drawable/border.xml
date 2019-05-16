@@ -6,10 +6,10 @@
     <item>
         <shape>
             <solid
-                android:color="@color/darkBackground">
+                android:color="@color/background_color">
             </solid>
             <stroke
-                android:color="@color/button_corners"
+                android:color="@color/button_corner_color"
                 android:width="2dp">
             </stroke>
             <corners

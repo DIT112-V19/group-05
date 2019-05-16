@@ -6,10 +6,10 @@
         android:state_activated="false">
         <shape>
             <solid
-                android:color="@color/button_non_active">
+                android:color="@color/non_active_button_color">
             </solid>
             <stroke
-                android:color="@color/button_corners"
+                android:color="@color/button_corner_color"
                 android:width="2dp">
             </stroke>
             <corners
@@ -23,10 +23,10 @@
         android:state_activated="true">
         <shape>
             <solid
-                android:color="@color/button_active">
+                android:color="@color/active_button_color">
             </solid>
             <stroke
-                android:color="@color/button_corners"
+                android:color="@color/button_corner_color"
                 android:width="2dp">
             </stroke>
             <corners

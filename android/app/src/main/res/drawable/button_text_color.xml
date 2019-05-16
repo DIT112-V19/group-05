@@ -3,10 +3,10 @@
 
     <!-- button text color when not activated -->
     <item android:state_activated="false"
-        android:color="@color/button_text_color_non_active" />
+        android:color="@color/non_active_button_text_color" />
 
     <!-- button text color when active -->
     <item android:state_activated="true"
-        android:color="@color/button_text_color_active" />
+        android:color="@color/active_button_text_color" />
 
 </selector>

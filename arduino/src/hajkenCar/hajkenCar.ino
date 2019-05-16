@@ -130,6 +130,11 @@ void loop() {
     Serial.print(input);// Checking input string in serial monitor
     stringToArray(input);
 
+
+  while (!Serial2.available()) {
+  //Waiting for new command
+  }
+
     waitingForInput();
   */
 }
@@ -481,6 +486,7 @@ int obstacleAvoidance() {
   }
 }
 
+
 int bypassObstacle() {
   int widthObstacle;
   int lengthObstacle;
@@ -532,6 +538,7 @@ void checkingRightSide() {
 
 void gpsFunction() {
 
+
   do {
     while (Serial1.available() > 0 && GPSreceiving) {
 
@@ -547,7 +554,12 @@ void gpsFunction() {
         Serial2.println(latitude + "*" + longitude);
         //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
 
+
         GPSreceiving = false;
+
+     Serial2.println(latitude + "*" + longitude);
+      //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
+
 
       }
     }
