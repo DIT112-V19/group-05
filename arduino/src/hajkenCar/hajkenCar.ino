@@ -94,9 +94,7 @@ void setup() {
   odometer2.attach(ODOMETER2_PIN, []() {
     odometer2.update();
   });
-
-  gpsFunction();
-  Serial2.println("Got out");
+  
   waitingForInput();
 }
 
@@ -529,8 +527,10 @@ void checkingRightSide() {
 void gpsFunction() {
 
   do {
-    while (Serial1.available() > 0) {
+    while (Serial1.available() > 0 && GPSreceiving) {
+
       gps.encode(Serial1.read());
+
       if (gps.location.isUpdated()) {
         lat = gps.location.lat();
         lng = gps.location.lng();
@@ -540,14 +540,10 @@ void gpsFunction() {
 
         Serial2.println(latitude + "*" + longitude);
         //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
+
         GPSreceiving = false;
-      }
-      String input = Serial2.readStringUntil('!');
-      
-      if (input == "gs"){
-        Serial2.println("gs successful");
-        return;
+
       }
     }
-  }while (GPSreceiving);
+  } while (GPSreceiving);
 }
