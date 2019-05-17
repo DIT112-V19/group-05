@@ -99,9 +99,6 @@ void setup() {
   odometer2.attach(ODOMETER2_PIN, []() {
     odometer2.update();
   });
-
-  forward(150);
-  waitingForInput();
 }
 
 /*
@@ -113,38 +110,30 @@ void setup() {
 
 
 void loop() {
-  /*String modeInput = Serial2.readStringUntil('!');
+
+    waitingForInput(); //wait for mode input
+    
+    String modeInput = Serial2.readStringUntil('!');
+    
     if(modeInput == "g"){
-    gpsFunction();
-
+      gpsFunction();
+      waitingForInput();
+      getInputString();
     }
-    else if(modeInput == "d")
-    {}
-
-
-
-    String input = Serial2.readStringUntil('!');
-    //input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
-    //input = "<l,18,v,1,r,0,f,50,t,90,f,50,t,90,f,50,t,90,f,50,t,90>"; //square
-
-    Serial.print(input);// Checking input string in serial monitor
-    stringToArray(input);
-
-
-  while (!Serial2.available()) {
-  //Waiting for new command
-  }
-
-    waitingForInput();
-  */
+    else if(modeInput == "d"){
+      waitingForInput();
+      getInputString();
+    }    
 }
 
 /*
  *********************************************
-     METHODS
+     EXAMPLES
  *********************************************
 **/
 
+    //input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
+    //input = "<l,18,v,1,r,0,f,50,t,90,f,50,t,90,f,50,t,90,f,50,t,90>"; //square
 
 /*
  *********************************************
@@ -463,6 +452,12 @@ void waitingForInput() {
   while (!Serial2.available()) {
     //Do nothing until Serial2 receives something
   }
+}
+
+void getInputString(){
+  
+  String input = Serial2.readStringUntil('!');
+  stringToArray(input);
 }
 
 /*
