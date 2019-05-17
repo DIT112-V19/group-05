@@ -113,11 +113,13 @@ void setup() {
 void loop() {
 
   String input = Serial2.readStringUntil('!');
+
   //input = "<l,12,v,1,r,0,f,100,t,-90,f,50,t,90>"; //Test input
   //input = "<l,18,v,1,r,0,f,50,t,90,f,50,t,90,f,50,t,90,f,50,t,90>"; //square
 
   Serial.print(input);// Checking input string in serial monitor
   stringToArray(input);
+
 
   while (!Serial2.available()) {
   //Waiting for new command
@@ -461,6 +463,8 @@ void obstacleAvoidance() {
   }
 }
 
+
+
 void gpsLoop(String input){
   if (input.equals("g")) {
     GPS == true;
@@ -474,7 +478,6 @@ void gpsLoop(String input){
 
 void gpsFunction() {
 
-
   while (ss.available() > 0) {
 
     gps.encode(ss.read());
@@ -486,9 +489,10 @@ void gpsFunction() {
       latitude = String(lat, 6);
       longitude = String(lng, 6);
 
-      Serial2.println(latitude + "*" + longitude);
+     Serial2.println(latitude + "*" + longitude);
       //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
 
     }
   }
 }
+

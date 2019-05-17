@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-import com.example.hajken.bluetooth.BluetoothConnection;
+import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.fragments.CollectionFragment;
 import com.example.hajken.fragments.DrawFragment;
 import com.example.hajken.fragments.GatewayFragment;
@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     private static final String TAG = "MainActivity";
     private static MainActivity mMainActivity;
+    private Bluetooth mBluetooth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +41,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 
         mMainActivity = this;
-
+        InterfaceMainActivity mInterfaceMainActivity = this;
         this.registerReceiver(mReceiver,filter);
+        mBluetooth = Bluetooth.getInstance(this, mInterfaceMainActivity);
+
 
         init(); // when mainActivity starts, it will inflate StartFragment first
     }
@@ -111,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         for (Fragment fragment : fragments){
             if (fragment instanceof CollectionFragment && ((CollectionFragment) fragment).isVehicleOn()){
-                Log.d(TAG, "onBackPressed: instance of CollectionFragment & backPressedDisabled = true");
                 Toast.makeText(this, "Can't go back while vehicle is running", Toast.LENGTH_SHORT).show();
             } else {
                 super.onBackPressed();
@@ -120,33 +122,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "TAG MAINACTIVITY - BroadcastReceiver onReceive");
             String action = intent.getAction();
-            //
-
-            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
-                BluetoothConnection.getInstance(context).connectMode();
-            }
-
-            if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
-                BluetoothConnection.getInstance(context).disconnectMode();
-            }
-
-            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
-                if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_OFF){
-                    BluetoothConnection.getInstance(context).disconnectMode();
-                }
-            }
-
-            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
-                if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_ON){
-                    BluetoothConnection.getInstance(context).connectMode();
-                }
-            }
-
+            mBluetooth.actOnAction(action, intent);
         }
     };
 

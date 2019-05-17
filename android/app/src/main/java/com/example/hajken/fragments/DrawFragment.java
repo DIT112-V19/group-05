@@ -11,12 +11,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CanvasView;
 import com.example.hajken.helpers.CoordinatesHolder;
@@ -43,10 +44,14 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private boolean vehicleOn = false;
     private TextView amountOfLoops;
     private SeekBar seekBar;
+    private Bluetooth mBluetooth;
+    private InterfaceMainActivity mInterfaceMainActivity;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
+        mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
     }
 
     @Override
@@ -155,20 +160,13 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                     CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
                     coordinatesListItem.setListOfCoordinates(canvasView.getValidPoints());
                     coordinatesListItem.setmBitmap(canvasView.getBitmap());
-                    Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getBitmap());
 
                     // added to a holder class which binds the bitmap together with its coordinates
                     CoordinatesHolder.COORDINATES_LIST_ITEMS.add(coordinatesListItem);
-                    Log.d(TAG, "coordinateHandling: " + canvasView.getValidPoints().toString() + " SIZE:" + canvasView.getValidPoints().size());
                     instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(canvasView.getValidPoints());
-                    Log.d(TAG, "Instruction coordinates: " + instructions.toString());
-                    mCustomDialogFragment.setDialogHeading("Would you like to start the vehicle?");
-                    mCustomDialogFragment.setAction("Start");
-                    mCustomDialogFragment.setTargetFragment(DrawFragment.this,1);
-                    mCustomDialogFragment.show(getFragmentManager(),"DIALOG");
+                    showStartDialog();
 
                     break;
-
                 } else {
                     Toasty.error(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
                     break;
@@ -188,7 +186,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                 if (instructions == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                 } else { // if there is route data
-                    BluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
+                    mBluetooth.stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = false;
                     Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
                 }
@@ -201,7 +199,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                 if (instructions == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                 } else {
-                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+                    mBluetooth.startCar(instructions);
                     Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show(); // <<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = true;
                     Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
@@ -212,6 +210,20 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
     public boolean isVehicleOn() {
         return vehicleOn;
+    }
+
+    public void showStartDialog(){
+        mCustomDialogFragment.setDialogHeading("Would you like to start the vehicle?");
+        mCustomDialogFragment.setAction("Start");
+        mCustomDialogFragment.setTargetFragment(DrawFragment.this,1);
+        mCustomDialogFragment.show(getFragmentManager(),"DIALOG");
+    }
+
+    public void showStopDialog(){
+        mCustomDialogFragment.setDialogHeading("Would you like to stop the vehicle?");
+        mCustomDialogFragment.setAction("Stop");
+        mCustomDialogFragment.setTargetFragment(DrawFragment.this,1);
+        mCustomDialogFragment.show(getFragmentManager(),"DIALOG");
     }
 
 }

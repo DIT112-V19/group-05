@@ -13,7 +13,7 @@
                 android:width="2dp">
             </stroke>
             <corners
-                android:radius="20dp">
+                android:radius="10dp">
             </corners>
         </shape>
     </item>

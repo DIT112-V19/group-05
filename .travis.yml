@@ -44,6 +44,8 @@ before_script:
     - adb shell input keyevent 82 &
     # Set `gradlew` as executable
     - chmod +x $TRAVIS_BUILD_DIR/android/gradlew
+    - cp $TRAVIS_BUILD_DIR/android/gradle.properties.no.git $TRAVIS_BUILD_DIR/android/gradle.properties
+    - sed -i "s/myKey/$GoolgeAPIKey/g" $TRAVIS_BUILD_DIR/android/gradle.properties
    # - wget https://github.com/mikalhart/TinyGPSPlus/archive/v1.0.2.tar.gz
    # - tar -xzvf v1.0.2.tar.gz
    # - export PATH=$PATH:$PWD/TinyGPSPlus/src/
@@ -61,7 +63,7 @@ install:
     - arduino --install-library "Smartcar shield"
     - arduino --install-library "NewPing"
     - git clone https://github.com/mikalhart/TinyGPSPlus.git $HOME/arduino_ide/libraries/TinyGPSPlus || true
-    
+
 script:
     # Build the Android app
     - cd $TRAVIS_BUILD_DIR/android
@@ -73,4 +75,3 @@ script:
     # Build all .ino files for Arduino Mega
     - cd $TRAVIS_BUILD_DIR/arduino
     - build_platform mega2560
-

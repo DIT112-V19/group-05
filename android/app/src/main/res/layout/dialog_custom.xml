@@ -30,6 +30,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginRight="20dp"
             android:gravity="center"
+            android:background="@drawable/custom_dialog_border"
             android:text="@string/action_execute"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
             android:textColor="@color/custom_dialog_text_color" />
@@ -42,6 +43,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="20dp"
             android:gravity="center"
+            android:background="@drawable/custom_dialog_border"
             android:text="@string/action_cancel"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
             android:textColor="@color/custom_dialog_text_color" />
