@@ -283,4 +283,20 @@ public class CollectionFragment extends Fragment implements
             });
         }
     }
+
+    @Override
+    public void onCarRunning() {
+        mInterfaceMainActivity.setOnBackPressedActive(false);
+
+    }
+
+    @Override
+    public void onCarNotRunning() {
+        mInterfaceMainActivity.setOnBackPressedActive(true);
+
+
+
+    }
+
+
 }

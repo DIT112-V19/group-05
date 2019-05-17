@@ -195,4 +195,14 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
             }
         });
     }
+
+    @Override
+    public void onCarRunning() {
+
+    }
+
+    @Override
+    public void onCarNotRunning() {
+
+    }
 }

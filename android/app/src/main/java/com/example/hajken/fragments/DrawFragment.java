@@ -212,6 +212,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
                     mBluetooth.startCar(instructions);
                     Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show(); // <<<<----- here is the bluetooth activation/starting the vehicle
+
                     vehicleOn = true;
                     Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
                 }

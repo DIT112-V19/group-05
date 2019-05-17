@@ -31,6 +31,7 @@ public class CanvasView extends View {
     private static final String TAG = "CanvasView";
     private float mX, mY;
     private ArrayList<PointF> validPoints;
+    private ArrayList<PointF> actualPathPoints;
     private static final int ZERO = 0;
     private static final float TOLERANCE = 5; /// ???????
 
@@ -120,11 +121,18 @@ public class CanvasView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         float x = event.getX();
         float y = event.getY();
 
+        Log.d(TAG, "onTouchEvent: "+x+" y "+y);
+
+
         //Inverts y-value so that it is the correct rotation for user
         float invertedY = mBitmap.getHeight() - y;
+
+        Log.d(TAG, "onTouchEvent: Inverted "+x+" y "+invertedY);
+
 
         //this makes sure that values are not stored when touching outside of canvas
         if (x > width || x < ZERO || y > height || y < ZERO) {
@@ -165,8 +173,12 @@ public class CanvasView extends View {
                 PointF upPoint = new PointF();
                 upPoint.set(x, invertedY);
                 listOfCoordinates.add(upPoint);
-                validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(getListOfCoordinates(), 100.0);
-                displayActualPath(validPoints);
+                validPoints = MathUtility.getInstance(getContext()).rdpSimplifier(getListOfCoordinates(), 65.0);
+                actualPathPoints = new ArrayList<>();
+                copyList(validPoints);
+                displayActualPath(actualPathPoints);
+
+
                 invalidate();
                 break;
         }
@@ -193,34 +205,47 @@ public class CanvasView extends View {
          return bmp;
     }
 
-    public void displayActualPath(ArrayList<PointF> validPoints){
+    public void copyList(ArrayList<PointF> validPoints){
+
+        for (int i = 0; i < validPoints.size(); i++){
+            PointF point = new PointF();
+            point.x = validPoints.get(i).x;
+            point.y = validPoints.get(i).y;
+            this.actualPathPoints.add(point);
+        }
+
+    }
+
+
+    public void displayActualPath(ArrayList<PointF> actualPathPoints){
         //Inverts all y-values so that it is the correct rotation for bitMap :)
-        for (int i = 0; i < validPoints.size();i++){
-            validPoints.get(i).set(validPoints.get(i).x,mBitmap.getHeight()-validPoints.get(i).y);
+        for (int i = 0; i < actualPathPoints.size();i++){
+            actualPathPoints.get(i).set(actualPathPoints.get(i).x,mBitmap.getHeight()-actualPathPoints.get(i).y);
         }
 
         //Draw path
-        mActualPath.moveTo(validPoints.get(0).x,validPoints.get(0).y);
-        float bX = validPoints.get(0).x;
-        float bY = validPoints.get(0).y;
+        mActualPath.moveTo(actualPathPoints.get(0).x,actualPathPoints.get(0).y);
+        float bX = actualPathPoints.get(0).x;
+        float bY = actualPathPoints.get(0).y;
 
         float dx;
         float dy;
 
-        for (int i = 1; i < validPoints.size(); i++){ // draw the rest of the points
+        for (int i = 1; i < actualPathPoints.size(); i++){ // draw the rest of the points
             dx = Math.abs(bX - mX);
             dy = Math.abs(bY - mY);
             if (dx >= TOLERANCE || dy >= TOLERANCE) {
-                mActualPath.quadTo(bX, bY, (validPoints.get(i).x + bX) / 2, (validPoints.get(i).y + bY) / 2);
-                bX = validPoints.get(i).x;
-                bY = validPoints.get(i).y;
+                mActualPath.quadTo(bX, bY, (actualPathPoints.get(i).x + bX) / 2, (actualPathPoints.get(i).y + bY) / 2);
+                bX = actualPathPoints.get(i).x;
+                bY = actualPathPoints.get(i).y;
             }
         }
-        mActualPath.lineTo(validPoints.get(validPoints.size()-1).x,validPoints.get(validPoints.size()-1).y);
+        mActualPath.lineTo(actualPathPoints.get(actualPathPoints.size()-1).x,actualPathPoints.get(actualPathPoints.size()-1).y);
     }
 
     public ArrayList<PointF> getValidPoints() {
         return validPoints;
     }
+
 
 }
