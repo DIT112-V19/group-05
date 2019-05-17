@@ -2,10 +2,16 @@ package com.example.hajken.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.util.Log;
+
+import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.MainActivity;
+import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.helpers.ListOfDevices;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -16,21 +22,25 @@ public class Bluetooth {
     private MainActivity mMainActivity = MainActivity.getThis();
     private final static UUID MY_UUID_INSECURE = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private BluetoothDevice mBluetoothDevice;
+    private BluetoothDevice mPairedBluetoothDevice;
     private BluetoothAdapter mBluetoothAdapter;
     private ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
     private static Bluetooth mInstance = null;
     private ListOfDevices mListAdapter;
     private BluetoothConnection mBluetoothConnection;
+    private InterfaceMainActivity mInterfaceMainActivity;
+    private Context mContext;
 
-    public Bluetooth(Context context){
+    public Bluetooth(Context context, InterfaceMainActivity mInterfaceMainActivity){
         context = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        this.mInterfaceMainActivity = mInterfaceMainActivity ;
     }
 
-    public static Bluetooth getInstance(Context context){
+    public static Bluetooth getInstance(Context context, InterfaceMainActivity mInterfaceMainActivity){
 
         if (mInstance == null){
-            mInstance = new Bluetooth(context);
+            mInstance = new Bluetooth(context, mInterfaceMainActivity);
         }
         return mInstance;
     }
@@ -50,14 +60,24 @@ public class Bluetooth {
         }
     }
 
-    public void unPairDevice(){
-
+    public void unPairDevice(BluetoothDevice mPairedBluetoothDevice){
+        mBluetoothConnection.unPair(mPairedBluetoothDevice);
 
     }
 
-   /*private BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+    public void stopCar(String input){
+        mBluetoothConnection.stopCar(input);
+    }
+
+    public void startCar(String input){
+        mBluetoothConnection.startCar(input);
+    }
+
+    public BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "TAG scanFragment - Broadcast receiver onReceive");
+
             String action = intent.getAction();
 
             if (BluetoothDevice.ACTION_FOUND.equals(action)){
@@ -66,65 +86,71 @@ public class Bluetooth {
                     mBluetoothdevices.add(device);
                 }
                 //only create once and notify when changes occurs
-                mScanFragment.getmListAdapter().notifyDataSetChanged();
+                mListAdapter.notifyDataSetChanged();
             }
         }
     };
 
-    public BluetoothDevice scanForDevices(){
+    public void discover(){
 
-        if (mBluetoothAdapter != null){
-            Log.d(TAG, " Bluetooth exists and device can scan");
-            if (mBluetoothAdapter.isDiscovering()){
-                Log.d(TAG, " Discovering..");
-                mBluetoothAdapter.cancelDiscovery();
-                mBluetoothAdapter.startDiscovery();
-                Intent intent = new Intent(BluetoothDevice.ACTION_FOUND);
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                mBluetoothdevices.add(device);
-            }
-            if (!mBluetoothAdapter.isDiscovering()){
-                Log.d(TAG, " Didn't discover but now is.. ");
-                mBluetoothAdapter.startDiscovery();
-                Intent intent = new Intent(BluetoothDevice.ACTION_FOUND);
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                return device;
-            }
-        }
-        Log.d(TAG, " This device has no bluetooth");
-        return null;
-    }
-
-     void discover(){
-
-        if (mBluetoothAdapter.isDiscovering()){
+        if (getmBluetoothAdapter().isDiscovering()){
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            mMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
-
+            mInterfaceMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
         }
-        if (!mBluetoothAdapter.isDiscovering()){
-            mBluetoothAdapter.startDiscovery();
+        if (!getmBluetoothAdapter().isDiscovering()){
+            getmBluetoothAdapter().startDiscovery();
             IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-            mMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
+            mInterfaceMainActivity.registerReceiver(mBroadcastReceiver1, intentFilter);
         }
     }
 
-    void addToListView(Context context, int i){
+
+    public void bondWithDevice(Context context, int i){
         mBluetoothAdapter.cancelDiscovery();
         String deviceName = mBluetoothdevices.get(i).getName();
 
         //the bond can only be created if the API are correct
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
             mBluetoothdevices.get(i).createBond();
+            mPairedBluetoothDevice = mBluetoothdevices.get(i);
             mBluetoothConnection = BluetoothConnection.getInstance(context);
             mBluetoothConnection.startClient(mBluetoothdevices.get(i), MY_UUID_INSECURE );
             Log.i(TAG, " connected to " + deviceName);
 
         }
-    }*/
+    }
+
+    public void actOnAction(String action, Intent intent){
+
+
+        if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+            mBluetoothConnection.connectMode();
+        }
+
+        if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)){
+            mBluetoothConnection.disconnectMode();
+        }
+
+        if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+            if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_OFF){
+                mBluetoothConnection.disconnectMode();
+            }
+        }
+
+        if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
+            if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,-1) == BluetoothAdapter.STATE_ON){
+                mBluetoothConnection.connectMode();
+            }
+        }
+    }
+
+    public void registerListenerBluetooth(BluetoothConnection.onBluetoothConnectionListener listener){
+        mBluetoothConnection.registerListener(listener);
+    }
 
 
     public BluetoothDevice getmBluetoothDevice() {
+
         return mBluetoothDevice;
     }
 
@@ -152,13 +178,6 @@ public class Bluetooth {
         return MY_UUID_INSECURE;
     }
 
-    public static Bluetooth getmInstance() {
-        return mInstance;
-    }
-
-    public static void setmInstance(Bluetooth mInstance) {
-        Bluetooth.mInstance = mInstance;
-    }
 
     public ListOfDevices getmListAdapter() {
         return mListAdapter;
@@ -176,4 +195,7 @@ public class Bluetooth {
         this.mBluetoothConnection = mBluetoothConnection;
     }
 
+    public BluetoothDevice getmPairedBluetoothDevice() {
+        return mPairedBluetoothDevice;
+    }
 }

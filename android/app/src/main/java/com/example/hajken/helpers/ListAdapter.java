@@ -31,7 +31,6 @@ public class ListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ((ListViewHolder) holder).bindView(mItems.get(position));
-
     }
 
     @Override
@@ -42,7 +41,6 @@ public class ListAdapter extends RecyclerView.Adapter {
     public interface onItemSelectedListener{
 
         void onItemSelected(CoordinatesListItem coordinatesListItem);
-
     }
 
     private class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -56,13 +54,11 @@ public class ListAdapter extends RecyclerView.Adapter {
             // mItemText = (TextView) itemView.findViewById(R.id.itemText);
             mItemImage = (ImageView) itemView.findViewById(R.id.itemImage);
             itemView.setOnClickListener(this);
-
         }
 
         public void bindView(CoordinatesListItem item){
             //mItemText.setText(OurData.imageName[position]);
             mItemImage.setImageBitmap(item.getmBitmap());
-
         }
 
         public void onClick(View view){
@@ -70,9 +66,14 @@ public class ListAdapter extends RecyclerView.Adapter {
             if(getAdapterPosition() > -1){
                 onItemSelectedListener.onItemSelected(mItems.get(getAdapterPosition()));
             }
-
         }
-
     }
 
+    public ListAdapter.onItemSelectedListener getOnItemSelectedListener() {
+        return onItemSelectedListener;
+    }
+
+    public void setOnItemSelectedListener(ListAdapter.onItemSelectedListener onItemSelectedListener) {
+        this.onItemSelectedListener = onItemSelectedListener;
+    }
 }
