@@ -117,6 +117,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         startCarButton = view.findViewById(R.id.start_car_button);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
+        startCarButton.setClickable(false);
+        startCarButton.setActivated(false);
 
         //TextView for API-key
         //mApiKeyField = view.findViewById(R.id.apiKeyText);
@@ -265,14 +267,12 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                     break;
 
                 } else {
-                    Toast.makeText(getActivity(), "Not connected to a device. No funcion yet.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Not connected to a device. No function yet.", Toast.LENGTH_LONG).show();
                     break;
 
                 }
             }
-
         }
-
     }
 
     @Override
@@ -321,6 +321,9 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                     destinationMarker.remove();
                     destinationMarker = map.addMarker(markerOptions);
                 }
+
+                startCarButton.setActivated(true);
+                startCarButton.setClickable(true);
 
                 Log.d(TAG, "Getting to calculateDirections()");
 

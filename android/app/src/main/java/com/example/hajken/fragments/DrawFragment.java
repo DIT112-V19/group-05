@@ -16,6 +16,9 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.hajken.InterfaceMainActivity;
+import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CanvasView;
 import com.example.hajken.helpers.CoordinatesHolder;
@@ -41,10 +44,16 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private boolean vehicleOn = false;
     private TextView amountOfLoops;
     private SeekBar seekBar;
+    private Bluetooth mBluetooth;
+    private InterfaceMainActivity mInterfaceMainActivity;
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
+        mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
+
     }
 
     @Override
@@ -187,7 +196,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                 if (instructions == null){
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                 } else { // if there is route data
-                    BluetoothConnection.getInstance(getContext()).stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
+                    mBluetooth.stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = false;
                     Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
                 }
@@ -201,7 +210,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                     Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
                 } else {
 
-                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+                    mBluetooth.startCar(instructions);
                     Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show(); // <<<<----- here is the bluetooth activation/starting the vehicle
                     vehicleOn = true;
                     Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
