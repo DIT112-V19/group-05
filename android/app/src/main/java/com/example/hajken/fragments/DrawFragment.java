@@ -215,6 +215,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
                     vehicleOn = true;
                     Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
+                    mInterfaceMainActivity.setOnBackPressedActive(true);
                 }
             }
         }
