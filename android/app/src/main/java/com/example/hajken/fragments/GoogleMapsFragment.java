@@ -24,6 +24,7 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.hajken.BuildConfig;
+import com.example.hajken.helpers.GPSTracker;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.maps.android.SphericalUtil;
 
@@ -69,7 +70,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     private final int FAST = 3;
 
     private MapView mMapView;
-    private BluetoothConnection bluetoothConnection;
 
     private GeoApiContext mGeoApiContext = null;
 
@@ -183,23 +183,11 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public void onAttach(Context context) {
         super.onAttach(context);
 
-      /*  bluetoothConnection = BluetoothConnection.getInstance(getContext());
-        bluetoothConnection.startCar("g!"); //small g to request GPS
-        Log.d(TAG, "Request for GPS-message sent");
 
-        interfaceMainActivity = (InterfaceMainActivity) getActivity();
-
-        String GPS = bluetoothConnection.readGPS();
-        Log.d(TAG, "Received this GPS-message from car: " + GPS);
-
-        if(GPS != null){
-            System.out.println("GPS position from Car is " + GPS);
-        }
-
-
-        */
+        //Call GPSConnector.update()
 
         //This might be moved to another method
+        //Might be a singleton pattern?
         if (mGeoApiContext == null) {
             mGeoApiContext = new GeoApiContext.Builder()
                     .apiKey(BuildConfig.apiKey)
@@ -224,19 +212,17 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public void addCarOnMap(GoogleMap map) {
 
         BluetoothConnection.getInstance(getContext());
-        //Example String
-        String latLang = "57.706931*11.938822";
 
-        int index = latLang.indexOf("*");
+        //
+        GPSTracker myTracker = new GPSTracker(getContext());
+        myTracker.getLocation();
 
-        String lat = latLang.substring(0,index);
-        String lgn = latLang.substring(index + 1);
 
         //Setting the CarMarker to its LatLgn Position
-        carMarker = map.addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(lat), Double.parseDouble(lgn)))
+        carMarker = map.addMarker(new MarkerOptions().position(new LatLng(myTracker.getLocation().getLatitude(), myTracker.getLocation().getLongitude()))
                 .title("THE HAJKEN CAR").icon(BitmapDescriptorFactory.defaultMarker(carMarkerColor)));
 
-        //Moving the camera to zoom-value 19
+        //Moving the camera to zoom value 19
         CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(carMarker.getPosition(), 19.0f);
 
         map.animateCamera(cu);
@@ -570,7 +556,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public Marker getCarMarker(){
         return carMarker;
     }
-
 
 
     public ArrayList<PointF> getPathToPointFList(){
