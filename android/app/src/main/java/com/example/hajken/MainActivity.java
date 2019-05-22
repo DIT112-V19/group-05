@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.LocationManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         Log.d(TAG, "TAG MAINACTIVITY - onCreate");
 
