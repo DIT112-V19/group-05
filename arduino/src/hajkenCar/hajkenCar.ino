@@ -37,7 +37,7 @@ const int gyroOffset = 11;
 //distanceCar
 //**********
 float speed = 50;
-int turningSpeed = 35;
+int turningSpeed = 55;
 int stopSpeed = 0;
 
 //motor pin connection
@@ -111,9 +111,10 @@ void setup() {
     odometer2.update();
   });
 
-digitalWrite(LEDgreen, HIGH);
-forward(100);
+  digitalWrite(LEDgreen, HIGH);
+
   waitingForInput();
+  
 }
 
 /*
@@ -351,6 +352,17 @@ void rotate(int angleToTurn) {
     currentTurned = initialHeading - currentHeading;
   }
 
+
+
+//*****************
+  //Correction for overturn or underturn
+  int neededTurn = currentTurned + angleToTurn;
+  
+  if(abs(neededTurn) > 0){
+    rotate(neededTurn);
+  }
+
+  
   stop();
 }
 
