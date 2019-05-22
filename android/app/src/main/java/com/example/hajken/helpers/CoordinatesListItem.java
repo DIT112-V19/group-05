@@ -9,16 +9,8 @@ import java.util.ArrayList;
 public class CoordinatesListItem {
 
     private String mName;
-    private Bitmap mBitmap;
     private ArrayList<PointF> listOfCoordinates = new ArrayList<>();
 
-    public Bitmap getmBitmap() {
-        return mBitmap;
-    }
-
-    public void setmBitmap(Bitmap mBitmap) {
-        this.mBitmap = mBitmap;
-    }
 
     public ArrayList<PointF> getListOfCoordinates() {
         return listOfCoordinates;
@@ -30,5 +22,9 @@ public class CoordinatesListItem {
 
     public void setmName(String path){
         this.mName = path;
+    }
+
+    public String getmName(){
+        return this.mName;
     }
 }

@@ -74,6 +74,7 @@ public class CollectionFragment extends Fragment implements
         mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
 
 
+
     }
 
     //Changes the input to users choice
@@ -193,7 +194,6 @@ public class CollectionFragment extends Fragment implements
             public void onItemSelected(CoordinatesListItem coordinatesListItem) {
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
-                    Log.i(TAG, "onItemSelected: bitmap: " + coordinatesListItem.getmBitmap());
                     Log.d(TAG, "coordinateHandling: " + coordinatesListItem.getListOfCoordinates().toString() + " SIZE:" + coordinatesListItem.getListOfCoordinates().size());
                     validPoints = coordinatesListItem.getListOfCoordinates();
                     start_car_button.setClickable(true);

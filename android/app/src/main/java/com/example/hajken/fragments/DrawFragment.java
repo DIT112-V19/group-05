@@ -56,6 +56,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private Bluetooth mBluetooth;
     private CheckBox saveButton;
     private InterfaceMainActivity mInterfaceMainActivity;
+    private SaveData saveData;
 
 
     @Override
@@ -70,6 +71,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCustomDialogFragment = new CustomDialogFragment();
+        saveData = SaveData.getInstance(getContext());
     }
 
     @Nullable
@@ -175,16 +177,17 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
                         CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
                         coordinatesListItem.setListOfCoordinates(canvasView.getValidPoints());
-                        coordinatesListItem.setmBitmap(canvasView.getBitmap());
                         coordinatesListItem.setmName(createName());
+
+                        saveData.mItemList.add(coordinatesListItem);
                         Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getBitmap());
 
-                        SaveData saveData = SaveData.getInstance(getContext());
+                        saveData.savePNG(canvasView.getBitmap());
                         saveData.saveData(coordinatesListItem);
 
 
 
-
+                    }
 
 
 
@@ -207,7 +210,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                     }
                 }
             }
-        }
+
     }
 
         @Override
@@ -249,8 +252,10 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         }
 
         public String createName(){
-        String name = Integer.toString(SaveData.getInstance(getContext()).getList().size());
-        return name;
+
+            String name = Integer.toString(SaveData.getInstance(getContext()).getList().size())+".png";
+            return name;
+
         }
 
 

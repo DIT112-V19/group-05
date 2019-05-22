@@ -4,12 +4,21 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Path;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.ImageView;
 
+import com.example.hajken.MainActivity;
+import com.example.hajken.R;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -24,8 +33,10 @@ public class SaveData {
     private static SaveData mInstance = null;
     private Context context;
     private File filePath;
-    private ArrayList<CoordinatesListItem> mItemList;
-
+    public static ArrayList<CoordinatesListItem> mItemList = new ArrayList<>();
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+    private File mypath;
 
 
     private SaveData(Context context){
@@ -41,12 +52,14 @@ public class SaveData {
 
     public String savePNG(Bitmap bitmap){
 
-        ContextWrapper cw = new ContextWrapper(context);
+        ContextWrapper cw = new ContextWrapper(MainActivity.getThis());
         // path to /data/data/yourapp/app_data/savedMaps
-        File directory = cw.getDir("savedMaps", MODE_PRIVATE);
+
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         // Create savedMaps
 
-        File mypath = new File(directory, createName());
+        mypath = new File(directory, createName());
+
         Log.d(TAG, "before saving data. My path is: "+mypath);
 
         FileOutputStream toPhoneStream = null;
@@ -65,44 +78,60 @@ public class SaveData {
                 e.printStackTrace();
             }
         }
-
+        Log.d(TAG, "myPath: "+mypath);
         return mypath.getAbsolutePath();
     }
 
     public void saveData(Object object){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
+        mPreferences = MainActivity.getThis().getSharedPreferences("shared preferences", MODE_PRIVATE);
+        mEditor = mPreferences.edit();
         String json = gson.toJson(mItemList);
-        editor.putString("task list", json);
-        editor.apply();
-
+        mEditor.putString("task list", json);
+        mEditor.apply();
+        Log.d(TAG, "Inside Save Data: "+ json);
+        Log.d(TAG, "Save listitem: "+ mItemList);
 
     }
 
     public void loadData(){
-        SharedPreferences sharedPreferences = context.getSharedPreferences("shared preferences", MODE_PRIVATE);
+        mPreferences = MainActivity.getThis().getSharedPreferences("shared preferences", MODE_PRIVATE);
         Gson gson = new Gson();
-        String json = sharedPreferences.getString("task list", null);
+        String json = mPreferences.getString("task list", null);
         Type type = new TypeToken<ArrayList<CoordinatesListItem>>() {}.getType();
         mItemList = gson.fromJson(json, type);
 
         if (mItemList == null) {
             mItemList = new ArrayList<>();
         }
-
+        Log.d(TAG, "Inside Load Data: "+ json);
     }
 
 
-    public String createName() {
-        String name = Integer.toString(mItemList.size());
-        return name;
+    public String createName(){
+
+            String name = Integer.toString(mItemList.size()-1)+".png";
+            return name;
 
     }
+
+    /*public Bitmap loadBitmap(String name){
+        FileInputStream in = new FileInputStream(mypath+mItemList);
+
+
+        return bitmap;
+    }*/
 
     public ArrayList<CoordinatesListItem> getList(){
         return this.mItemList;
     }
+
+    public void setList(){
+        mItemList = new ArrayList<CoordinatesListItem>();
+    }
+
+
+
 
 
 }
