@@ -22,13 +22,14 @@ import android.widget.Toast;
 
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.helpers.CoordinateConverter;
-import com.example.hajken.helpers.CoordinatesHolder;
 import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.ListAdapter;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
+import com.example.hajken.helpers.SaveData;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,7 +138,6 @@ public class CollectionFragment extends Fragment implements
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Inflates the collFragment
         final View view = inflater.inflate(R.layout.fragment_collection, container, false);
-
         //Speed changing
         radioGroup = view.findViewById(R.id.radio_group);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
@@ -147,6 +147,7 @@ public class CollectionFragment extends Fragment implements
         start_car_button.setOnClickListener(this);
         start_car_button.setClickable(false);
         start_car_button.setActivated(false);
+        SaveData.getInstance(getContext()).loadData();
 
 
 
@@ -187,7 +188,7 @@ public class CollectionFragment extends Fragment implements
             }
         });
 
-        final ListAdapter listAdapter = new ListAdapter(CoordinatesHolder.COORDINATES_LIST_ITEMS, new ListAdapter.onItemSelectedListener() {
+        final ListAdapter listAdapter = new ListAdapter(SaveData.getInstance(getContext()).getList(), new ListAdapter.onItemSelectedListener() {
             @Override
             public void onItemSelected(CoordinatesListItem coordinatesListItem) {
 

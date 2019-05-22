@@ -371,6 +371,12 @@ public class BluetoothConnection {
         void onNotConnected();
 
     }
+
+    public OutputStream getmOutputStream(){
+        return this.mOutputStream;
+    }
+
+
 }
 
 

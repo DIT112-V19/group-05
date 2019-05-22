@@ -1,6 +1,8 @@
 package com.example.hajken.fragments;
 
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -21,15 +24,21 @@ import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CanvasView;
-import com.example.hajken.helpers.CoordinatesHolder;
 import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.R;
+import com.example.hajken.helpers.SaveData;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import es.dmoral.toasty.Toasty;
 
-public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface{
+public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
+
 
     private final int SLOW = 1;
     private final int MED = 2;
@@ -45,6 +54,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private TextView amountOfLoops;
     private SeekBar seekBar;
     private Bluetooth mBluetooth;
+    private CheckBox saveButton;
     private InterfaceMainActivity mInterfaceMainActivity;
 
 
@@ -72,12 +82,13 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         canvasView = view.findViewById(R.id.canvasView);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
+        saveButton = view.findViewById(R.id.save_button);
 
         //Speed changing
         radioGroup = view.findViewById(R.id.radio_group);
 
         //Set amount of repetitions beginning at zero
-        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions, Integer.toString(0)));
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -85,7 +96,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                 RadioButton checkedRadioButton = group.findViewById(checkedId);
                 boolean isChecked = checkedRadioButton.isChecked();
 
-                if (isChecked){
+                if (isChecked) {
                     checkButton(view);
                 }
             }
@@ -108,7 +119,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
-                amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(progress)));
+                amountOfLoops.setText(getString(R.string.amount_of_repetitions, Integer.toString(progress)));
             }
 
             @Override
@@ -158,69 +169,89 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
 
-                    // create a java object to hold the bitmap with its respective coordinates
-                    // will later be displayed in the recycler view
-                    CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
-                    coordinatesListItem.setListOfCoordinates(canvasView.getValidPoints());
-                    coordinatesListItem.setmBitmap(canvasView.getBitmap());
-                    Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getBitmap());
+                    if (saveButton.isChecked()) {
+                        // create a java object to hold the bitmap with its respective coordinates
+                        // will later be displayed in the recycler view
 
-                    // added to a holder class which binds the bitmap together with its coordinates
-                    CoordinatesHolder.COORDINATES_LIST_ITEMS.add(coordinatesListItem);
-                    Log.d(TAG, "coordinateHandling: " + canvasView.getValidPoints().toString() + " SIZE:" + canvasView.getValidPoints().size());
-                    instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(canvasView.getValidPoints());
-                    Log.d(TAG, "Instruction coordinates: " + instructions.toString());
-                    mCustomDialogFragment.setDialogHeading("Are you ready?");
-                    mCustomDialogFragment.setAction("Start");
-                    mCustomDialogFragment.setTargetFragment(DrawFragment.this,1);
-                    mCustomDialogFragment.show(getFragmentManager(),"DIALOG");
+                        CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
+                        coordinatesListItem.setListOfCoordinates(canvasView.getValidPoints());
+                        coordinatesListItem.setmBitmap(canvasView.getBitmap());
+                        coordinatesListItem.setmName(createName());
+                        Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getBitmap());
 
-                    break;
+                        SaveData saveData = SaveData.getInstance(getContext());
+                        saveData.saveData(coordinatesListItem);
 
-                } else {
-                    Toasty.error(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
-                    break;
+
+
+
+
+
+
+
+
+
+                        Log.d(TAG, "coordinateHandling: " + canvasView.getValidPoints().toString() + " SIZE:" + canvasView.getValidPoints().size());
+                        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(canvasView.getValidPoints());
+                        Log.d(TAG, "Instruction coordinates: " + instructions.toString());
+                        mCustomDialogFragment.setDialogHeading("Are you ready?");
+                        mCustomDialogFragment.setAction("Start");
+                        mCustomDialogFragment.setTargetFragment(DrawFragment.this, 1);
+                        mCustomDialogFragment.show(getFragmentManager(), "DIALOG");
+
+                        break;
+
+                    } else {
+                        Toasty.error(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
+                        break;
+                    }
                 }
             }
         }
     }
 
-    @Override
-    public void controlVehicle(Boolean execute) {
-        Log.e(TAG, "controlVehicle: found incoming input");
+        @Override
+        public void controlVehicle (Boolean execute){
+            Log.e(TAG, "controlVehicle: found incoming input");
 
-        //when vehicle is running
-        if (isVehicleOn()){
-            //when user chooses to stop the vehicle
-            if (execute){
-                if (instructions == null){
-                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
-                } else { // if there is route data
-                    mBluetooth.stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
-                    vehicleOn = false;
-                    Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
+            //when vehicle is running
+            if (isVehicleOn()) {
+                //when user chooses to stop the vehicle
+                if (execute) {
+                    if (instructions == null) {
+                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG).show();
+                    } else { // if there is route data
+                        mBluetooth.stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
+                        vehicleOn = false;
+                        Toast.makeText(getActivity(), "Vehicle stopping", Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
 
-            //when vehicle is not running
-        } else {
-            //Change button state
-            if (execute){
-                if (instructions == null){
-                    Toast.makeText(getActivity(),"Something went wrong",Toast.LENGTH_LONG).show();
-                } else {
+                //when vehicle is not running
+            } else {
+                //Change button state
+                if (execute) {
+                    if (instructions == null) {
+                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_LONG).show();
+                    } else {
 
-                    mBluetooth.startCar(instructions);
-                    Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show(); // <<<<----- here is the bluetooth activation/starting the vehicle
-                    vehicleOn = true;
-                    Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
+                        mBluetooth.startCar(instructions);
+                        Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show(); // <<<<----- here is the bluetooth activation/starting the vehicle
+                        vehicleOn = true;
+                        Toast.makeText(getActivity(), "Starting...", Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }
-    }
 
-    public boolean isVehicleOn() {
-        return vehicleOn;
-    }
+        public boolean isVehicleOn () {
+            return vehicleOn;
+        }
+
+        public String createName(){
+        String name = Integer.toString(SaveData.getInstance(getContext()).getList().size());
+        return name;
+        }
+
 
 }
