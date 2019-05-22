@@ -393,6 +393,12 @@ public class BluetoothConnection {
          void onCarNotRunning();
 
     }
+
+    public OutputStream getmOutputStream(){
+        return this.mOutputStream;
+    }
+
+
 }
 
 
