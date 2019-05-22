@@ -214,7 +214,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     }
 
         @Override
-        public void controlVehicle (Boolean execute){
+        public void controlVehicle (Boolean execute) {
             Log.e(TAG, "controlVehicle: found incoming input");
 
             //when vehicle is running
@@ -230,6 +230,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                     }
                 }
 
+
                 //when vehicle is not running
             } else {
                 //Change button state
@@ -240,23 +241,25 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
                         mBluetooth.startCar(instructions);
                         Toast.makeText(getActivity(), "Starting Car", Toast.LENGTH_SHORT).show(); // <<<<----- here is the bluetooth activation/starting the vehicle
+
                         vehicleOn = true;
                         Toast.makeText(getActivity(), "Starting...", Toast.LENGTH_LONG).show();
+                        mInterfaceMainActivity.setOnBackPressedActive(true);
+
                     }
                 }
             }
         }
+            public boolean isVehicleOn () {
+                return vehicleOn;
+            }
 
-        public boolean isVehicleOn () {
-            return vehicleOn;
-        }
+            public String createName () {
 
-        public String createName(){
+                String name = Integer.toString(SaveData.getInstance(getContext()).getList().size()) + ".png";
+                return name;
 
-            String name = Integer.toString(SaveData.getInstance(getContext()).getList().size())+".png";
-            return name;
-
-        }
+            }
 
 
 }
