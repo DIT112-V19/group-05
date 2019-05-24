@@ -1,6 +1,8 @@
 package com.example.hajken.helpers;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.hajken.MainActivity;
 import com.example.hajken.R;
 import com.google.maps.model.TransitAgency;
 
@@ -23,6 +27,7 @@ public class ListAdapter extends RecyclerView.Adapter {
 
 
     private ArrayList<CoordinatesListItem> mItems;
+    public static int selected_position = 0;
 
 
     public ListAdapter(ArrayList<CoordinatesListItem> mItems, onItemSelectedListener onItemSelectedListener) {
@@ -42,6 +47,9 @@ public class ListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ((ListViewHolder) holder).bindView(mItems.get(position));
+
+        //Highlight the background
+        holder.itemView.setBackgroundColor(selected_position == position ? MainActivity.getThis().getResources().getColor(R.color.non_active_button_text_color) : Color.TRANSPARENT);
     }
 
     @Override
@@ -77,7 +85,11 @@ public class ListAdapter extends RecyclerView.Adapter {
         }
 
         public void onClick(View view){
-
+            if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
+            // Updating old as well as new positions
+            notifyItemChanged(selected_position);
+            selected_position = getAdapterPosition();
+            notifyItemChanged(selected_position);
             if(getAdapterPosition() > -1){
                 onItemSelectedListener.onItemSelected(mItems.get(getAdapterPosition()));
             }
