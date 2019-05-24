@@ -225,15 +225,16 @@ public class BluetoothConnection {
 
             mInputStream = tempInputStream;
             mOutputStream = tempOutputStream;
+            readInput();
             setIsConnected(true);
 
 
         }
 
-        public void readInput() {
+        private void readInput() {
             //stores what is read from stream
             byte[] byteForStream = new byte[1024];
-
+            mListener.onCarRunning();
             int bytes;
 
             while (true) {
@@ -241,6 +242,20 @@ public class BluetoothConnection {
                     bytes = mInputStream.read(byteForStream);
                     String message = new String(byteForStream, 0, bytes);
                     Log.d(TAG, " Read from inputstream " + message);
+                    if (message.equals("Done")){
+                        mListener.onCarNotRunning();
+
+                    }
+                    if (message.equals("Obstacle")){
+                        mListener.onCarNotRunning();
+
+
+                    }
+                    if (message.equals("Continue")){
+                        mListener.onCarRunning();
+
+                    }
+
 
                 } catch (IOException e) {
                     Log.e(TAG, " error reading from inputstream " + e.getMessage());
@@ -281,6 +296,7 @@ public class BluetoothConnection {
 
             mOutputStream = mSocket.getOutputStream();
             mOutputStream.write(inputInBytes);
+            mListener.onCarRunning();
 
             Log.d(TAG, " successfully written to outputstream in write()");
 
@@ -314,6 +330,7 @@ public class BluetoothConnection {
 
     public void stopCar(String input) {
         writeToDevice(input);
+        mListener.onCarNotRunning();
     }
 
 
@@ -325,6 +342,9 @@ public class BluetoothConnection {
         //stores what is read from stream
         byte[] byteForStream = new byte[1024];
         String message = "";
+
+        mListener.onCarRunning();
+
 
         int bytes;
 
@@ -341,8 +361,6 @@ public class BluetoothConnection {
         }
     return message;
     }
-
-
 
 
     public boolean getIsConnected(){
@@ -370,7 +388,17 @@ public class BluetoothConnection {
 
         void onNotConnected();
 
+         void onCarRunning();
+
+         void onCarNotRunning();
+
     }
+
+    public OutputStream getmOutputStream(){
+        return this.mOutputStream;
+    }
+
+
 }
 
 

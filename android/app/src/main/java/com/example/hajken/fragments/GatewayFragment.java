@@ -11,11 +11,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
+import com.example.hajken.bluetooth.Bluetooth;
 
 public class GatewayFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "GatewayFragment";
     private InterfaceMainActivity mInterfaceMainActivity;
+    private Bluetooth mBluetooth;
 
     private Button collectionRouteButton, designRouteButton, mapsRouteButton;
 
@@ -29,6 +31,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
     }
 
 
@@ -69,15 +72,20 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
             //This is the events that are associated with the buttons
             case R.id.GoogleMapsButton: {
                 mInterfaceMainActivity.inflateFragment(getString(R.string.google_maps_fragment));
+
                 break;
             }
 
             case R.id.collection_button: {
+                mBluetooth.startCar("d!");
+
                 mInterfaceMainActivity.inflateFragment(getString(R.string.collection_fragment));
                 break;
             }
 
             case R.id.draw_button: {
+                mBluetooth.startCar("d!");
+
                 mInterfaceMainActivity.inflateFragment(getString(R.string.draw_fragment));
                 break;
             }
