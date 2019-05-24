@@ -17,7 +17,8 @@ const int USS2_TRIGGER_PIN = 5; //Trigger Pin
 const int USS2_ECHO_PIN = 6; //Echo Pin
 
 const unsigned int USS1_MAX_DISTANCE = 100; //max distance of an object to be detected, in cm
-const unsigned int USS2_MAX_DISTANCE = 100;
+const unsigned int USS2_MAX_DISTANCE = 40
+;
 //*create ultraSonicSensor Object*
 NewPing USSensorFront (USS1_TRIGGER_PIN, USS1_ECHO_PIN, USS1_MAX_DISTANCE);
 NewPing USSensorRight (USS2_TRIGGER_PIN, USS2_ECHO_PIN, USS2_MAX_DISTANCE);
@@ -33,7 +34,7 @@ const int gyroOffset = 11;
 //**********
 //distanceCar
 //**********
-float speed = 50;
+float speed = 80;
 int turningSpeed = 55;
 int stopSpeed = 0;
 
@@ -107,9 +108,9 @@ void setup() {
 
   initializeOdometer();
 
-  //waitingForInput();
-  //forward(150);
-  //stringToArray("<l,10,v,1,r,2,f,60,t,90,f,60>");
+  waitingForInput();
+  forward(300);
+  
 }
 
 /*
@@ -575,6 +576,7 @@ int bypassObstacle() {
 
   //Passing left side of obstacle
   rotate(90); //turn
+  distanceReset();
   forwardUntilObstacleRightSide();
   followingRightSide(); //check if obstacle still in the way
   lengthObstacle = car.getDistance() + 15; //store length of Obstacle
@@ -598,7 +600,7 @@ int bypassObstacle() {
 //checkingRightSide method
 void followingRightSide() {
   int ZeroCounter = 0;
-  const int ZeroCounterMargin = 5;
+  const int ZeroCounterMargin = 10;
   int currentDistanceRightSide = USSensorRight.ping_cm();
   int initalDistanceRightSide = currentDistanceRightSide;
   int initialHeading = car.getHeading();
@@ -637,12 +639,20 @@ void followingRightSide() {
 void forwardUntilObstacleRightSide() {
   int initialHeading = car.getHeading();
   int currentDistanceRightSide = USSensorRight.ping_cm();
+  int nonZeroCounter = 0;
+  const int NON_ZERO_MARGIN = 10;
   car.setSpeed(speed); //drive
   car.update();
 
-  while ((currentDistanceRightSide > 25) || (currentDistanceRightSide == 0) ) {
+  while (nonZeroCounter <= NON_ZERO_MARGIN ) {
     currentDistanceRightSide = USSensorRight.ping_cm();
     directionCorrection(initialHeading);
+
+     if (currentDistanceRightSide > 0) {
+      nonZeroCounter++;
+    }else {
+      nonZeroCounter = 0;
+    }
   }
   Serial3.println("right side is now");
   Serial3.println(currentDistanceRightSide);
