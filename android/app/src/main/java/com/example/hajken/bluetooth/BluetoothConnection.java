@@ -6,6 +6,9 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
+
+import com.example.hajken.helpers.GPSTracker;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -233,9 +236,9 @@ public class BluetoothConnection {
 
 
 
-        private String readInput() {
+        private void readInput() {
             //stores what is read from stream
-            byte[] byteForStream = new byte[1024];
+            byte[] byteForStream = new byte[2048];
             mListener.onCarRunning();
 
             String message = "";
@@ -245,9 +248,11 @@ public class BluetoothConnection {
             while (true) {
                 try {
                     bytes = mInputStream.read(byteForStream);
-                   message = new String(byteForStream, 0, bytes);
+
+                    message += new String(byteForStream, 0, bytes);
                     Log.d(TAG, " Read from inputstream " + message);
-                    
+                    System.out.println("Message is" + message);
+
                     if (message.equals("Done")){
                         mListener.onCarNotRunning();
 
@@ -261,15 +266,19 @@ public class BluetoothConnection {
                         mListener.onCarRunning();
 
                     }
+                    if(message.contains("*")){
+                        GPSTracker.getInstance(myContext).setGPSstring(message);
+                        Log.d(TAG, "Setting GPSString to " + message);
+                    }
 
 
 
-                } catch (IOException e) {
+                } catch (Exception e) {
                     Log.e(TAG, " error reading from inputstream " + e.getMessage());
                     break;
                 }
             }
-            return message;
+            message = "";
 
         }
 

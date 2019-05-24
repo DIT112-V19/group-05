@@ -24,7 +24,6 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.hajken.BuildConfig;
-import com.example.hajken.helpers.GPSConnector;
 import com.example.hajken.helpers.GPSTracker;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.maps.android.SphericalUtil;
@@ -185,8 +184,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public void onAttach(Context context) {
         super.onAttach(context);
 
-
-
         //This might be moved to another method
         //Might be a singleton pattern?
         if (mGeoApiContext == null) {
@@ -214,12 +211,12 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     public void addCarOnMap(GoogleMap map) {
 
         //Updating the GPS
-        GPSConnector.getInstance(getContext()).update();
+        GPSTracker.getInstance(getContext()).setLatLgn();
 
         //Setting the CarMarker to its LatLgn Position
         carMarker = map.addMarker(new MarkerOptions().position(new LatLng(
-                GPSConnector.getInstance(getContext()).getLat(),
-                GPSConnector.getInstance(getContext()).getLgn()))
+                GPSTracker.getInstance(getContext()).getLatitude(),
+                GPSTracker.getInstance(getContext()).getLongitude()))
                 .title("THE HAJKEN CAR").icon(BitmapDescriptorFactory.defaultMarker(carMarkerColor)));
 
         //Moving the camera to zoom value 19
@@ -262,7 +259,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             case R.id.start_car_button: {
 
                 instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(getPathToPointFList());
-                System.out.println("Instruction coordinates i Maps är: " + instructions);
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
                     BluetoothConnection.getInstance(getContext()).startCar(instructions);
@@ -437,9 +433,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
                         polyline.setClickable(true);
 
-                        //Only for developing
-                        printDecodedPath();
-
                         //This moves the camera to show the entire polyline on the screen
                         moveToBounds(polyline, map);
 
@@ -475,15 +468,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
 
-    //Only for developing
-    public void printDecodedPath() {
-
-        //Printing coordinates in console
-        for (LatLng lg : newDecodedPath) {
-            System.out.println("PRINTING : Latitude " + lg.latitude + " Longitude + " + lg.longitude);
-        }
-    }
-
     public List<LatLng> getDecodedPath() {
         return newDecodedPath;
     }
@@ -513,11 +497,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         LatLng farLeft = map.getProjection().getVisibleRegion().farLeft;
         LatLng farRight = map.getProjection().getVisibleRegion().farRight;
 
-        //Only for developing
-        double distanceOfRoute = SphericalUtil.computeDistanceBetween(decodedPath.get(0), decodedPath.get(1));
-        //System.out.println("The distance of the map in meters is " + distanceOfMap);
-        System.out.println("Distansen på rutten är " + distanceOfRoute);
-
         //Converting the distance between the entire map into a scale
         double scale = SphericalUtil.computeDistanceBetween(farLeft, farRight) / 9;
 
@@ -543,10 +522,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
             pathToPointF.add(convertedPoint);
 
-        }
-
-        for(int i = 0; i<pathToPointF.size(); i++){
-            System.out.println("Mina slutgiltiga koordinater är nu: x = " + pathToPointF.get(i).x + " och y = " + pathToPointF.get(i).y);
         }
 
     }
