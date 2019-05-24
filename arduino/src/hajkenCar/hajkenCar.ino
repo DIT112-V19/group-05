@@ -72,14 +72,21 @@ String latitude;
 String longitude;
 boolean GPSreceiving = true;
 
-//GPS pin connection
+//SERIAL setup
+
 static const uint32_t GPSBaud = 9600;
+static const uint32_t BluetoothBaud = 9600;
+static const uint32_t SerialBaud = 9600;
+
 
 //*********
 //LEDs
 const int LEDgreen = 31; //Green LED - “ready”
 const int LEDyellow = 33; //Yellow LED - “Driving on route”
 const int LEDred = 35; //Red LED - “obstacle”
+
+//Menu control flow
+boolean stayInSubMenu = true;
 
 /*
  *********************************************
@@ -91,20 +98,14 @@ void setup() {
   pinMode(LEDgreen, OUTPUT);
   pinMode(LEDred, OUTPUT);
 
+  Serial.begin(SerialBaud);
   Serial1.begin(GPSBaud); //GPS
-  Serial.begin(9600);
-  Serial3.begin(9600); // opens channel for bluetooth, pins 16+17
+  Serial3.begin(BluetoothBaud); // opens channel for bluetooth, pins 14+15
 
   Serial3.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
   Serial.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
 
-  //initialize Odometers
-  odometer2.attach(ODOMETER2_PIN, []() {
-    odometer2.update();
-  });
-
-
-  digitalWrite(LEDgreen, HIGH);
+  initializeOdometer();
 
   //waitingForInput();
   //forward(150);
@@ -120,20 +121,54 @@ void setup() {
 
 
 void loop() {
-  digitalWrite(LEDgreen, HIGH);
   waitingForInput(); //wait for mode input
+  stayInSubMenu = true;
+  String MenuInput = Serial3.readStringUntil('!');
 
-  String modeInput = Serial3.readStringUntil('!');
 
-  if (modeInput == "g") {
+  if (MenuInput == "m") {
+    digitalWrite(LEDgreen, HIGH);
+  }
+
+  else if (MenuInput == "g") {
     gpsFunction();
+    while (stayInSubMenu) {
+      waitingForInput();
+      getInputString();
+    }
+  }
+  else if (MenuInput == "d") {
+    while (stayInSubMenu) {
+      waitingForInput();
+      getInputString();
+    }
+
+  }
+
+
+  /*
+    switch(MenuInput)
+    {
+    case 'm':
+    digitalWrite(LEDgreen, HIGH);
+    stayInSubMenu = true;
+    break;
+
+    case 'g':
+    gpsFunction();
+    while(stayInSubMenu){
     waitingForInput();
     getInputString();
-  }
-  else if (modeInput == "d") {
+    }
+    break;
+
+    case 'd':
+    while(stayInSubMenu){
     waitingForInput();
     getInputString();
-  }
+    }
+    break;
+    }*/
 }
 
 /*
@@ -313,7 +348,7 @@ void rotate(int angleToTurn) {
   if (angleToTurn == 0) {
     return; // Dont do anything if angle to turn is 0
   }
- 
+
   angleToTurn %= 360;
 
   //Setting rotation
@@ -338,8 +373,6 @@ void rotate(int angleToTurn) {
     currentTurned = initialHeading - currentHeading;
   }
 
-
-
   //*****************
   //Correction for overturn or underturn
   int neededTurn = currentTurned + angleToTurn;
@@ -347,8 +380,6 @@ void rotate(int angleToTurn) {
   if (abs(neededTurn) > 2) {
     rotate(neededTurn);
   }
-
-
   stop();
 }
 
@@ -482,16 +513,27 @@ void distanceReset() {
   odometer2.reset();
 }
 
+void initializeOdometer() {
+  odometer2.attach(ODOMETER2_PIN, []() {
+    odometer2.update();
+  });
+}
+
 void waitingForInput() {
   while (!Serial3.available()) {
-    //Do nothing until Serial2 receives something
+    //Do nothing until Serial3 receives something
   }
 }
 
 void getInputString() {
-
   String input = Serial3.readStringUntil('!');
-  stringToArray(input);
+
+  if (input == "m") {
+    stayInSubMenu = false;
+    return;
+  } else {
+    stringToArray(input);
+  }
 }
 
 /*
@@ -615,11 +657,16 @@ void forwardUntilObstacleRightSide() {
 **/
 
 void gpsFunction() {
-
+  unsigned long startMillis = millis();
+  unsigned long currentMillis;
+  const unsigned long period = 5000;
 
   do {
     while (Serial1.available() > 0 && GPSreceiving) {
-
+      if ((startMillis + 5000) < millis()) {
+        Serial3.println("timeout");
+        return;
+      }
       gps.encode(Serial1.read());
 
       if (gps.location.isUpdated()) {
@@ -629,9 +676,7 @@ void gpsFunction() {
         latitude = String(lat, 6);
         longitude = String(lng, 6);
 
-        Serial3.println(latitude + "*" + longitude);
-        //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
-
+        Serial3.println("<" + latitude + "*" + longitude + ">");
 
         GPSreceiving = false;
 
