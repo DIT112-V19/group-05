@@ -6,12 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.LocationManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.fragments.CollectionFragment;
 import com.example.hajken.fragments.DrawFragment;
@@ -19,16 +19,18 @@ import com.example.hajken.fragments.GatewayFragment;
 import com.example.hajken.fragments.GoogleMapsFragment;
 import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.fragments.StartFragment;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements InterfaceMainActivity{
 
     private static final String TAG = "MainActivity";
     private static MainActivity mMainActivity;
     private Bluetooth mBluetooth;
+    private boolean onBackPressedActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         Log.d(TAG, "TAG MAINACTIVITY - onCreate");
 
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         mMainActivity = this;
         InterfaceMainActivity mInterfaceMainActivity = this;
         this.registerReceiver(mReceiver,filter);
+        onBackPressedActive = true;
         mBluetooth = Bluetooth.getInstance(this, mInterfaceMainActivity);
 
 
@@ -111,13 +114,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     //Override method to be able to adapt onBackPressed for fragments --- could this be done with just an if statement instead of loop?
     @Override
     public void onBackPressed(){
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        for (Fragment fragment : fragments){
-            if (fragment instanceof CollectionFragment && ((CollectionFragment) fragment).isVehicleOn()){
-                Toast.makeText(this, "Can't go back while vehicle is running", Toast.LENGTH_SHORT).show();
-            } else {
-                super.onBackPressed();
-            }
+        if (onBackPressedActive){
+            super.onBackPressed();
+        } else {
+            Log.d(TAG, "onBackPressed: cant go back");
         }
     }
 
@@ -128,6 +128,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
             mBluetooth.actOnAction(action, intent);
         }
     };
+
+    public void setOnBackPressedActive(boolean onBackPressedActive) {
+        this.onBackPressedActive = onBackPressedActive;
+    }
 
     public static MainActivity getThis(){
         return mMainActivity;

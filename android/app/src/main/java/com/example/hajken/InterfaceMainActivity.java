@@ -17,4 +17,6 @@ public interface InterfaceMainActivity {
 
     void runOnUiThread(Runnable action);
 
+    void setOnBackPressedActive(boolean onBackPressedActive);
+
 }
