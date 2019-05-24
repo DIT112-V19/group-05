@@ -28,15 +28,14 @@ import com.example.hajken.R;
 import com.example.hajken.helpers.SaveData;
 import es.dmoral.toasty.Toasty;
 
-public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface {
-
+public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
 
     private final int SLOW = 1;
     private final int MED = 2;
     private final int FAST = 3;
     private final int ZERO = 0;
     private static final String TAG = "DrawFragment";
-    private Button startCarButton;
+    private Button sendToVehicleButton;
     private CanvasView canvasView;
     private String instructions;
     private RadioGroup radioGroup;
@@ -70,7 +69,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         final View view = inflater.inflate(R.layout.fragment_draw, container, false);
 
         //Creates the buttons and canvasView
-        startCarButton = view.findViewById(R.id.start_car_button);
+        sendToVehicleButton = view.findViewById(R.id.send_to_vehicle_button);
         canvasView = view.findViewById(R.id.canvasView);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
@@ -99,7 +98,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    startCarButton.setActivated(true);
+                    sendToVehicleButton.setActivated(true);
                 }
                 return false;
             }
@@ -125,7 +124,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
             }
         });
 
-        startCarButton.setOnClickListener(this);
+        sendToVehicleButton.setOnClickListener(this);
         return view;
     }
 
@@ -157,30 +156,30 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         switch (view.getId()) {
 
             //This is the events that are associated with the buttons
-            case R.id.start_car_button: {
+            case R.id.send_to_vehicle_button: {
 
                 if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
-                    if (saveButton.isChecked()) {
-                        // create a java object to hold the bitmap with its respective coordinates
-                        // will later be displayed in the recycler view
+                    if (isVehicleOn()){
+                        showStopDialog();
+                    } else {
+                        if (saveButton.isChecked()) {
+                            // create a java object to hold the bitmap with its respective coordinates
+                            // will later be displayed in the recycler view
 
-                        CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
-                        coordinatesListItem.setListOfCoordinates(canvasView.getValidPoints());
-                        coordinatesListItem.setmName(createName());
+                            CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
+                            coordinatesListItem.setListOfCoordinates(canvasView.getValidPoints());
+                            coordinatesListItem.setmName(createName());
 
-                        saveData.mItemList.add(coordinatesListItem);
-                        Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getBitmap());
+                            saveData.mItemList.add(coordinatesListItem);
+                            Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getBitmap());
 
-                        saveData.savePNG(canvasView.getBitmap());
-                        saveData.saveData(coordinatesListItem);
+                            saveData.savePNG(canvasView.getBitmap());
+                            saveData.saveData(coordinatesListItem);
+                        }
+                        Log.d(TAG, "coordinateHandling: " + canvasView.getValidPoints().toString() + " SIZE:" + canvasView.getValidPoints().size());
+                        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(canvasView.getValidPoints());
+                        showStartDialog();
                     }
-                    Log.d(TAG, "coordinateHandling: " + canvasView.getValidPoints().toString() + " SIZE:" + canvasView.getValidPoints().size());
-                    instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(canvasView.getValidPoints());
-                    Log.d(TAG, "Instruction coordinates: " + instructions.toString());
-                    mCustomDialogFragment.setDialogHeading("Are you ready?");
-                    mCustomDialogFragment.setAction("Start");
-                    mCustomDialogFragment.setTargetFragment(DrawFragment.this, 1);
-                    mCustomDialogFragment.show(getFragmentManager(), "DIALOG");
                     break;
 
                 } else {
@@ -233,10 +232,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     }
 
     public String createName() {
-
-        String name = Integer.toString(SaveData.getInstance(getContext()).getList().size()) + ".png";
-        return name;
-
+        return Integer.toString(SaveData.getInstance(getContext()).getList().size()) + ".png";
     }
 
     public void showStartDialog(){
@@ -253,5 +249,33 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         mCustomDialogFragment.show(getFragmentManager(),"DIALOG");
     }
 
+    @Override
+    public void onConnect() {
+
+    }
+
+    @Override
+    public void onNotConnected() {
+        // this should include button state changes later
+        sendToVehicleButton.setActivated(false);
+        sendToVehicleButton.setClickable(false);
+
+
+    }
+
+    @Override
+    public void onCarRunning() {
+        sendToVehicleButton.setText(getString(R.string.stop_vehicle_text));
+        sendToVehicleButton.setClickable(true);
+        sendToVehicleButton.setActivated(true);
+
+    }
+
+    @Override
+    public void onCarNotRunning() {
+        sendToVehicleButton.setText(getString(R.string.stop_vehicle_text));
+        sendToVehicleButton.setClickable(true);
+        sendToVehicleButton.setActivated(true);
+    }
 }
 

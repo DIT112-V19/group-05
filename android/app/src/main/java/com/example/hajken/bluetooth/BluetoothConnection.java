@@ -345,7 +345,6 @@ public class BluetoothConnection {
 
         mListener.onCarRunning();
 
-
         int bytes;
 
         while (true) {
@@ -388,9 +387,9 @@ public class BluetoothConnection {
 
         void onNotConnected();
 
-         void onCarRunning();
+        void onCarRunning();
 
-         void onCarNotRunning();
+        void onCarNotRunning();
 
     }
 

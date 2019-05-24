@@ -8,10 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.util.Log;
-
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.MainActivity;
-import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.helpers.ListOfDevices;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -27,7 +25,7 @@ public class Bluetooth {
     private ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
     private static Bluetooth mInstance = null;
     private ListOfDevices mListAdapter;
-    private BluetoothConnection mBluetoothConnection;
+    private static BluetoothConnection mBluetoothConnection;
     private InterfaceMainActivity mInterfaceMainActivity;
     private Context mContext;
 

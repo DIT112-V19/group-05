@@ -2,7 +2,6 @@
 
     <!-- General -->
     <string name="app_name">Route Design</string>
-
     <string name="start_fragment">start fragment</string>
     <string name="scan_fragment">scan fragment</string>
     <string name="gateway_fragment">gateway fragment</string>
@@ -10,12 +9,10 @@
     <string name="draw_fragment">draw fragment</string>
     <string name="google_maps_fragment">googlemaps fragment</string>
 
-
     <!--Google APi Key-->
     <string name="api_key_text">No API key found</string>
 
     <!-- Buttons -->
-
     <string name="find_vehicle_button">connect to vehicle</string>
     <string name="scan_button">scan</string>
     <string name="unpair_button">unpair</string>
@@ -41,6 +38,8 @@
     <!-- Random Strings -->
     <string name="square">Square</string>
     <string name="amount_of_repetitions">Amount of repetitions: %1$s</string>
+    <string name="stop_vehicle_text">Stop vehicle</string>
+    <string name="start_vehicle_text">Start vehicle</string>
 
     <!-- Custom Dialog strings -->
     <string name="action_cancel">Cancel</string>

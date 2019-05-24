@@ -114,7 +114,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         final View view = inflater.inflate(R.layout.fragment_google_maps, container, false);
 
         //Creates the buttons
-        startCarButton = view.findViewById(R.id.start_car_button);
+        startCarButton = view.findViewById(R.id.send_to_vehicle_button);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
         startCarButton.setClickable(false);
@@ -257,7 +257,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         switch (view.getId()) {
 
             //This is the events that are associated with the buttons
-            case R.id.start_car_button: {
+            case R.id.send_to_vehicle_button: {
 
                 instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(getPathToPointFList());
                 System.out.println("Instruction coordinates i Maps är: " + instructions);

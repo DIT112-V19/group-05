@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -31,9 +30,6 @@ import com.example.hajken.R;
 import com.example.hajken.helpers.SaveData;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import es.dmoral.toasty.Toasty;
 
 public class CollectionFragment extends Fragment implements
         View.OnClickListener, CustomDialogFragment.OnActionInterface,
@@ -143,7 +139,7 @@ public class CollectionFragment extends Fragment implements
         radioGroup = view.findViewById(R.id.radio_group);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
-        start_car_button = view.findViewById(R.id.start_car_button);
+        start_car_button = view.findViewById(R.id.send_to_vehicle_button);
         recyclerView = view.findViewById(R.id.recyclerView);
         start_car_button.setOnClickListener(this);
         start_car_button.setClickable(false);
@@ -242,7 +238,7 @@ public class CollectionFragment extends Fragment implements
         switch (view.getId()){
 
             //These are the events that are associated with clicking of the buttons
-            case R.id.start_car_button: {
+            case R.id.send_to_vehicle_button: {
 
 
                 dialog.setDialogHeading("Are you ready?");

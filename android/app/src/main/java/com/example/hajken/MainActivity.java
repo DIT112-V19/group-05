@@ -53,20 +53,14 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     }
 
     private void init(){
-        Log.d(TAG, "TAG MAINACTIVITY - init");
-
         StartFragment fragment = new StartFragment();
         doFragmentTransaction(fragment,getString(R.string.start_fragment),false);
-
     }
 
     //used to be a string message here as well but we are not using that
     private void doFragmentTransaction(Fragment fragment, String tag, boolean addToBackStack){
 
-        Log.d(TAG, "TAG MAINACTIVITY - doFragmentTransaction");
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
         transaction.replace(R.id.main_container,fragment,tag);
 
         if (addToBackStack){
@@ -79,9 +73,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     //this method is responsible to start fragmentTransactions
     @Override
     public void inflateFragment(String fragmentTag) {
-
-        Log.d(TAG, "TAG MAINACTIVITY - inflateFragment");
-
 
         if (fragmentTag.equals(getString(R.string.scan_fragment))){
 
@@ -111,7 +102,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     }
 
-    //Override method to be able to adapt onBackPressed for fragments --- could this be done with just an if statement instead of loop?
     @Override
     public void onBackPressed(){
         if (onBackPressedActive){
