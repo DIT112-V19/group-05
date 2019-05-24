@@ -6,20 +6,24 @@
 //ultraSonicSensor
 float carDistanceToObstacle; //actual distance to next obstacle, in cm
 float stopDistanceToObstacle = 5; //distance that triggers to stop, in cm
-//float bypassDistanceObstacle = 70; //check distance to obstacle while bypassing
-boolean obstacleBypassOff = true; //deactivate obstacle bypassing - stop driving when obstacle detected
+boolean obstacleBypassOff = false; //deactivate obstacle bypassing - stop driving when obstacle detected
+boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
+boolean stopFromDriving; //boolean to stop car
 
 //ultraSonicSensor Pin connection
-const int USS1_TRIGGER_PIN = 6; //Trigger Pin
-const int USS1_ECHO_PIN = 7; //Echo Pin
-const int USS2_TRIGGER_PIN = 52; //Trigger Pin
-const int USS2_ECHO_PIN = 51; //Echo Pin
+const int USS1_TRIGGER_PIN = 51; //Trigger Pin
+const int USS1_ECHO_PIN = 52; //Echo Pin
+const int USS2_TRIGGER_PIN = 5; //Trigger Pin
+const int USS2_ECHO_PIN = 6; //Echo Pin
 
 const unsigned int USS1_MAX_DISTANCE = 100; //max distance of an object to be detected, in cm
 const unsigned int USS2_MAX_DISTANCE = 100;
 //*create ultraSonicSensor Object*
 NewPing USSensorFront (USS1_TRIGGER_PIN, USS1_ECHO_PIN, USS1_MAX_DISTANCE);
 NewPing USSensorRight (USS2_TRIGGER_PIN, USS2_ECHO_PIN, USS2_MAX_DISTANCE);
+
+const unsigned short ODOMETER2_PIN = 3;
+const unsigned long PULSES_PER_METER_2 = 345;
 
 //Gyroscope
 const int gyroOffset = 11;
@@ -30,10 +34,8 @@ const int gyroOffset = 11;
 //distanceCar
 //**********
 float speed = 50;
-int turningSpeed = 35;
+int turningSpeed = 55;
 int stopSpeed = 0;
-boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
-boolean stopFromDriving; //boolean to stop car
 
 //motor pin connection
 int leftMotorForwardPin = 8;
@@ -42,11 +44,7 @@ int leftMotorSpeedPin = 9;
 int rightMotorForwardPin = 12;
 int rightMotorBackwardPin = 13;
 int rightMotorSpeedPin = 11;
-//odometer nr1 pin connection
-const unsigned short ODOMETER1_PIN = 2;
-const unsigned long PULSES_PER_METER_1 = 184;
-const unsigned short ODOMETER2_PIN = 3;
-const unsigned long PULSES_PER_METER_2 = 258;
+
 
 //*create cars' motor's object*
 BrushedMotor leftMotor(leftMotorForwardPin, leftMotorBackwardPin, leftMotorSpeedPin);
@@ -54,13 +52,13 @@ BrushedMotor rightMotor(rightMotorForwardPin, rightMotorBackwardPin, rightMotorS
 //*create car's control object*
 DifferentialControl control(leftMotor, rightMotor);
 //*create odometer object*
-DirectionlessOdometer odometer1(PULSES_PER_METER_1);
 DirectionlessOdometer odometer2(PULSES_PER_METER_2);
 
 //*create gyroscope object*
 GY50 gyroscope(gyroOffset);
 //*create car object*
-SmartCar car(control, gyroscope, odometer1, odometer2);
+SmartCar car(control, gyroscope, odometer2);
+
 //**********
 
 //**********
@@ -77,8 +75,11 @@ boolean GPSreceiving = true;
 //GPS pin connection
 static const uint32_t GPSBaud = 9600;
 
-
 //*********
+//LEDs
+const int LEDgreen = 31; //Green LED - “ready”
+const int LEDyellow = 33; //Yellow LED - “Driving on route”
+const int LEDred = 35; //Red LED - “obstacle”
 
 /*
  *********************************************
@@ -86,21 +87,28 @@ static const uint32_t GPSBaud = 9600;
  *********************************************
 **/
 void setup() {
+  pinMode(LEDyellow, OUTPUT);
+  pinMode(LEDgreen, OUTPUT);
+  pinMode(LEDred, OUTPUT);
+
   Serial1.begin(GPSBaud); //GPS
   Serial.begin(9600);
-  Serial2.begin(9600); // opens channel for bluetooth, pins 16+17
+  Serial3.begin(9600); // opens channel for bluetooth, pins 16+17
 
-  Serial2.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
+  Serial3.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
   Serial.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
 
   //initialize Odometers
-  odometer1.attach(ODOMETER1_PIN, []() {
-    odometer1.update();
-  });
   odometer2.attach(ODOMETER2_PIN, []() {
     odometer2.update();
   });
-  waitingForInput();
+
+
+  digitalWrite(LEDgreen, HIGH);
+
+  //waitingForInput();
+  //forward(150);
+  //stringToArray("<l,10,v,1,r,2,f,60,t,90,f,60>");
 }
 
 /*
@@ -112,10 +120,10 @@ void setup() {
 
 
 void loop() {
-
+  digitalWrite(LEDgreen, HIGH);
   waitingForInput(); //wait for mode input
 
-  String modeInput = Serial2.readStringUntil('!');
+  String modeInput = Serial3.readStringUntil('!');
 
   if (modeInput == "g") {
     gpsFunction();
@@ -189,6 +197,8 @@ void stringToArray(String str) {
 **/
 
 void commands(String commands[], int arraySize) {
+  digitalWrite(LEDgreen, LOW);
+  digitalWrite(LEDyellow, HIGH);
 
   int roundsToDrive = commands[3].toInt();
 
@@ -211,17 +221,19 @@ void commands(String commands[], int arraySize) {
       } else if (commands[i] == "t") {
         rotate((int)commands[i + 1].toFloat());
       } else {
-        Serial2.println("unknown or no command");
+        Serial3.println("unknown or no command");
         Serial.println("unknown or no command");
       }
     }
     k++;
-    if (roundsToDrive > 0 && k < roundsToDrive) {
+    if (roundsToDrive > 0 && k <= roundsToDrive) {
       reverseCommands(commands, arraySize);
       k++;
     }
-  } while (k < roundsToDrive);
-Serial2.println("Done");
+  } while (k <= roundsToDrive);
+  Serial3.println("Done");
+  digitalWrite(LEDyellow, LOW);
+
 }
 
 void reverseCommands(String commands[], int arraySize) {
@@ -237,7 +249,7 @@ void reverseCommands(String commands[], int arraySize) {
       reverseTurn = reverseTurn * -1;
       rotate(reverseTurn);
     } else {
-      Serial2.println("unknown or no command");
+      Serial3.println("unknown or no command");
       Serial.println("unknown or no command");
     }
   }
@@ -258,7 +270,7 @@ void forward(int distance) {
   if (distance == 0) {
     return;
   }
-  Serial2.write("Going forward\n"); //Printing status
+  Serial3.write("Going forward\n"); //Printing status
   Serial.write("Going forward\n"); //Printing status
 
   distanceReset();
@@ -301,15 +313,7 @@ void rotate(int angleToTurn) {
   if (angleToTurn == 0) {
     return; // Dont do anything if angle to turn is 0
   }
-
-  //correction of overturn
-  /*if(angleToTurn > 180){
-    angleToTurn = angleToTurn * 0.97;
-    }
-    else{
-    angleToTurn = angleToTurn * 0.94;
-    }
-  */
+ 
   angleToTurn %= 360;
 
   //Setting rotation
@@ -334,6 +338,17 @@ void rotate(int angleToTurn) {
     currentTurned = initialHeading - currentHeading;
   }
 
+
+
+  //*****************
+  //Correction for overturn or underturn
+  int neededTurn = currentTurned + angleToTurn;
+
+  if (abs(neededTurn) > 2) {
+    rotate(neededTurn);
+  }
+
+
   stop();
 }
 
@@ -341,7 +356,6 @@ void rotate(int angleToTurn) {
 //**STOPPING**
 
 void stop() {
-  Serial2.write("Car stops\n ");
   car.setSpeed(stopSpeed);
   car.update();
 }
@@ -357,22 +371,22 @@ void directionCorrection(int initialHeading) {
   int headingOffset = (initialHeading - currentHeading);
   headingOffset = mod(headingOffset, 360);
 
-  /* Serial2.print("Current heading: ");
-    Serial2.println(currentHeading);
+  /* Serial3.print("Current heading: ");
+    Serial3.println(currentHeading);
 
-    Serial2.print("Initial Heading: ");
-    Serial2.println(initialHeading);
+    Serial3.print("Initial Heading: ");
+    Serial3.println(initialHeading);
 
-    Serial2.print("Heading offset: ");
-    Serial2.println(headingOffset);
+    Serial3.print("Heading offset: ");
+    Serial3.println(headingOffset);
   */
   if (headingOffset == 0) {
     car.overrideMotorSpeed(speed, speed);
   } else if (headingOffset > 180) {
-    //Serial2.println("Correcting to the LEFT");
+    //Serial3.println("Correcting to the LEFT");
     car.overrideMotorSpeed((speed - 7), (speed + 7));
   } else if (headingOffset < 180) {
-    //Serial2.println("Correcting to the RIGHT");
+    //Serial3.println("Correcting to the RIGHT");
     car.overrideMotorSpeed((speed + 7), (speed - 7));
   }
 }
@@ -408,8 +422,8 @@ void go() {
 
   char inputToGo;  //input variable
   while (true) {
-    if (Serial2.available()) {
-      inputToGo = Serial2.read();
+    if (Serial3.available()) {
+      inputToGo = Serial3.read();
       if (inputToGo = 'g') {
         stopFromDriving = false;
         while (!stopFromDriving) {
@@ -429,8 +443,8 @@ void checkForStop() {
   }
   char inputToStop;  //input variable
 
-  if (Serial2.available()) {
-    inputToStop = Serial2.read();
+  if (Serial3.available()) {
+    inputToStop = Serial3.read();
     if (inputToStop == 's') {
       stop();
       checkForStart();
@@ -444,8 +458,8 @@ void checkForStart() {
   }
   char inputToStart;  //input variable
   while (true) {
-    if (Serial2.available()) {
-      inputToStart = Serial2.read();
+    if (Serial3.available()) {
+      inputToStart = Serial3.read();
       if (inputToStart == 'c') {
         car.setSpeed(speed);
         return;
@@ -465,19 +479,18 @@ int mod( int x, int y ) {
 }
 
 void distanceReset() {
-  odometer1.reset(); //resets the car's driven distance
   odometer2.reset();
 }
 
 void waitingForInput() {
-  while (!Serial2.available()) {
+  while (!Serial3.available()) {
     //Do nothing until Serial2 receives something
   }
 }
 
 void getInputString() {
 
-  String input = Serial2.readStringUntil('!');
+  String input = Serial3.readStringUntil('!');
   stringToArray(input);
 }
 
@@ -493,9 +506,10 @@ int obstacleAvoidance() {
   car.update();
   carDistanceToObstacle = USSensorFront.ping_cm(); // UltraSonicSound Sensor measures (0 = more than 100 cm distance)
   if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) {
-    Serial2.write("obastacle"); // Sending message to bluetooth
+    Serial3.write("obstacle"); // Sending message to bluetooth
+    digitalWrite(LEDred, HIGH);
     stop();
-    while(obstacleBypassOff); // BYPASS OBASTACLE DEACTIVATED
+    while (obstacleBypassOff); // BYPASS OBASTACLE DEACTIVATED
     return bypassObstacle();
   }
   else {
@@ -508,48 +522,65 @@ int bypassObstacle() {
   int widthObstacle;
   int lengthObstacle;
   int currentForward = car.getDistance(); //store distance before obstacle
-  int extraDistanceForRotation = 15; //drive 15 cm extra to avoid crashing into obstacle
+  int extraDistanceForRotation = 5; //drive 5 cm extra to avoid crashing into obstacle
 
   //Passing frontside of obstacle
   rotate(-90);// turn
   distanceReset();
-  //TODO add direction correction
-  car.setSpeed(speed); //drive
-  car.update();
-  checkingRightSide(); //check if obstacle still in the way
+  followingRightSide(); //check if obstacle still in the way
   widthObstacle = car.getDistance() + extraDistanceForRotation; //store width of Obstacle
   forwardWithoutObstacleControl(extraDistanceForRotation);
 
   //Passing left side of obstacle
   rotate(90); //turn
-  distanceReset();
-  forwardWithoutObstacleControl(20);
-  car.setSpeed(speed); //drive //TODO direction correction
-  car.update();
-  checkingRightSide(); //check if obstacle still in the way
-  lengthObstacle = car.getDistance() + extraDistanceForRotation; //store length of Obstacle
-  forwardWithoutObstacleControl(extraDistanceForRotation);
+  forwardUntilObstacleRightSide();
+  followingRightSide(); //check if obstacle still in the way
+  lengthObstacle = car.getDistance() + 15; //store length of Obstacle
+  Serial3.println("the obstacle has: ");
+  Serial3.println(lengthObstacle);
+
+  forwardWithoutObstacleControl(15);
+  Serial3.println("Finished with extra distance");
+
 
   //Passing backside of obstacle
   rotate(90); //turn
-  distanceReset();
   forwardWithoutObstacleControl(widthObstacle); //drive along backside, go stored width of obstacle
   rotate(-90);
   distanceReset();
-  Serial2.println("continue");
+  Serial3.println("continue");
+  digitalWrite(LEDred, LOW);
   return (lengthObstacle + currentForward); //return sum of distance before obstacle plus length of obstacle
 }
 
 //checkingRightSide method
-void checkingRightSide() {
+void followingRightSide() {
   int ZeroCounter = 0;
   const int ZeroCounterMargin = 5;
   int currentDistanceRightSide = USSensorRight.ping_cm();
+  int initalDistanceRightSide = currentDistanceRightSide;
+  int initialHeading = car.getHeading();
+  int updatedHeading;
 
-  // while (bypassDistanceObstacle >= currentDistanceRightSide && ZeroCounter <= ZeroCounterMargin) {
-
+  car.setSpeed(speed); //drive
+  car.update();
   while (ZeroCounter <= ZeroCounterMargin) {
     currentDistanceRightSide = USSensorRight.ping_cm();
+    Serial3.println("right side sensor");
+    Serial3.println(currentDistanceRightSide);
+    if (currentDistanceRightSide > 11) {
+      updatedHeading = mod((initialHeading + 90), 360);
+      directionCorrection(updatedHeading);
+    }
+    else if (currentDistanceRightSide < 10) {
+      updatedHeading = mod((initialHeading - 90), 360);
+      directionCorrection(updatedHeading);
+    }
+    else {
+      directionCorrection(initialHeading);
+    }
+
+
     if (currentDistanceRightSide == 0) {
       ZeroCounter++;
     }
@@ -557,9 +588,24 @@ void checkingRightSide() {
       ZeroCounter = 0;
     }
     car.update();
-    Serial2.println(currentDistanceRightSide);
+    Serial3.println(currentDistanceRightSide);
   }
 }
+
+void forwardUntilObstacleRightSide() {
+  int initialHeading = car.getHeading();
+  int currentDistanceRightSide = USSensorRight.ping_cm();
+  car.setSpeed(speed); //drive
+  car.update();
+
+  while ((currentDistanceRightSide > 25) || (currentDistanceRightSide == 0) ) {
+    currentDistanceRightSide = USSensorRight.ping_cm();
+    directionCorrection(initialHeading);
+  }
+  Serial3.println("right side is now");
+  Serial3.println(currentDistanceRightSide);
+}
+
 
 
 /*
@@ -583,15 +629,11 @@ void gpsFunction() {
         latitude = String(lat, 6);
         longitude = String(lng, 6);
 
-        Serial2.println(latitude + "*" + longitude);
+        Serial3.println(latitude + "*" + longitude);
         //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
 
 
         GPSreceiving = false;
-
-        Serial2.println(latitude + "*" + longitude);
-        //Serial.println("Sending this message to device:" + latitude + "*" + longitude);
-
 
       }
     }
