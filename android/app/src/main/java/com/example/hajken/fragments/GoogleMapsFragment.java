@@ -24,6 +24,7 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.hajken.BuildConfig;
+import com.example.hajken.helpers.GPSConnector;
 import com.example.hajken.helpers.GPSTracker;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.maps.android.SphericalUtil;
@@ -52,6 +53,7 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.TravelMode;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -184,7 +186,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         super.onAttach(context);
 
 
-        //Call GPSConnector.update()
 
         //This might be moved to another method
         //Might be a singleton pattern?
@@ -209,17 +210,16 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         mMapView.onSaveInstanceState(mapViewBundle);
     }
 
+
     public void addCarOnMap(GoogleMap map) {
 
-        BluetoothConnection.getInstance(getContext());
-
-        //
-        GPSTracker myTracker = new GPSTracker(getContext());
-        myTracker.getLocation();
-
+        //Updating the GPS
+        GPSConnector.getInstance(getContext()).update();
 
         //Setting the CarMarker to its LatLgn Position
-        carMarker = map.addMarker(new MarkerOptions().position(new LatLng(myTracker.getLocation().getLatitude(), myTracker.getLocation().getLongitude()))
+        carMarker = map.addMarker(new MarkerOptions().position(new LatLng(
+                GPSConnector.getInstance(getContext()).getLat(),
+                GPSConnector.getInstance(getContext()).getLgn()))
                 .title("THE HAJKEN CAR").icon(BitmapDescriptorFactory.defaultMarker(carMarkerColor)));
 
         //Moving the camera to zoom value 19
@@ -227,6 +227,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         map.animateCamera(cu);
     }
+
+
 
     public void checkButton(View view) {
         int radioId = radioGroup.getCheckedRadioButtonId();

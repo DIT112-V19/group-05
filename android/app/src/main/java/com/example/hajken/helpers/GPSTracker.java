@@ -22,8 +22,6 @@ public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;
 
-    //private InterfaceMainActivity mInterfaceMainActivity;
-
     // Flag for GPS status
     boolean isGPSEnabled = false;
 
@@ -46,10 +44,24 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    public GPSTracker(Context context) {
+    /*public GPSTracker(Context context) {
         this.mContext = context;
         //this.mInterfaceMainActivity = mInterfaceMainActivity;
         getLocation();
+    }
+    */
+
+    private static GPSTracker mInstance = null;
+
+    private GPSTracker(Context context){
+        mContext = context;
+    }
+
+    public static GPSTracker getInstance(Context context){
+        if (mInstance == null){
+            mInstance = new GPSTracker(context);
+        }
+        return mInstance;
     }
 
 

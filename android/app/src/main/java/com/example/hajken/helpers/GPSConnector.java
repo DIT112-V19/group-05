@@ -37,25 +37,43 @@ public class GPSConnector {
 
     public void connect(){
 
-        //BluetoothConnection bluetoothConnection = BluetoothConnection.getInstance();
-
         Log.d(TAG, "Request for GPS-message sent");
 
-        do{
+        double currentTime = System.currentTimeMillis();
+        double endTime = currentTime + 3000;
 
-           // bluetoothConnection.startCar("g!"); //small g to request GPS
+        //small g to request GPS
+        BluetoothConnection.getInstance(myContext).startCar("g!");
 
-           // GPSstring = bluetoothConnection.readGPS();
+        while(System.currentTimeMillis() < endTime || (GPSstring != null && !GPSstring.contains("*"))){
 
-        }while(GPSstring != null);
+            GPSstring = BluetoothConnection.getInstance(myContext).readGPS();
+
+        }
+
+        System.out.println("GPS STRING IS NOW" + GPSstring);
+
+        if(GPSstring == null){
+
+            System.out.println("Did not get a GPSstring here");
+
+            //Getting Lat and Lgn from phone
+            this.lat = GPSTracker.getInstance(myContext).getLocation().getLatitude();
+            this.lgn = GPSTracker.getInstance(myContext).getLocation().getLongitude();
+
+        }
 
     }
 
 
     public void update(){
 
+        //connecting to Bluetoth of car
         connect();
-        setLatLgn();
+
+        if(GPSstring != null){
+            setLatLgn();
+        }
 
         isUpdated = true;
     }
@@ -96,14 +114,5 @@ public class GPSConnector {
     }
 
 
-    public void GPSTrackerTry(){
-
-        //CallingTheGPSTracker
-        GPSTracker myTracker = new GPSTracker(myContext);
-        myTracker.getLocation().getLatitude();
-        myTracker.getLocation().getLongitude();
-
-
-    }
 
 }

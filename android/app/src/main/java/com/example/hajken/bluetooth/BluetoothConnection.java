@@ -75,8 +75,6 @@ public class BluetoothConnection {
 
     private class AcceptThread extends Thread {
 
-
-
         private final BluetoothServerSocket mServerSocket;
 
         public AcceptThread() {
@@ -206,7 +204,7 @@ public class BluetoothConnection {
     }
 
     private class ConnectedThread extends Thread {
-        private final InputStream mInputStream;
+        private InputStream mInputStream;
 
         public ConnectedThread(BluetoothSocket socket) {
             Log.d(TAG, " connectedThread starting ");
@@ -227,26 +225,31 @@ public class BluetoothConnection {
             mOutputStream = tempOutputStream;
             setIsConnected(true);
 
-
         }
 
-        public void readInput() {
+
+
+        public String readInput() {
             //stores what is read from stream
             byte[] byteForStream = new byte[1024];
 
+            String message = "";
             int bytes;
 
             while (true) {
                 try {
                     bytes = mInputStream.read(byteForStream);
-                    String message = new String(byteForStream, 0, bytes);
+                   message = new String(byteForStream, 0, bytes);
                     Log.d(TAG, " Read from inputstream " + message);
+                    return message;
 
                 } catch (IOException e) {
                     Log.e(TAG, " error reading from inputstream " + e.getMessage());
                     break;
                 }
             }
+            return message;
+
         }
 
         //will send data to remote device
@@ -289,6 +292,10 @@ public class BluetoothConnection {
         }
     }
 
+    public String readGPS(){
+        return readString();
+    }
+
     public boolean getWasUnPaired(){
         return wasUnPaired;
     }
@@ -317,11 +324,9 @@ public class BluetoothConnection {
     }
 
 
-    public String readGPS(){
-        return readString();
-    }
 
-    public String readString() {
+
+   public String readString() {
         //stores what is read from stream
         byte[] byteForStream = new byte[1024];
         String message = "";
