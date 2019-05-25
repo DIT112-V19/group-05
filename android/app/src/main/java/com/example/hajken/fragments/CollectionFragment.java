@@ -28,103 +28,51 @@ import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 import com.example.hajken.helpers.SaveData;
+import com.example.hajken.helpers.Vehicle;
 
 import java.util.ArrayList;
+
+import es.dmoral.toasty.Toasty;
 
 public class CollectionFragment extends Fragment implements
         View.OnClickListener, CustomDialogFragment.OnActionInterface,
         BluetoothConnection.onBluetoothConnectionListener {
 
-
     private static final String TAG = "CollectionFragment";
     private InterfaceMainActivity mInterfaceMainActivity;
     private RecyclerView recyclerView;
-    private boolean vehicleOn = false;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
     private SeekBar seekBar;
     private ArrayList<PointF> validPoints;
     private TextView amountOfLoops;
-    private TextView textView;
     private String instructions;
-    private Button start_car_button;
-    CustomDialogFragment dialog;
+    private Button sendToVehicleButton;
+    private CustomDialogFragment mCustomDialog;
     private Bluetooth mBluetooth;
-
-
-    //Data for the vehicle routes
-    private final String circleRouteData = ""; // to be fixed
-    private final String squareRouteData = "<F*30*R*90*F*30*R*90*F*30*R*90*F*30*R*90>";
-    private String input;
-
     private final int SLOW = 1;
     private final int MED = 2;
     private final int FAST = 3;
+    private Vehicle mVehicle;
+    private Context mContext;
 
     //calls before onCreate, used to instantiate the interface
     //part of the collFragment to activity communication
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.mContext = context;
         mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
-        mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
-
-
-
-    }
-
-    //Changes the input to users choice
-    public void setInput(String input) {
-        this.input = input;
-    }
-
-    //Method checks indicates whether or not the vehicle is turned on (not connected to Bluetooth)
-    public boolean isVehicleOn() {
-        return vehicleOn;
-    }
-
-
-    @Override
-    public void controlVehicle(Boolean execute) {
-        Log.e(TAG, "controlVehicle: found incoming input");
-
-        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
-
-        //when vehicle is running
-        if (isVehicleOn()){
-            //when user chooses to stop the vehicle
-            if (execute){
-                if (instructions == null){
-                    Toast.makeText(getActivity(),"Something went wrong 1",Toast.LENGTH_LONG).show();
-                } else { // if there is route data
-                    mBluetooth.stopCar("s");  //<<<<----- here is the bluetooth activation/starting the vehicle
-                    vehicleOn = false;
-                    Toast.makeText(getActivity(),"Vehicle stopping",Toast.LENGTH_LONG).show();
-                }
-            }
-
-            //when vehicle is not running
-        } else {
-            //Change button state
-            if (execute){
-                if (instructions == null){
-                    Toast.makeText(getActivity(),"Something went wrong 2",Toast.LENGTH_LONG).show();
-                } else {
-                    mBluetooth.startCar(instructions); // <<<<----- here is the bluetooth activation/starting the vehicle
-                    vehicleOn = true;
-                    Toast.makeText(getActivity(),"Starting...",Toast.LENGTH_LONG).show();
-                }
-            }
-        }
+        mBluetooth = Bluetooth.getInstance(getContext());
     }
 
     //occurs after onAttach
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BluetoothConnection.getInstance(getContext()).registerListener(this);
-        dialog = new CustomDialogFragment();
-
+        //BluetoothConnection.getInstance(getContext()).registerListener(this);
+        mCustomDialog = new CustomDialogFragment();
+        mVehicle = Vehicle.getInstance();
 
     }
 
@@ -135,18 +83,19 @@ public class CollectionFragment extends Fragment implements
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //Inflates the collFragment
         final View view = inflater.inflate(R.layout.fragment_collection, container, false);
-        //Speed changing
+
         radioGroup = view.findViewById(R.id.radio_group);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
-        start_car_button = view.findViewById(R.id.send_to_vehicle_button);
+        sendToVehicleButton = view.findViewById(R.id.send_to_vehicle_button);
+
+        sendToVehicleButton.setOnClickListener(this);
+        sendToVehicleButton.setClickable(false);
+        sendToVehicleButton.setActivated(false);
+
         recyclerView = view.findViewById(R.id.recyclerView);
-        start_car_button.setOnClickListener(this);
-        start_car_button.setClickable(false);
-        start_car_button.setActivated(false);
+
         SaveData.getInstance(getContext()).loadData();
-
-
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -162,9 +111,6 @@ public class CollectionFragment extends Fragment implements
 
         //Set amount of repetitions beginning at zero
         amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
-
-
-
         seekBar.setMax(10);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -189,17 +135,14 @@ public class CollectionFragment extends Fragment implements
             @Override
             public void onItemSelected(CoordinatesListItem coordinatesListItem) {
 
-                if (BluetoothConnection.getInstance(getContext()).getIsConnected()){
+                if (mBluetooth.isConnected()){
                     Log.d(TAG, "coordinateHandling: " + coordinatesListItem.getListOfCoordinates().toString() + " SIZE:" + coordinatesListItem.getListOfCoordinates().size());
                     validPoints = coordinatesListItem.getListOfCoordinates();
-                    start_car_button.setClickable(true);
-                    start_car_button.setActivated(true);
+                    sendToVehicleButton.setClickable(true);
+                    sendToVehicleButton.setActivated(true);
                 } else {
-                    Toast.makeText(getActivity(), "Not connected to a device", Toast.LENGTH_LONG).show();
-
+                    Toasty.error(mContext, "Not connected to a device", Toast.LENGTH_LONG).show();
                 }
-
-
             }
         });
         recyclerView.setAdapter(listAdapter);
@@ -207,8 +150,6 @@ public class CollectionFragment extends Fragment implements
         recyclerView.setLayoutManager(layoutManager);
         return view;
     }
-
-
 
     public void checkButton(View view){
         int radioId = radioGroup.getCheckedRadioButtonId();
@@ -236,17 +177,43 @@ public class CollectionFragment extends Fragment implements
     public void onClick(View view) {
 
         switch (view.getId()){
-
             //These are the events that are associated with clicking of the buttons
             case R.id.send_to_vehicle_button: {
 
-
-                dialog.setDialogHeading("Are you ready?");
-                dialog.setAction("Start");
-                dialog.setTargetFragment(CollectionFragment.this,1);
-                dialog.show(getFragmentManager(),"DIALOG");
-
+                if (mBluetooth.isConnected()){
+                    if (mVehicle.isRunning()){
+                        showStopDialog();
+                    } else {
+                        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
+                        showStartDialog();
+                    }
+                } else {
+                    Toasty.error(mContext, "Not connected", Toast.LENGTH_LONG).show();
+                }
                 break;
+            }
+        }
+    }
+
+    @Override
+    public void controlVehicle(Boolean execute) {
+
+        //when vehicle is running
+        if (mVehicle.isRunning()){
+            //when user chooses to stop the vehicle
+            if (execute){
+                mBluetooth.stopCar("s");
+            }
+
+        //when vehicle is not running
+        } else {
+            //Change button state
+            if (execute){
+                if (instructions == null){
+                    Toasty.error(mContext,"Something went wrong",Toast.LENGTH_LONG).show();
+                } else {
+                    mBluetooth.startCar(instructions);
+                }
             }
         }
     }
@@ -254,46 +221,42 @@ public class CollectionFragment extends Fragment implements
     @Override
     public void onConnect() {
 
-        if (getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    // previously used to display which device the phone was connected to, keep or throw away?
-                   // textView.setText("Connected Device:" + BluetoothConnection.getInstance(getContext()).getDeviceName());
-                }
-            });
-        }
     }
 
     @Override
     public void onNotConnected() {
-
-        if(getActivity() != null) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    // previously used to display which device the phone was connected to, keep or throw away?
-
-                    // textView.setText("Connected Device: None");
-                }
-            });
-        }
+        sendToVehicleButton.setActivated(false);
+        sendToVehicleButton.setClickable(false);
     }
 
     @Override
     public void onCarRunning() {
+        sendToVehicleButton.setText(getString(R.string.stop_vehicle_text));
         mInterfaceMainActivity.setOnBackPressedActive(false);
-
     }
 
     @Override
     public void onCarNotRunning() {
+        sendToVehicleButton.setText(getString(R.string.start_vehicle_text));
         mInterfaceMainActivity.setOnBackPressedActive(true);
+    }
 
-
+    @Override
+    public void onFoundObstacle() {
 
     }
 
+    public void showStartDialog(){
+        mCustomDialog.setDialogHeading("Would you like to start the vehicle?");
+        mCustomDialog.setAction("Start");
+        mCustomDialog.setTargetFragment(CollectionFragment.this,1);
+        mCustomDialog.show(getFragmentManager(),"DIALOG");
+    }
 
+    public void showStopDialog(){
+        mCustomDialog.setDialogHeading("Would you like to stop the vehicle?");
+        mCustomDialog.setAction("Stop");
+        mCustomDialog.setTargetFragment(CollectionFragment.this,1);
+        mCustomDialog.show(getFragmentManager(),"DIALOG");
+    }
 }

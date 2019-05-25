@@ -175,7 +175,6 @@ public class CanvasView extends View {
                 copyList(validPoints);
                 displayActualPath(actualPathPoints);
 
-
                 invalidate();
                 break;
         }
@@ -210,9 +209,7 @@ public class CanvasView extends View {
             point.y = validPoints.get(i).y;
             this.actualPathPoints.add(point);
         }
-
     }
-
 
     public void displayActualPath(ArrayList<PointF> actualPathPoints){
         //Inverts all y-values so that it is the correct rotation for bitMap :)

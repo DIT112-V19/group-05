@@ -24,7 +24,10 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.hajken.BuildConfig;
+import com.example.hajken.bluetooth.Bluetooth;
+import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.helpers.GPSTracker;
+import com.example.hajken.helpers.Vehicle;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.maps.android.SphericalUtil;
 
@@ -56,6 +59,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import es.dmoral.toasty.Toasty;
+
 import static android.content.ContentValues.TAG;
 
 
@@ -63,29 +68,27 @@ import static android.content.ContentValues.TAG;
  * A simple {@link Fragment} subclass.
  */
 
-public class GoogleMapsFragment extends Fragment  implements View.OnClickListener, OnMapReadyCallback {
+public class GoogleMapsFragment extends Fragment  implements View.OnClickListener, OnMapReadyCallback, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
 
     private final int SLOW = 1;
     private final int MED = 2;
     private final int FAST = 3;
-
     private MapView mMapView;
-
     private GeoApiContext mGeoApiContext = null;
-
-    private Button startCarButton;
+    private Button sendToVehicleButton;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-
     private TextView textView;
     //private TextView mApiKeyField;
-
     private String instructions;
     private TextView amountOfLoops;
     private SeekBar seekBar;
-
+    private Bluetooth mBluetooth;
+    private Context mContext;
+    private Vehicle mVehicle;
+    private CustomDialogFragment mCustomDialog;
+    private InterfaceMainActivity mInterfaceMainActivity;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
-    private InterfaceMainActivity interfaceMainActivity;
 
     //Marker for the destination of the car
     private Marker destinationMarker = null;
@@ -108,17 +111,40 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         // Required empty public constructor
     }
 
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.mContext = context;
+
+        //Call GPSConnector.update()
+
+        //This might be moved to another method
+        //Might be a singleton pattern?
+        if (mGeoApiContext == null) {
+            mGeoApiContext = new GeoApiContext.Builder()
+                    .apiKey(BuildConfig.apiKey)
+                    .build();
+        }
+
+        mBluetooth = Bluetooth.getInstance(mContext);
+        mVehicle = Vehicle.getInstance();
+        mCustomDialog = new CustomDialogFragment();
+        mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_google_maps, container, false);
 
         //Creates the buttons
-        startCarButton = view.findViewById(R.id.send_to_vehicle_button);
+        sendToVehicleButton = view.findViewById(R.id.send_to_vehicle_button);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
-        startCarButton.setClickable(false);
-        startCarButton.setActivated(false);
+        sendToVehicleButton.setOnClickListener(this);
+
+        sendToVehicleButton.setClickable(false);
+        sendToVehicleButton.setActivated(false);
 
         //TextView for API-key
         //mApiKeyField = view.findViewById(R.id.apiKeyText);
@@ -154,7 +180,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         mMapView.onCreate(mapViewBundle);
         mMapView.getMapAsync(this);
 
-        startCarButton.setOnClickListener(this);
 
         seekBar.setMax(10);
 
@@ -179,23 +204,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         return view;
     }
 
-
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-
-        //Call GPSConnector.update()
-
-        //This might be moved to another method
-        //Might be a singleton pattern?
-        if (mGeoApiContext == null) {
-            mGeoApiContext = new GeoApiContext.Builder()
-                    .apiKey(BuildConfig.apiKey)
-                    .build();
-        }
-    }
-
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -211,9 +219,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
     public void addCarOnMap(GoogleMap map) {
 
-        BluetoothConnection.getInstance(getContext());
-
-        //
         GPSTracker myTracker = new GPSTracker(getContext());
         myTracker.getLocation();
 
@@ -259,17 +264,39 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             //This is the events that are associated with the buttons
             case R.id.send_to_vehicle_button: {
 
-                instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(getPathToPointFList());
-                System.out.println("Instruction coordinates i Maps är: " + instructions);
-
-                if (BluetoothConnection.getInstance(getContext()).getIsConnected()) {
-                    BluetoothConnection.getInstance(getContext()).startCar(instructions);
+                if (mBluetooth.isConnected()){
+                    if(mVehicle.isRunning()){
+                        showStopDialog();
+                    } else {
+                        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(getPathToPointFList());
+                        showStartDialog();
+                    }
                     break;
-
                 } else {
-                    Toast.makeText(getActivity(), "Not connected to a device. No function yet.", Toast.LENGTH_LONG).show();
-                    break;
+                    Toasty.error(mContext, "Not connected", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
 
+    @Override
+    public void controlVehicle(Boolean execute) {
+
+        //when vehicle is running
+        if (mVehicle.isRunning()) {
+            //when user chooses to stop the vehicle
+            if (execute) {
+                mBluetooth.stopCar("s");
+            }
+
+            //when vehicle is not running
+        } else {
+            //Change button state
+            if (execute) {
+                if (instructions == null) {
+                    Toasty.error(mContext,"Something went wrong",Toast.LENGTH_LONG).show();
+                } else {
+                    mBluetooth.startCar(instructions);
                 }
             }
         }
@@ -322,8 +349,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                     destinationMarker = map.addMarker(markerOptions);
                 }
 
-                startCarButton.setActivated(true);
-                startCarButton.setClickable(true);
+                sendToVehicleButton.setActivated(true);
+                sendToVehicleButton.setClickable(true);
 
                 Log.d(TAG, "Getting to calculateDirections()");
 
@@ -562,4 +589,47 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         return pathToPointF;
     }
 
+
+    public void showStartDialog(){
+        mCustomDialog.setDialogHeading("Would you like to start the vehicle?");
+        mCustomDialog.setAction("Start");
+        mCustomDialog.setTargetFragment(GoogleMapsFragment.this,1);
+        mCustomDialog.show(getFragmentManager(),"DIALOG");
+    }
+
+    public void showStopDialog(){
+        mCustomDialog.setDialogHeading("Would you like to stop the vehicle?");
+        mCustomDialog.setAction("Stop");
+        mCustomDialog.setTargetFragment(GoogleMapsFragment.this,1);
+        mCustomDialog.show(getFragmentManager(),"DIALOG");
+    }
+
+    @Override
+    public void onConnect() {
+
+    }
+
+    @Override
+    public void onNotConnected() {
+        sendToVehicleButton.setClickable(false);
+        sendToVehicleButton.setActivated(false);
+    }
+
+    @Override
+    public void onCarRunning() {
+        sendToVehicleButton.setText(getString(R.string.stop_vehicle_text));
+        mInterfaceMainActivity.setOnBackPressedActive(false);
+
+    }
+
+    @Override
+    public void onCarNotRunning() {
+        sendToVehicleButton.setText(getString(R.string.start_vehicle_text));
+        mInterfaceMainActivity.setOnBackPressedActive(true);
+    }
+
+    @Override
+    public void onFoundObstacle() {
+
+    }
 }

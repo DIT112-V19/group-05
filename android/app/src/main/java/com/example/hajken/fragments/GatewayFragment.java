@@ -18,12 +18,14 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "GatewayFragment";
     private InterfaceMainActivity mInterfaceMainActivity;
     private Bluetooth mBluetooth;
+    private Context mContext;
 
     private Button collectionRouteButton, designRouteButton, mapsRouteButton;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.mContext = context;
         mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
 
     }
@@ -31,7 +33,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
+        mBluetooth = Bluetooth.getInstance(mContext);
     }
 
 
@@ -39,6 +41,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gateway,container,false);
+        mBluetooth.setVehicleLoop("m!");
 
         //Creates the buttons
         collectionRouteButton = view.findViewById(R.id.collection_button);
@@ -71,21 +74,19 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
 
             //This is the events that are associated with the buttons
             case R.id.GoogleMapsButton: {
+                mBluetooth.setVehicleLoop("g!");
                 mInterfaceMainActivity.inflateFragment(getString(R.string.google_maps_fragment));
-
                 break;
             }
 
             case R.id.collection_button: {
-                mBluetooth.startCar("d!");
-
+                mBluetooth.setVehicleLoop("d!");
                 mInterfaceMainActivity.inflateFragment(getString(R.string.collection_fragment));
                 break;
             }
 
             case R.id.draw_button: {
-                mBluetooth.startCar("d!");
-
+                mBluetooth.setVehicleLoop("d!");
                 mInterfaceMainActivity.inflateFragment(getString(R.string.draw_fragment));
                 break;
             }

@@ -6,6 +6,9 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
+
+import com.example.hajken.helpers.Vehicle;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,7 +17,6 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class BluetoothConnection {
-
 
     private static final String TAG = "BluetoothConnection ";
     private final String APPNAME = "HAJKEN";
@@ -32,7 +34,7 @@ public class BluetoothConnection {
     private BluetoothSocket mSocket = null;
     private boolean isFinished = false;
     private boolean wasUnPaired = false;
-
+    private Vehicle mVehicle = Vehicle.getInstance();
     private ConnectedThread myConnectedThread;
     private static BluetoothConnection mInstance = null;
 
@@ -242,20 +244,22 @@ public class BluetoothConnection {
                     bytes = mInputStream.read(byteForStream);
                     String message = new String(byteForStream, 0, bytes);
                     Log.d(TAG, " Read from inputstream " + message);
+
+                    if (message.equals("Starting")){
+                        mListener.onCarRunning();
+                    }
+
                     if (message.equals("Done")){
                         mListener.onCarNotRunning();
-
                     }
+
                     if (message.equals("Obstacle")){
-                        mListener.onCarNotRunning();
-
-
+                        mListener.onFoundObstacle();
                     }
+
                     if (message.equals("Continue")){
                         mListener.onCarRunning();
-
                     }
-
 
                 } catch (IOException e) {
                     Log.e(TAG, " error reading from inputstream " + e.getMessage());
@@ -390,6 +394,8 @@ public class BluetoothConnection {
         void onCarRunning();
 
         void onCarNotRunning();
+
+        void onFoundObstacle();
 
     }
 

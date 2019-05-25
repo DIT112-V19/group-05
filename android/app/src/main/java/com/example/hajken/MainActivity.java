@@ -43,10 +43,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 
         mMainActivity = this;
-        InterfaceMainActivity mInterfaceMainActivity = this;
         this.registerReceiver(mReceiver,filter);
         onBackPressedActive = true;
-        mBluetooth = Bluetooth.getInstance(this, mInterfaceMainActivity);
+        mBluetooth = Bluetooth.getInstance(this);
 
 
         init(); // when mainActivity starts, it will inflate StartFragment first

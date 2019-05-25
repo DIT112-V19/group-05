@@ -22,25 +22,33 @@ public class Bluetooth {
     private BluetoothDevice mBluetoothDevice;
     private BluetoothDevice mPairedBluetoothDevice;
     private BluetoothAdapter mBluetoothAdapter;
-    private ArrayList<BluetoothDevice> mBluetoothdevices = new ArrayList<>();
+    private ArrayList<BluetoothDevice> mBluetoothDevices = new ArrayList<>();
     private static Bluetooth mInstance = null;
     private ListOfDevices mListAdapter;
     private static BluetoothConnection mBluetoothConnection;
     private InterfaceMainActivity mInterfaceMainActivity;
     private Context mContext;
 
-    public Bluetooth(Context context, InterfaceMainActivity mInterfaceMainActivity){
+    public Bluetooth(Context context){
         context = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.mInterfaceMainActivity = mInterfaceMainActivity ;
+        this.mInterfaceMainActivity = MainActivity.getThis();
     }
 
-    public static Bluetooth getInstance(Context context, InterfaceMainActivity mInterfaceMainActivity){
+    public static Bluetooth getInstance(Context context){
 
         if (mInstance == null){
-            mInstance = new Bluetooth(context, mInterfaceMainActivity);
+            mInstance = new Bluetooth(context);
         }
         return mInstance;
+    }
+
+    public boolean isConnected(){
+
+        if (mBluetoothConnection == null){
+            return false;
+        }
+        return mBluetoothConnection.getIsConnected();
     }
 
     public void enableBluetooth(){
@@ -64,11 +72,21 @@ public class Bluetooth {
     }
 
     public void stopCar(String input){
-        mBluetoothConnection.stopCar(input);
+        if (isConnected()){
+            mBluetoothConnection.stopCar(input);
+        }
     }
 
     public void startCar(String input){
-        mBluetoothConnection.startCar(input);
+        if (isConnected()){
+            mBluetoothConnection.startCar(input);
+        }
+    }
+
+    public void setVehicleLoop(String input){
+        if (isConnected()){
+            startCar(input);
+        }
     }
 
     public BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
@@ -81,7 +99,7 @@ public class Bluetooth {
             if (BluetoothDevice.ACTION_FOUND.equals(action)){
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (device.getName() != null){
-                    mBluetoothdevices.add(device);
+                    mBluetoothDevices.add(device);
                 }
                 //only create once and notify when changes occurs
                 mListAdapter.notifyDataSetChanged();
@@ -105,14 +123,14 @@ public class Bluetooth {
 
     public void bondWithDevice(Context context, int i){
         mBluetoothAdapter.cancelDiscovery();
-        String deviceName = mBluetoothdevices.get(i).getName();
+        String deviceName = mBluetoothDevices.get(i).getName();
 
         //the bond can only be created if the API are correct
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
-            mBluetoothdevices.get(i).createBond();
-            mPairedBluetoothDevice = mBluetoothdevices.get(i);
+            mBluetoothDevices.get(i).createBond();
+            mPairedBluetoothDevice = mBluetoothDevices.get(i);
             mBluetoothConnection = BluetoothConnection.getInstance(context);
-            mBluetoothConnection.startClient(mBluetoothdevices.get(i), MY_UUID_INSECURE );
+            mBluetoothConnection.startClient(mBluetoothDevices.get(i), MY_UUID_INSECURE );
             Log.i(TAG, " connected to " + deviceName);
 
         }
@@ -164,12 +182,12 @@ public class Bluetooth {
         this.mBluetoothAdapter = mBluetoothAdapter;
     }
 
-    public ArrayList<BluetoothDevice> getmBluetoothdevices() {
-        return mBluetoothdevices;
+    public ArrayList<BluetoothDevice> getmBluetoothDevices() {
+        return mBluetoothDevices;
     }
 
-    public void setmBluetoothdevices(ArrayList<BluetoothDevice> mBluetoothdevices) {
-        this.mBluetoothdevices = mBluetoothdevices;
+    public void setmBluetoothDevices(ArrayList<BluetoothDevice> mBluetoothDevices) {
+        this.mBluetoothDevices = mBluetoothDevices;
     }
 
     public static UUID getMyUuidInsecure() {

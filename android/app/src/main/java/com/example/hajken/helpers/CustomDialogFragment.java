@@ -49,7 +49,7 @@ public class CustomDialogFragment extends DialogFragment {
             }
         });
 
-        //Event of start
+        //Event of execute
         actionExecute.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 onAction.controlVehicle(true);
@@ -66,7 +66,7 @@ public class CustomDialogFragment extends DialogFragment {
     }
 
     public interface OnActionInterface {
-        void controlVehicle(Boolean start);
+        void controlVehicle(Boolean execute);
     }
 
     public OnActionInterface onAction; //interface object
