@@ -110,10 +110,6 @@ public class GPSTracker extends Service implements LocationListener {
             e.printStackTrace();
         }
 
-        location = new Location("Blabla");
-        location.setLatitude(00.00);
-        location.setLongitude(00.00);
-
         return location;
     }
 
