@@ -25,15 +25,12 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     private static final String TAG = "MainActivity";
     private static MainActivity mMainActivity;
     private Bluetooth mBluetooth;
-    private boolean onBackPressedActive;
+    private boolean isOnBackPressedActive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        Log.d(TAG, "TAG MAINACTIVITY - onCreate");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -44,11 +41,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
         mMainActivity = this;
         this.registerReceiver(mReceiver,filter);
-        onBackPressedActive = true;
+        isOnBackPressedActive = true;
         mBluetooth = Bluetooth.getInstance(this);
 
-
-        init(); // when mainActivity starts, it will inflate StartFragment first
+        init();
     }
 
     private void init(){
@@ -56,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         doFragmentTransaction(fragment,getString(R.string.start_fragment),false);
     }
 
-    //used to be a string message here as well but we are not using that
     private void doFragmentTransaction(Fragment fragment, String tag, boolean addToBackStack){
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -103,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     @Override
     public void onBackPressed(){
-        if (onBackPressedActive){
+        if (isOnBackPressedActive){
             super.onBackPressed();
         } else {
             Log.d(TAG, "onBackPressed: cant go back");
@@ -119,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     };
 
     public void setOnBackPressedActive(boolean onBackPressedActive) {
-        this.onBackPressedActive = onBackPressedActive;
+        this.isOnBackPressedActive = onBackPressedActive;
     }
 
     public static MainActivity getThis(){

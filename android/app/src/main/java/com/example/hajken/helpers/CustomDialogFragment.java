@@ -60,7 +60,7 @@ public class CustomDialogFragment extends DialogFragment {
         //Changes the name of the heading of the dialog
         dialogHeading.setText(heading);
 
-        //Changes the name of the action button of the dialog
+        //Changes the name of the action btn_general of the dialog
         actionExecute.setText(action);
         return view;
     }

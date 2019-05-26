@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +18,8 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.helpers.CoordinateConverter;
-import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.ListAdapter;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.helpers.CustomDialogFragment;
@@ -29,16 +27,20 @@ import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 import com.example.hajken.helpers.SaveData;
 import com.example.hajken.helpers.Vehicle;
-
 import java.util.ArrayList;
-
 import es.dmoral.toasty.Toasty;
 
 public class CollectionFragment extends Fragment implements
         View.OnClickListener, CustomDialogFragment.OnActionInterface,
         BluetoothConnection.onBluetoothConnectionListener {
 
+    private final int SLOW = 1;
+    private final int MED = 2;
+    private final int FAST = 3;
+    private final int ZERO = 0;
+    private final int MAX_SEEKBAR_LEVEL = 10;
     private static final String TAG = "CollectionFragment";
+
     private InterfaceMainActivity mInterfaceMainActivity;
     private RecyclerView recyclerView;
     private RadioGroup radioGroup;
@@ -50,38 +52,34 @@ public class CollectionFragment extends Fragment implements
     private Button sendToVehicleButton;
     private CustomDialogFragment mCustomDialog;
     private Bluetooth mBluetooth;
-    private final int SLOW = 1;
-    private final int MED = 2;
-    private final int FAST = 3;
     private Vehicle mVehicle;
     private Context mContext;
+    private SaveData mSaveData;
+    private CoordinateConverter mCoordinateConverter;
+    private FragmentManager mFragmentManager;
 
-    //calls before onCreate, used to instantiate the interface
-    //part of the collFragment to activity communication
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mContext = context;
         mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
-        mBluetooth = Bluetooth.getInstance(getContext());
     }
 
-    //occurs after onAttach
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //BluetoothConnection.getInstance(getContext()).registerListener(this);
+        mBluetooth = Bluetooth.getInstance(getContext());
+        mSaveData = SaveData.getInstance(mContext);
+        mCoordinateConverter = CoordinateConverter.getInstance(mContext);
+        mFragmentManager = getFragmentManager();
         mCustomDialog = new CustomDialogFragment();
         mVehicle = Vehicle.getInstance();
-
     }
 
-    //occurs after onCreate
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //Inflates the collFragment
         final View view = inflater.inflate(R.layout.fragment_collection, container, false);
 
         radioGroup = view.findViewById(R.id.radio_group);
@@ -94,25 +92,18 @@ public class CollectionFragment extends Fragment implements
         sendToVehicleButton.setActivated(false);
 
         recyclerView = view.findViewById(R.id.recyclerView);
+        mSaveData.loadData();
 
-        SaveData.getInstance(getContext()).loadData();
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton checkedRadioButton = group.findViewById(checkedId);
+            boolean isChecked = checkedRadioButton.isChecked();
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton checkedRadioButton = group.findViewById(checkedId);
-                boolean isChecked = checkedRadioButton.isChecked();
-
-                if (isChecked){
-                    checkButton(view);
-                }
+            if (isChecked){
+                checkButton(view);
             }
         });
-
-        //Set amount of repetitions beginning at zero
-        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
-        seekBar.setMax(10);
-
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(ZERO)));
+        seekBar.setMax(MAX_SEEKBAR_LEVEL);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -131,18 +122,13 @@ public class CollectionFragment extends Fragment implements
             }
         });
 
-        final ListAdapter listAdapter = new ListAdapter(SaveData.getInstance(getContext()).getList(), new ListAdapter.onItemSelectedListener() {
-            @Override
-            public void onItemSelected(CoordinatesListItem coordinatesListItem) {
+        final ListAdapter listAdapter = new ListAdapter(SaveData.getInstance(getContext()).getList(), coordinatesListItem -> {
 
-                if (mBluetooth.isConnected()){
-                    Log.d(TAG, "coordinateHandling: " + coordinatesListItem.getListOfCoordinates().toString() + " SIZE:" + coordinatesListItem.getListOfCoordinates().size());
-                    validPoints = coordinatesListItem.getListOfCoordinates();
-                    sendToVehicleButton.setClickable(true);
-                    sendToVehicleButton.setActivated(true);
-                } else {
-                    Toasty.error(mContext, "Not connected to a device", Toast.LENGTH_LONG).show();
-                }
+            if (mBluetooth.isConnected()){ validPoints = coordinatesListItem.getListOfCoordinates();
+                sendToVehicleButton.setClickable(true);
+                sendToVehicleButton.setActivated(true);
+            } else {
+                Toasty.error(mContext,getString(R.string.not_connected_text),Toast.LENGTH_LONG).show();
             }
         });
         recyclerView.setAdapter(listAdapter);
@@ -157,17 +143,17 @@ public class CollectionFragment extends Fragment implements
 
         switch (radioButton.getText().toString()){
             case "Slow" : {
-                CoordinateConverter.getInstance(getContext()).setSpeed(SLOW);
+                mCoordinateConverter.setSpeed(SLOW);
                 break;
             }
 
             case "Medium" : {
-                CoordinateConverter.getInstance(getContext()).setSpeed(MED);
+                mCoordinateConverter.setSpeed(MED);
                 break;
             }
 
             case "Fast" : {
-                CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
+                mCoordinateConverter.setSpeed(FAST);
                 break;
             }
         }
@@ -177,18 +163,17 @@ public class CollectionFragment extends Fragment implements
     public void onClick(View view) {
 
         switch (view.getId()){
-            //These are the events that are associated with clicking of the buttons
             case R.id.send_to_vehicle_button: {
 
                 if (mBluetooth.isConnected()){
                     if (mVehicle.isRunning()){
                         showStopDialog();
                     } else {
-                        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
+                        instructions = mCoordinateConverter.returnInstructions(validPoints);
                         showStartDialog();
                     }
                 } else {
-                    Toasty.error(mContext, "Not connected", Toast.LENGTH_LONG).show();
+                    Toasty.error(mContext, getString(R.string.not_connected_text), Toast.LENGTH_LONG).show();
                 }
                 break;
             }
@@ -198,19 +183,14 @@ public class CollectionFragment extends Fragment implements
     @Override
     public void controlVehicle(Boolean execute) {
 
-        //when vehicle is running
         if (mVehicle.isRunning()){
-            //when user chooses to stop the vehicle
             if (execute){
-                mBluetooth.stopCar("s");
+                mBluetooth.stopCar(getString(R.string.stop_vehicle_instruction));
             }
-
-        //when vehicle is not running
         } else {
-            //Change button state
             if (execute){
                 if (instructions == null){
-                    Toasty.error(mContext,"Something went wrong",Toast.LENGTH_LONG).show();
+                    Toasty.error(mContext,getString(R.string.vehicle_malfunction_text),Toast.LENGTH_LONG).show();
                 } else {
                     mBluetooth.startCar(instructions);
                 }
@@ -247,16 +227,16 @@ public class CollectionFragment extends Fragment implements
     }
 
     public void showStartDialog(){
-        mCustomDialog.setDialogHeading("Would you like to start the vehicle?");
-        mCustomDialog.setAction("Start");
+        mCustomDialog.setDialogHeading(getString(R.string.start_dialog_heading));
+        mCustomDialog.setAction(getString(R.string.action_start_text));
         mCustomDialog.setTargetFragment(CollectionFragment.this,1);
-        mCustomDialog.show(getFragmentManager(),"DIALOG");
+        mCustomDialog.show(mFragmentManager,getString(R.string.dialog_tag));
     }
 
     public void showStopDialog(){
-        mCustomDialog.setDialogHeading("Would you like to stop the vehicle?");
-        mCustomDialog.setAction("Stop");
+        mCustomDialog.setDialogHeading(getString(R.string.stop_dialog_heading));
+        mCustomDialog.setAction(getString(R.string.action_start_text));
         mCustomDialog.setTargetFragment(CollectionFragment.this,1);
-        mCustomDialog.show(getFragmentManager(),"DIALOG");
+        mCustomDialog.show(mFragmentManager,getString(R.string.dialog_tag));
     }
 }

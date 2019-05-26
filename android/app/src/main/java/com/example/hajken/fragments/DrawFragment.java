@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,7 +28,6 @@ import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.R;
 import com.example.hajken.helpers.SaveData;
 import com.example.hajken.helpers.Vehicle;
-
 import es.dmoral.toasty.Toasty;
 
 public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
@@ -36,7 +36,9 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private final int MED = 2;
     private final int FAST = 3;
     private final int ZERO = 0;
+    private final int MAX_SEEKBAR_LEVEL = 10;
     private static final String TAG = "DrawFragment";
+
     private Button sendToVehicleButton;
     private CanvasView canvasView;
     private String instructions;
@@ -47,25 +49,29 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private SeekBar seekBar;
     private Bluetooth mBluetooth;
     private CheckBox saveButton;
+    private CoordinateConverter mCoordinateConverter;
     private InterfaceMainActivity mInterfaceMainActivity;
-    private SaveData saveData;
+    private SaveData mSaveData;
     private Vehicle mVehicle;
     private Context mContext;
+    private FragmentManager mFragmentManager;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mContext = context;
         mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
-        mBluetooth = Bluetooth.getInstance(getContext());
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCustomDialog = new CustomDialogFragment();
-        saveData = SaveData.getInstance(getContext());
+        mBluetooth = Bluetooth.getInstance(mContext);
+        mSaveData = SaveData.getInstance(mContext);
         mVehicle = Vehicle.getInstance();
+        mCustomDialog = new CustomDialogFragment();
+        mFragmentManager = getFragmentManager();
+        mCoordinateConverter = CoordinateConverter.getInstance(mContext);
     }
 
     @Nullable
@@ -73,48 +79,35 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_draw, container, false);
 
-        //Creates the buttons and canvasView
         sendToVehicleButton = view.findViewById(R.id.send_to_vehicle_button);
         canvasView = view.findViewById(R.id.canvasView);
         amountOfLoops = view.findViewById(R.id.amount_of_repetitions);
         seekBar = view.findViewById(R.id.seekbar);
         saveButton = view.findViewById(R.id.save_button);
-
-        //Speed changing
         radioGroup = view.findViewById(R.id.radio_group);
-
-        //Set amount of repetitions on inflation to zero
         amountOfLoops.setText(getString(R.string.amount_of_repetitions, Integer.toString(ZERO)));
 
         sendToVehicleButton.setOnClickListener(this);
         sendToVehicleButton.setClickable(false);
         sendToVehicleButton.setActivated(false);
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton checkedRadioButton = group.findViewById(checkedId);
-                boolean isChecked = checkedRadioButton.isChecked();
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton checkedRadioButton = group.findViewById(checkedId);
+            boolean isChecked = checkedRadioButton.isChecked();
 
-                if (isChecked) {
-                    checkButton(view);
-                }
+            if (isChecked) {
+                checkButton(view);
             }
         });
-
-        canvasView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    sendToVehicleButton.setActivated(true);
-                    sendToVehicleButton.setClickable(true);
-                }
-                return false;
+        canvasView.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                sendToVehicleButton.setActivated(true);
+                sendToVehicleButton.setClickable(true);
             }
+            return false;
         });
 
-        seekBar.setMax(10);
-
+        seekBar.setMax(MAX_SEEKBAR_LEVEL);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -142,17 +135,17 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
         switch (radioButton.getText().toString()) {
             case "Slow": {
-                CoordinateConverter.getInstance(getContext()).setSpeed(SLOW);
+                mCoordinateConverter.setSpeed(SLOW);
                 break;
             }
 
             case "Medium": {
-                CoordinateConverter.getInstance(getContext()).setSpeed(MED);
+                mCoordinateConverter.setSpeed(MED);
                 break;
             }
 
             case "High": {
-                CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
+                mCoordinateConverter.setSpeed(FAST);
                 break;
             }
         }
@@ -163,7 +156,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
         switch (view.getId()) {
 
-            //This is the events that are associated with the buttons
             case R.id.send_to_vehicle_button: {
 
                 if (mBluetooth.isConnected()) {
@@ -171,26 +163,23 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                         showStopDialog();
                     } else {
                         if (saveButton.isChecked()) {
+
                             // create a java object to hold the bitmap with its respective coordinates
                             // will later be displayed in the recycler view
-
                             CoordinatesListItem coordinatesListItem = new CoordinatesListItem();
                             coordinatesListItem.setListOfCoordinates(canvasView.getValidPoints());
                             coordinatesListItem.setmName(createName());
-
                             SaveData.mItemList.add(coordinatesListItem);
-                            Log.d(TAG, "drawfragment onclick bitmap " + canvasView.getBitmap());
-
-                            saveData.savePNG(canvasView.getBitmap());
-                            saveData.saveData(coordinatesListItem);
+                            mSaveData.savePNG(canvasView.getBitmap());
+                            mSaveData.saveData(coordinatesListItem);
                         }
-                        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(canvasView.getValidPoints());
+                        instructions = mCoordinateConverter.returnInstructions(canvasView.getValidPoints());
                         showStartDialog();
                     }
                     break;
 
                 } else {
-                    Toasty.error(mContext, "Not connected", Toast.LENGTH_LONG).show();
+                    Toasty.error(mContext, getString(R.string.not_connected_text), Toast.LENGTH_LONG).show();
                     break;
                 }
             }
@@ -200,19 +189,14 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     @Override
     public void controlVehicle(Boolean execute) {
 
-        //when vehicle is running
         if (mVehicle.isRunning()) {
-            //when user chooses to stop the vehicle
             if (execute) {
-                mBluetooth.stopCar("s");
+                mBluetooth.stopCar(getString(R.string.stop_vehicle_instruction));
             }
-
-            //when vehicle is not running
         } else {
-            //Change button state
             if (execute) {
                 if (instructions == null) {
-                    Toasty.error(mContext,"Something went wrong",Toast.LENGTH_LONG).show();
+                    Toasty.error(mContext,getString(R.string.vehicle_malfunction_text),Toast.LENGTH_LONG).show();
                 } else {
                     mBluetooth.startCar(instructions);
                 }
@@ -221,21 +205,21 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     }
 
     public String createName() {
-        return Integer.toString(SaveData.getInstance(getContext()).getList().size()) + ".png";
+        return Integer.toString(SaveData.getInstance(getContext()).getList().size()) + getString(R.string.image_file_type);
     }
 
     public void showStartDialog(){
-        mCustomDialog.setDialogHeading("Would you like to start the vehicle?");
-        mCustomDialog.setAction("Start");
+        mCustomDialog.setDialogHeading(getString(R.string.start_dialog_heading));
+        mCustomDialog.setAction(getString(R.string.action_start_text));
         mCustomDialog.setTargetFragment(DrawFragment.this,1);
-        mCustomDialog.show(getFragmentManager(),"DIALOG");
+        mCustomDialog.show(mFragmentManager,getString(R.string.dialog_tag));
     }
 
     public void showStopDialog(){
-        mCustomDialog.setDialogHeading("Would you like to stop the vehicle?");
-        mCustomDialog.setAction("Stop");
+        mCustomDialog.setDialogHeading(getString(R.string.start_dialog_heading));
+        mCustomDialog.setAction(getString(R.string.action_stop_text));
         mCustomDialog.setTargetFragment(DrawFragment.this,1);
-        mCustomDialog.show(getFragmentManager(),"DIALOG");
+        mCustomDialog.show(mFragmentManager,getString(R.string.dialog_tag));
     }
 
     @Override

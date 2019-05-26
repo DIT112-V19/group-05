@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@drawable/custom_dialog_border"
+        android:background="@drawable/border_dialog"
         android:padding="10dp">
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginRight="20dp"
             android:gravity="center"
-            android:background="@drawable/custom_dialog_border"
+            android:background="@drawable/border_dialog"
             android:text="@string/action_execute"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
             android:textColor="@color/custom_dialog_text_color" />
@@ -43,7 +43,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="20dp"
             android:gravity="center"
-            android:background="@drawable/custom_dialog_border"
+            android:background="@drawable/border_dialog"
             android:text="@string/action_cancel"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
             android:textColor="@color/custom_dialog_text_color" />

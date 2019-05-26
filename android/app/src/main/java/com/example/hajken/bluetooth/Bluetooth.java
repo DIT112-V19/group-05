@@ -138,7 +138,6 @@ public class Bluetooth {
 
     public void actOnAction(String action, Intent intent){
 
-
         if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
             mBluetoothConnection.connectMode();
         }

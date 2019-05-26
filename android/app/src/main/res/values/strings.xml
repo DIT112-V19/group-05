@@ -8,6 +8,7 @@
     <string name="collection_fragment">collection fragment</string>
     <string name="draw_fragment">draw fragment</string>
     <string name="google_maps_fragment">googlemaps fragment</string>
+    <string name="image_file_type">.png</string>
 
     <!--Google APi Key-->
     <string name="api_key_text">No API key found</string>
@@ -35,17 +36,38 @@
     <string name="circle__symbol_description">Circle</string>
     <string name="square_symbol_description">Square</string>
 
-    <!-- Random Strings -->
-    <string name="square">Square</string>
+    <!-- SeekBar strings -->
     <string name="amount_of_repetitions">Amount of repetitions: %1$s</string>
+
+    <!-- Button state strings -->
     <string name="stop_vehicle_text">Stop vehicle</string>
     <string name="start_vehicle_text">Start vehicle</string>
+
+    <!-- Bluetooth strings -->
+    <string name="not_connected_text">Not connected</string>
+    <string name="no_bluetooth_adapter">No bluetooth adapter found</string>
+    <string name="no_active_bluetooth_adapter">Please activate bluetooth</string>
 
     <!-- Custom Dialog strings -->
     <string name="action_cancel">Cancel</string>
     <string name="action_execute">Execute</string>
     <string name="dialog_heading">Heading</string>
+    <string name="dialog_tag">DIALOG</string>
 
+    <!-- Vehicle execution strings -->
+    <string name="stop_vehicle_instruction">s!</string>
+    <string name="vehicle_malfunction_text">Vehicle malfunction</string>
+    <string name="exit_loop">m!</string>
+    <string name="google_maps_loop">g!</string>
+    <string name="coordinates_loop">d!</string>
 
+    <!-- Random Strings -->
+    <string name="square">Square</string>
 
+    <!-- Dialog Strings -->
+    <string name="start_dialog_heading">Would you like to start the vehicle?</string>
+    <string name="stop_dialog_heading">Would you like to stop the vehicle?</string>
+    <string name="action_start_text">Start</string>
+    <string name="action_stop_text">Stop</string
+        >
 </resources>

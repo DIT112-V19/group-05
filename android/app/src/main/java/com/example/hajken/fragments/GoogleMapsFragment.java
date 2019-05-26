@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,10 +20,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
 import android.widget.SeekBar;
 import android.widget.Toast;
-
 import com.example.hajken.BuildConfig;
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.helpers.CustomDialogFragment;
@@ -30,10 +29,8 @@ import com.example.hajken.helpers.GPSTracker;
 import com.example.hajken.helpers.Vehicle;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.maps.android.SphericalUtil;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
-
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.R;
@@ -54,32 +51,25 @@ import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.TravelMode;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import es.dmoral.toasty.Toasty;
-
 import static android.content.ContentValues.TAG;
-
-
-/**
- * A simple {@link Fragment} subclass.
- */
 
 public class GoogleMapsFragment extends Fragment  implements View.OnClickListener, OnMapReadyCallback, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
 
+    private final int ZERO = 0;
     private final int SLOW = 1;
     private final int MED = 2;
     private final int FAST = 3;
+    private final int MAX_SEEKBAR_LEVEL = 10;
+
     private MapView mMapView;
     private GeoApiContext mGeoApiContext = null;
     private Button sendToVehicleButton;
     private RadioGroup radioGroup;
     private RadioButton radioButton;
-    private TextView textView;
-    //private TextView mApiKeyField;
     private String instructions;
     private TextView amountOfLoops;
     private SeekBar seekBar;
@@ -88,6 +78,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     private Vehicle mVehicle;
     private CustomDialogFragment mCustomDialog;
     private InterfaceMainActivity mInterfaceMainActivity;
+    private CoordinateConverter mCoordinateConverter;
+    private FragmentManager mFragmentManager;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     //Marker for the destination of the car
@@ -111,7 +103,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         // Required empty public constructor
     }
 
-
     public void onAttach(Context context) {
         super.onAttach(context);
         this.mContext = context;
@@ -130,6 +121,8 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         mVehicle = Vehicle.getInstance();
         mCustomDialog = new CustomDialogFragment();
         mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
+        mCoordinateConverter = CoordinateConverter.getInstance(mContext);
+        mFragmentManager = getFragmentManager();
     }
 
     @Override
@@ -154,20 +147,16 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         radioGroup = view.findViewById(R.id.radio_group);
 
         //Set amount of repetitions beginning at zero
-        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(ZERO)));
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton checkedRadioButton = group.findViewById(checkedId);
-                boolean isChecked = checkedRadioButton.isChecked();
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            RadioButton checkedRadioButton = group.findViewById(checkedId);
+            boolean isChecked = checkedRadioButton.isChecked();
 
-                if (isChecked) {
-                    checkButton(view);
-                }
+            if (isChecked) {
+                checkButton(view);
             }
         });
-
 
         mMapView = new MapView(getContext());
         mMapView = view.findViewById(R.id.mapView);
@@ -180,9 +169,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         mMapView.onCreate(mapViewBundle);
         mMapView.getMapAsync(this);
 
-
-        seekBar.setMax(10);
-
+        seekBar.setMax(MAX_SEEKBAR_LEVEL);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -222,7 +209,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         GPSTracker myTracker = new GPSTracker(getContext());
         myTracker.getLocation();
 
-
         //Setting the CarMarker to its LatLgn Position
         carMarker = map.addMarker(new MarkerOptions().position(new LatLng(myTracker.getLocation().getLatitude(), myTracker.getLocation().getLongitude()))
                 .title("THE HAJKEN CAR").icon(BitmapDescriptorFactory.defaultMarker(carMarkerColor)));
@@ -239,17 +225,17 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
         switch (radioButton.getText().toString()) {
             case "Slow": {
-                CoordinateConverter.getInstance(getContext()).setSpeed(SLOW);
+                mCoordinateConverter.setSpeed(SLOW);
                 break;
             }
 
             case "Medium": {
-                CoordinateConverter.getInstance(getContext()).setSpeed(MED);
+                mCoordinateConverter.setSpeed(MED);
                 break;
             }
 
             case "Fast": {
-                CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
+                mCoordinateConverter.setSpeed(FAST);
                 break;
             }
         }
@@ -268,12 +254,12 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
                     if(mVehicle.isRunning()){
                         showStopDialog();
                     } else {
-                        instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(getPathToPointFList());
+                        instructions = mCoordinateConverter.returnInstructions(getPathToPointFList());
                         showStartDialog();
                     }
                     break;
                 } else {
-                    Toasty.error(mContext, "Not connected", Toast.LENGTH_LONG).show();
+                    Toasty.error(mContext, getString(R.string.not_connected_text), Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -282,19 +268,14 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     @Override
     public void controlVehicle(Boolean execute) {
 
-        //when vehicle is running
         if (mVehicle.isRunning()) {
-            //when user chooses to stop the vehicle
             if (execute) {
-                mBluetooth.stopCar("s");
+                mBluetooth.stopCar(getString(R.string.stop_vehicle_instruction));
             }
-
-            //when vehicle is not running
         } else {
-            //Change button state
             if (execute) {
                 if (instructions == null) {
-                    Toasty.error(mContext,"Something went wrong",Toast.LENGTH_LONG).show();
+                    Toasty.error(mContext,getString(R.string.vehicle_malfunction_text),Toast.LENGTH_LONG).show();
                 } else {
                     mBluetooth.startCar(instructions);
                 }
@@ -303,71 +284,54 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     }
 
     @Override
-
     public void onResume() {
         super.onResume();
         mMapView.onResume();
-
     }
 
-
     @Override
-
     public void onStart() {
         super.onStart();
         mMapView.onStart();
-
     }
-
 
     @Override
     public void onStop() {
         super.onStop();
         mMapView.onStop();
-
     }
 
-
     @Override
-
     public void onMapReady(GoogleMap map) {
 
         addCarOnMap(map);
 
-        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
+        map.setOnMapClickListener(latLng -> {
 
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title(latLng.latitude + " : " + latLng.longitude);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title(latLng.latitude + " : " + latLng.longitude);
 
-                if (destinationMarker == null) {
-                    destinationMarker = map.addMarker(markerOptions);
-                } else {
-                    destinationMarker.remove();
-                    destinationMarker = map.addMarker(markerOptions);
-                }
-
-                sendToVehicleButton.setActivated(true);
-                sendToVehicleButton.setClickable(true);
-
-                Log.d(TAG, "Getting to calculateDirections()");
-
-                //calculateDirections(destinationMarker);
-                calculateDirections(map, destinationMarker);
-
+            if (destinationMarker == null) {
+                destinationMarker = map.addMarker(markerOptions);
+            } else {
+                destinationMarker.remove();
+                destinationMarker = map.addMarker(markerOptions);
             }
-        });
 
+            sendToVehicleButton.setActivated(true);
+            sendToVehicleButton.setClickable(true);
+
+            //calculateDirections(destinationMarker);
+            calculateDirections(map, destinationMarker);
+
+        });
     }
 
 
     @Override
     public void onPause() {
-
         mMapView.onPause();
-
         super.onPause();
 
     }
@@ -375,20 +339,15 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
     @Override
     public void onDestroy() {
-
         mMapView.onDestroy();
-
         super.onDestroy();
-
     }
 
 
     @Override
 
     public void onLowMemory() {
-
         super.onLowMemory();
-
         mMapView.onLowMemory();
 
     }
@@ -424,7 +383,6 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
             }
         });
-
     }
 
 
@@ -591,17 +549,17 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
 
     public void showStartDialog(){
-        mCustomDialog.setDialogHeading("Would you like to start the vehicle?");
-        mCustomDialog.setAction("Start");
+        mCustomDialog.setDialogHeading(getString(R.string.start_dialog_heading));
+        mCustomDialog.setAction(getString(R.string.start_vehicle_text));
         mCustomDialog.setTargetFragment(GoogleMapsFragment.this,1);
-        mCustomDialog.show(getFragmentManager(),"DIALOG");
+        mCustomDialog.show(mFragmentManager,getString(R.string.dialog_tag));
     }
 
     public void showStopDialog(){
-        mCustomDialog.setDialogHeading("Would you like to stop the vehicle?");
-        mCustomDialog.setAction("Stop");
+        mCustomDialog.setDialogHeading(getString(R.string.stop_dialog_heading));
+        mCustomDialog.setAction(getString(R.string.stop_vehicle_text));
         mCustomDialog.setTargetFragment(GoogleMapsFragment.this,1);
-        mCustomDialog.show(getFragmentManager(),"DIALOG");
+        mCustomDialog.show(mFragmentManager,getString(R.string.dialog_tag));
     }
 
     @Override

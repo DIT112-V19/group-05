@@ -161,7 +161,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     /**
      * Function to show settings alert dialog.
-     * On pressing the Settings button it will launch Settings Options.
+     * On pressing the Settings btn_general it will launch Settings Options.
      * */
     public void showSettingsAlert(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
@@ -172,7 +172,7 @@ public class GPSTracker extends Service implements LocationListener {
         // Setting Dialog Message
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
 
-        // On pressing the Settings button.
+        // On pressing the Settings btn_general.
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -180,7 +180,7 @@ public class GPSTracker extends Service implements LocationListener {
             }
         });
 
-        // On pressing the cancel button
+        // On pressing the cancel btn_general
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
