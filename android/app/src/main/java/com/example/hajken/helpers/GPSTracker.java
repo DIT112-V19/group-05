@@ -18,11 +18,13 @@ import android.util.Log;
 
 import com.example.hajken.InterfaceMainActivity;
 
+import java.util.concurrent.TimeUnit;
+
+import static android.support.constraint.Constraints.TAG;
+
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;
-
-    //private InterfaceMainActivity mInterfaceMainActivity;
 
     // Flag for GPS status
     boolean isGPSEnabled = false;
@@ -37,6 +39,11 @@ public class GPSTracker extends Service implements LocationListener {
     double latitude; // Latitude
     double longitude; // Longitude
 
+
+    private String GPSstring;
+    private String sLat;
+    private String sLgn;
+
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
 
@@ -46,10 +53,62 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    public GPSTracker(Context context) {
+    /*public GPSTracker(Context context) {
         this.mContext = context;
         //this.mInterfaceMainActivity = mInterfaceMainActivity;
         getLocation();
+    }
+    */
+
+    private static GPSTracker mInstance = null;
+
+    private GPSTracker(Context context){
+        mContext = context;
+    }
+
+    public static GPSTracker getInstance(Context context){
+        if (mInstance == null){
+            mInstance = new GPSTracker(context);
+        }
+        return mInstance;
+    }
+
+
+    public void setLatLgn(){
+
+        Log.d(TAG, "Setting LatLgn");
+
+        //Sleeping for 500 milliseconds to update GPSString
+        try {
+            TimeUnit.MILLISECONDS.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //if the GPSString has been updated from the car
+        if(getGPSstring() != null){
+
+            Log.d(TAG, "Got a GPS position from Car");
+
+            int index = getGPSstring().indexOf("*");
+
+            setsLat(getGPSstring().substring(0,index));
+            setsLgn(getGPSstring().substring(index+1));
+
+            setLatitude(Double.parseDouble(getsLat()));
+            setLongitude(Double.parseDouble(getsLgn()));
+
+        }
+        //else get the GPS position from the users phone
+        else {
+
+            Log.d(TAG, "Got a GPS position from Phone");
+
+            setLatitude(getLocation().getLatitude());
+            setLongitude(getLocation().getLongitude());
+
+        }
+
     }
 
 
@@ -190,6 +249,38 @@ public class GPSTracker extends Service implements LocationListener {
         alertDialog.show();
     }
 
+
+    public String getGPSstring() {
+        return GPSstring;
+    }
+
+    public void setGPSstring(String GPSstring) {
+        this.GPSstring = GPSstring;
+    }
+
+    public String getsLat() {
+        return sLat;
+    }
+
+    public void setsLat(String sLat) {
+        this.sLat = sLat;
+    }
+
+    public String getsLgn() {
+        return sLgn;
+    }
+
+    public void setsLgn(String sLgn) {
+        this.sLgn = sLgn;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
     @Override
     public void onLocationChanged(Location location) {
