@@ -15,41 +15,42 @@ public class Vehicle implements BluetoothConnection.onBluetoothConnectionListene
     private Context mContext = MainActivity.getThis();
 
     //Singleton
-    private Vehicle(){
+    private Vehicle() {
     }
 
-    public static Vehicle getInstance(){
-        if (mInstance == null){
+    public static Vehicle getInstance() {
+        if (mInstance == null) {
             mInstance = new Vehicle();
         }
-            return mInstance;
-        }
+        return mInstance;
+    }
+
 
     public boolean isRunning() {
         return isRunning;
     }
 
-    public void setRunning(boolean running) {
+    private void setRunning(boolean running) {
         isRunning = running;
     }
 
-    public void showToast(String string){
+    private void showToast(String string) {
 
-        switch (string){
-            case "Connected" :
-                Toasty.success(mContext,"Connected", Toast.LENGTH_LONG).show();
+        switch (string) {
+            case "Connected":
+                Toasty.success(mContext, "Connected", Toast.LENGTH_LONG).show();
                 break;
-            case "NotConnected" :
-                Toasty.error(mContext,"Not connected",Toast.LENGTH_LONG).show();
+            case "NotConnected":
+                Toasty.error(mContext, "Not connected", Toast.LENGTH_LONG).show();
                 break;
-            case "Running" :
-                Toasty.info(mContext,"Vehicle running",Toast.LENGTH_LONG).show();
+            case "Running":
+                Toasty.info(mContext, "Vehicle running", Toast.LENGTH_LONG).show();
                 break;
-            case "Stopping" :
-                Toasty.info(mContext,"Vehicle stopping",Toast.LENGTH_LONG).show();
+            case "Stopping":
+                Toasty.info(mContext, "Vehicle stopping", Toast.LENGTH_LONG).show();
                 break;
-            case "Obstacle" :
-                Toasty.info(mContext,"Obstacle found",Toast.LENGTH_LONG).show();
+            case "Obstacle":
+                Toasty.info(mContext, "Obstacle found", Toast.LENGTH_LONG).show();
                 break;
         }
     }

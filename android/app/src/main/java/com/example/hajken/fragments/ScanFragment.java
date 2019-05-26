@@ -150,40 +150,11 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
     @Override
     public void onConnect() {
 
-        /*
-        Log.d(TAG, "TAG scanFragment - onConnect");
-            mInterfaceMainActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    BluetoothConnection.getInstance(ScanFragment.this.getContext()).setIsConnected(true);
-                    ScanFragment.this.checkStateOfButtons();
-                    Toasty.success(mContext, "Connected to " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
-                }
-            });
-            */
     }
 
     @Override
     public void onNotConnected() {
-        Log.d(TAG, "TAG scanFragment - onNotConnected");
 
-        /*
-        mInterfaceMainActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                BluetoothConnection.getInstance(ScanFragment.this.getContext()).setIsConnected(false);
-                ScanFragment.this.checkStateOfButtons();
-
-                if (BluetoothConnection.getInstance(ScanFragment.this.getContext()).getWasUnPaired()) {
-                    Toasty.info(mContext, "Unpaired with " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
-                } else {
-                    if (mBluetoothAdapter.isEnabled()) {
-                        Toasty.error(mContext, "Lost connection with " + mBluetooth.getmPairedBluetoothDevice().getName(), Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-        });
-        */
     }
 
     @Override

@@ -103,21 +103,21 @@ public class CollectionFragment extends Fragment implements
                 RadioButton checkedRadioButton = group.findViewById(checkedId);
                 boolean isChecked = checkedRadioButton.isChecked();
 
-                if (isChecked){
+                if (isChecked) {
                     checkButton(view);
                 }
             }
         });
 
         //Set amount of repetitions beginning at zero
-        amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(0)));
+        amountOfLoops.setText(getString(R.string.amount_of_repetitions, Integer.toString(0)));
         seekBar.setMax(10);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
-                amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(progress)));
+                amountOfLoops.setText(getString(R.string.amount_of_repetitions, Integer.toString(progress)));
             }
 
             @Override
@@ -135,7 +135,7 @@ public class CollectionFragment extends Fragment implements
             @Override
             public void onItemSelected(CoordinatesListItem coordinatesListItem) {
 
-                if (mBluetooth.isConnected()){
+                if (mBluetooth.isConnected()) {
                     Log.d(TAG, "coordinateHandling: " + coordinatesListItem.getListOfCoordinates().toString() + " SIZE:" + coordinatesListItem.getListOfCoordinates().size());
                     validPoints = coordinatesListItem.getListOfCoordinates();
                     sendToVehicleButton.setClickable(true);
@@ -151,22 +151,22 @@ public class CollectionFragment extends Fragment implements
         return view;
     }
 
-    public void checkButton(View view){
+    public void checkButton(View view) {
         int radioId = radioGroup.getCheckedRadioButtonId();
         radioButton = view.findViewById(radioId);
 
-        switch (radioButton.getText().toString()){
-            case "Slow" : {
+        switch (radioButton.getText().toString()) {
+            case "Slow": {
                 CoordinateConverter.getInstance(getContext()).setSpeed(SLOW);
                 break;
             }
 
-            case "Medium" : {
+            case "Medium": {
                 CoordinateConverter.getInstance(getContext()).setSpeed(MED);
                 break;
             }
 
-            case "Fast" : {
+            case "Fast": {
                 CoordinateConverter.getInstance(getContext()).setSpeed(FAST);
                 break;
             }
@@ -176,12 +176,12 @@ public class CollectionFragment extends Fragment implements
     @Override
     public void onClick(View view) {
 
-        switch (view.getId()){
+        switch (view.getId()) {
             //These are the events that are associated with clicking of the buttons
             case R.id.send_to_vehicle_button: {
 
-                if (mBluetooth.isConnected()){
-                    if (mVehicle.isRunning()){
+                if (mBluetooth.isConnected()) {
+                    if (mVehicle.isRunning()) {
                         showStopDialog();
                     } else {
                         instructions = CoordinateConverter.getInstance(getContext()).returnInstructions(validPoints);
@@ -199,18 +199,18 @@ public class CollectionFragment extends Fragment implements
     public void controlVehicle(Boolean execute) {
 
         //when vehicle is running
-        if (mVehicle.isRunning()){
+        if (mVehicle.isRunning()) {
             //when user chooses to stop the vehicle
-            if (execute){
+            if (execute) {
                 mBluetooth.stopCar("s");
             }
 
-        //when vehicle is not running
+            //when vehicle is not running
         } else {
             //Change button state
-            if (execute){
-                if (instructions == null){
-                    Toasty.error(mContext,"Something went wrong",Toast.LENGTH_LONG).show();
+            if (execute) {
+                if (instructions == null) {
+                    Toasty.error(mContext, "Something went wrong", Toast.LENGTH_LONG).show();
                 } else {
                     mBluetooth.startCar(instructions);
                 }
@@ -246,17 +246,17 @@ public class CollectionFragment extends Fragment implements
 
     }
 
-    public void showStartDialog(){
+    public void showStartDialog() {
         mCustomDialog.setDialogHeading("Would you like to start the vehicle?");
         mCustomDialog.setAction("Start");
-        mCustomDialog.setTargetFragment(CollectionFragment.this,1);
-        mCustomDialog.show(getFragmentManager(),"DIALOG");
+        mCustomDialog.setTargetFragment(CollectionFragment.this, 1);
+        mCustomDialog.show(getFragmentManager(), "DIALOG");
     }
 
-    public void showStopDialog(){
+    public void showStopDialog() {
         mCustomDialog.setDialogHeading("Would you like to stop the vehicle?");
         mCustomDialog.setAction("Stop");
-        mCustomDialog.setTargetFragment(CollectionFragment.this,1);
-        mCustomDialog.show(getFragmentManager(),"DIALOG");
+        mCustomDialog.setTargetFragment(CollectionFragment.this, 1);
+        mCustomDialog.show(getFragmentManager(), "DIALOG");
     }
 }
