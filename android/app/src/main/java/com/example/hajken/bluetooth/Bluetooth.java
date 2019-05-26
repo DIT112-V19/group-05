@@ -29,8 +29,8 @@ public class Bluetooth {
     private InterfaceMainActivity mInterfaceMainActivity;
     private Context mContext;
 
-    public Bluetooth(Context context){
-        context = context;
+    private Bluetooth(Context context){
+        this.mContext = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         this.mInterfaceMainActivity = MainActivity.getThis();
     }
@@ -89,7 +89,7 @@ public class Bluetooth {
         }
     }
 
-    public BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+    private BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "TAG scanFragment - Broadcast receiver onReceive");
@@ -159,40 +159,17 @@ public class Bluetooth {
         }
     }
 
-    public void registerListenerBluetooth(BluetoothConnection.onBluetoothConnectionListener listener){
-        mBluetoothConnection.registerListener(listener);
-    }
-
-
-    public BluetoothDevice getmBluetoothDevice() {
-
-        return mBluetoothDevice;
-    }
-
-    public void setmBluetoothDevice(BluetoothDevice mBluetoothDevice) {
-        this.mBluetoothDevice = mBluetoothDevice;
-    }
-
     public BluetoothAdapter getmBluetoothAdapter() {
         return mBluetoothAdapter;
-    }
-
-    public void setmBluetoothAdapter(BluetoothAdapter mBluetoothAdapter) {
-        this.mBluetoothAdapter = mBluetoothAdapter;
     }
 
     public ArrayList<BluetoothDevice> getmBluetoothDevices() {
         return mBluetoothDevices;
     }
 
-    public void setmBluetoothDevices(ArrayList<BluetoothDevice> mBluetoothDevices) {
-        this.mBluetoothDevices = mBluetoothDevices;
-    }
-
-    public static UUID getMyUuidInsecure() {
+    static UUID getMyUuidInsecure() {
         return MY_UUID_INSECURE;
     }
-
 
     public ListOfDevices getmListAdapter() {
         return mListAdapter;
@@ -200,14 +177,6 @@ public class Bluetooth {
 
     public void setmListAdapter(ListOfDevices mListAdapter) {
         this.mListAdapter = mListAdapter;
-    }
-
-    public BluetoothConnection getmBluetoothConnection() {
-        return mBluetoothConnection;
-    }
-
-    public void setmBluetoothConnection(BluetoothConnection mBluetoothConnection) {
-        this.mBluetoothConnection = mBluetoothConnection;
     }
 
     public BluetoothDevice getmPairedBluetoothDevice() {

@@ -2,6 +2,7 @@ package com.example.hajken.helpers;
 
 import android.content.Context;
 import android.util.Log;
+
 import com.example.hajken.bluetooth.BluetoothConnection;
 
 import com.example.hajken.InterfaceMainActivity;
@@ -22,37 +23,36 @@ public class GPSConnector {
     private static GPSConnector mInstance = null;
     private Context myContext;
 
-    private GPSConnector(Context context){
+    private GPSConnector(Context context) {
         myContext = context;
     }
 
-    public static GPSConnector getInstance(Context context){
-        if (mInstance == null){
+    public static GPSConnector getInstance(Context context) {
+        if (mInstance == null) {
             mInstance = new GPSConnector(context);
         }
         return mInstance;
     }
 
 
-
-    public void connect(){
+    private void connect() {
 
         //BluetoothConnection bluetoothConnection = BluetoothConnection.getInstance();
 
         Log.d(TAG, "Request for GPS-message sent");
 
-        do{
+        do {
 
-           // bluetoothConnection.startCar("g!"); //small g to request GPS
+            // bluetoothConnection.startCar("g!"); //small g to request GPS
 
-           // GPSstring = bluetoothConnection.readGPS();
+            // GPSstring = bluetoothConnection.readGPS();
 
-        }while(GPSstring != null);
+        } while (GPSstring != null);
 
     }
 
 
-    public void update(){
+    public void update() {
 
         connect();
         setLatLgn();
@@ -60,43 +60,43 @@ public class GPSConnector {
         isUpdated = true;
     }
 
-    public void setLatLgn(){
+    private void setLatLgn() {
 
         int index = GPSstring.indexOf("*");
 
-        sLat = GPSstring.substring(0,index);
+        sLat = GPSstring.substring(0, index);
         sLgn = GPSstring.substring(index + 1);
 
         setLat(Double.parseDouble(sLat));
         setLgn(Double.parseDouble(sLgn));
     }
 
-    public boolean isUpdated(){
+    public boolean isUpdated() {
         return isUpdated;
     }
 
-    public void setLat(double lat){
+    private void setLat(double lat) {
 
         this.lat = lat;
     }
 
-    public void setLgn(double lat){
+    private void setLgn(double lat) {
 
         this.lat = lat;
     }
 
-    public double getLat(){
+    public double getLat() {
 
         return lat;
     }
 
-    public double getLgn(){
+    public double getLgn() {
 
         return lgn;
     }
 
 
-    public void GPSTrackerTry(){
+    public void GPSTrackerTry() {
 
         //CallingTheGPSTracker
         GPSTracker myTracker = new GPSTracker(myContext);

@@ -104,11 +104,12 @@ public class CollectionFragment extends Fragment implements
         });
         amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(ZERO)));
         seekBar.setMax(MAX_SEEKBAR_LEVEL);
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 CoordinateConverter.getInstance(getContext()).setNrOfLoops(progress);
-                amountOfLoops.setText(getString(R.string.amount_of_repetitions,Integer.toString(progress)));
+                amountOfLoops.setText(getString(R.string.amount_of_repetitions, Integer.toString(progress)));
             }
 
             @Override
@@ -123,12 +124,12 @@ public class CollectionFragment extends Fragment implements
         });
 
         final ListAdapter listAdapter = new ListAdapter(SaveData.getInstance(getContext()).getList(), coordinatesListItem -> {
-
             if (mBluetooth.isConnected()){ validPoints = coordinatesListItem.getListOfCoordinates();
                 sendToVehicleButton.setClickable(true);
                 sendToVehicleButton.setActivated(true);
             } else {
                 Toasty.error(mContext,getString(R.string.not_connected_text),Toast.LENGTH_LONG).show();
+
             }
         });
         recyclerView.setAdapter(listAdapter);
@@ -137,7 +138,7 @@ public class CollectionFragment extends Fragment implements
         return view;
     }
 
-    public void checkButton(View view){
+    public void checkButton(View view) {
         int radioId = radioGroup.getCheckedRadioButtonId();
         radioButton = view.findViewById(radioId);
 
@@ -164,9 +165,8 @@ public class CollectionFragment extends Fragment implements
 
         switch (view.getId()){
             case R.id.send_to_vehicle_button: {
-
-                if (mBluetooth.isConnected()){
-                    if (mVehicle.isRunning()){
+                if (mBluetooth.isConnected()) {
+                    if (mVehicle.isRunning()) {
                         showStopDialog();
                     } else {
                         instructions = mCoordinateConverter.returnInstructions(validPoints);

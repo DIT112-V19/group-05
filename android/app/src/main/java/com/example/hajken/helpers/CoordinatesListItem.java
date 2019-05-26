@@ -20,11 +20,11 @@ public class CoordinatesListItem {
         this.listOfCoordinates = listOfCoordinates;
     }
 
-    public void setmName(String path){
+    public void setmName(String path) {
         this.mName = path;
     }
 
-    public String getmName(){
+    String getmName() {
         return this.mName;
     }
 }

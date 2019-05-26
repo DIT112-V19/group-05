@@ -366,25 +366,14 @@ public class BluetoothConnection {
     }
 
 
-    public boolean getIsConnected(){
+    protected boolean getIsConnected(){
         return isConnected;
     }
 
-    public void setIsConnected(Boolean isConnected){
+    private void setIsConnected(Boolean isConnected){
         this.isConnected = isConnected;
     }
 
-    public String getDeviceName(){
-        return mBluetoothDevice.getName();
-    }
-
-    public BluetoothAdapter getMyBluetoothAdapter() {
-        return myBluetoothAdapter;
-    }
-
-    public boolean isFinished() {
-        return isFinished;
-    }
 
     public interface onBluetoothConnectionListener {
         void onConnect();
@@ -398,11 +387,6 @@ public class BluetoothConnection {
         void onFoundObstacle();
 
     }
-
-    public OutputStream getmOutputStream(){
-        return this.mOutputStream;
-    }
-
 
 }
 

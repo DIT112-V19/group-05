@@ -1,4 +1,5 @@
 package com.example.hajken.helpers;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,7 +28,7 @@ public class ListAdapter extends RecyclerView.Adapter {
 
 
     private ArrayList<CoordinatesListItem> mItems;
-    public static int selected_position = 0;
+    private static int selected_position = 0;
 
 
     public ListAdapter(ArrayList<CoordinatesListItem> mItems, onItemSelectedListener onItemSelectedListener) {
@@ -57,56 +58,51 @@ public class ListAdapter extends RecyclerView.Adapter {
         return mItems.size();
     }
 
-    public interface onItemSelectedListener{
+    public interface onItemSelectedListener {
 
         void onItemSelected(CoordinatesListItem coordinatesListItem);
     }
 
     private class ListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView mItemText;
         private ImageView mItemImage;
 
-        public ListViewHolder(View itemView) {
+        ListViewHolder(View itemView) {
 
             super(itemView);
-            // mItemText = (TextView) itemView.findViewById(R.id.itemText);
             mItemImage = (ImageView) itemView.findViewById(R.id.itemImage);
             itemView.setOnClickListener(this);
         }
 
-        public void bindView(CoordinatesListItem item){
+        void bindView(CoordinatesListItem item) {
             //mItemText.setText(OurData.imageName[position]);
-            Log.d(TAG,"loading bitmap");
+            Log.d(TAG, "loading bitmap");
             String path = "/data/user/0/com.example.hajken/app_imageDir/";
             String name = item.getmName();
-            Log.d(TAG, "itemname"+item.getmName());
+            Log.d(TAG, "itemname" + item.getmName());
             mItemImage.setImageBitmap(loadImageFromStorage(path, name));
         }
 
-        public void onClick(View view){
+        public void onClick(View view) {
             if (getAdapterPosition() == RecyclerView.NO_POSITION) return;
             // Updating old as well as new positions
             notifyItemChanged(selected_position);
             selected_position = getAdapterPosition();
             notifyItemChanged(selected_position);
-            if(getAdapterPosition() > -1){
+            if (getAdapterPosition() > -1) {
                 onItemSelectedListener.onItemSelected(mItems.get(getAdapterPosition()));
             }
         }
     }
 
-    private Bitmap loadImageFromStorage(String path, String name)
-    {
+    private Bitmap loadImageFromStorage(String path, String name) {
         Log.d(TAG, "Inside load image");
         try {
-            File f=new File(path, name);
+            File f = new File(path, name);
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
-            Log.d(TAG, "Loading bitmap: "+b);
+            Log.d(TAG, "Loading bitmap: " + b);
             return b;
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             Log.d(TAG, "Exception");
         }
@@ -114,11 +110,4 @@ public class ListAdapter extends RecyclerView.Adapter {
         return null;
     }
 
-    public ListAdapter.onItemSelectedListener getOnItemSelectedListener() {
-        return onItemSelectedListener;
-    }
-
-    public void setOnItemSelectedListener(ListAdapter.onItemSelectedListener onItemSelectedListener) {
-        this.onItemSelectedListener = onItemSelectedListener;
-    }
 }

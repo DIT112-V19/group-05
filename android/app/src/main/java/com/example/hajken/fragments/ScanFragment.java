@@ -124,6 +124,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
     @Override
     public void onConnect() {
         setStateOfButtons();
+
     }
 
     @Override
