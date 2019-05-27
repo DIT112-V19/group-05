@@ -34,6 +34,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBluetooth = Bluetooth.getInstance(mContext);
+
     }
 
     @Nullable

@@ -7,6 +7,9 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
 
+
+import com.example.hajken.helpers.GPSTracker;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,8 +38,8 @@ public class BluetoothConnection {
     private ConnectedThread myConnectedThread;
     private static BluetoothConnection mInstance = null;
 
-    private ConnectionListener mConnectionListenerTheReturn;
-    private VehicleListener mVehicleListenerTheReturn;
+    private ConnectionListener mConnectionListener;
+    private VehicleListener mVehicleListener;
 
 
     private BluetoothConnection(Context context) {
@@ -56,26 +59,27 @@ public class BluetoothConnection {
     }
 
 
-    public void registerConnectionListener(ConnectionListener mConnectionListenerTheReturn) {
-        this.mConnectionListenerTheReturn = mConnectionListenerTheReturn;
+    public void registerConnectionListener(ConnectionListener mConnectionListener) {
+        this.mConnectionListener = mConnectionListener;
     }
 
-    public void registerVehicleListener(VehicleListener mVehicleListenerTheReturn) {
-        this.mVehicleListenerTheReturn = mVehicleListenerTheReturn;
+    public void registerVehicleListener(VehicleListener mVehicleListener) {
+        this.mVehicleListener = mVehicleListener;
     }
+
 
 
 
     public void disconnectMode(){
         setWasUnPaired(false);
         setIsConnected(false);
-        mConnectionListenerTheReturn.onNotConnected();
+        mConnectionListener.onNotConnected();
 
     }
 
     public void connectMode(){
         setIsConnected(true);
-        mConnectionListenerTheReturn.onConnect();
+        mConnectionListener.onConnect();
     }
 
 
@@ -85,8 +89,6 @@ public class BluetoothConnection {
 
 
     private class AcceptThread extends Thread {
-
-
 
         private final BluetoothServerSocket mServerSocket;
 
@@ -217,7 +219,7 @@ public class BluetoothConnection {
     }
 
     private class ConnectedThread extends Thread {
-        private final InputStream mInputStream;
+        private InputStream mInputStream;
 
         public ConnectedThread(BluetoothSocket socket) {
             Log.d(TAG, " connectedThread starting ");
@@ -239,43 +241,57 @@ public class BluetoothConnection {
             readInput();
             setIsConnected(true);
 
-
         }
+
+
+
+
 
         private void readInput() {
             //stores what is read from stream
-            byte[] byteForStream = new byte[1024];
-            int bytes;
+
+            byte[] byteForStream = new byte[2048];
             String message = "";
+
+            int bytes;
 
             while (true) {
 
                 try {
                     bytes = mInputStream.read(byteForStream);
+
                     message += new String(byteForStream, 0, bytes);
                     Log.d(TAG, " Read from inputstream " + message);
+                    System.out.println("Message is" + message);
 
                     if (message.equals("s")){
-                        mVehicleListenerTheReturn.onCarRunning();
+                        mVehicleListener.onCarRunning();
                         message = "";
                     }
 
                     if (message.equals("d")){
-                        mVehicleListenerTheReturn.onCarNotRunning();
+                        mVehicleListener.onCarNotRunning();
                         message = "";
                     }
 
                     if (message.equals("o")){
-                        mVehicleListenerTheReturn.onFoundObstacle();
+                        mVehicleListener.onFoundObstacle();
                         message = "";
+                    }
+                    if(message.contains("*")){
+                        GPSTracker.getInstance(myContext).setGPSstring(message);
+                        Log.d(TAG, "Setting GPSString to " + message);
                     }
 
 
-                } catch (IOException e) {
+
+                } catch (Exception e) {
                     Log.e(TAG, " error reading from inputstream " + e.getMessage());
                     break;
                 }
             }
+
+            message = "";
 
         }
 
@@ -319,6 +335,10 @@ public class BluetoothConnection {
         }
     }
 
+    public String readGPS(){
+        return readString();
+    }
+
     public boolean getWasUnPaired(){
         return wasUnPaired;
     }
@@ -332,7 +352,7 @@ public class BluetoothConnection {
                             .getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
                     setWasUnPaired(true);
-                    mConnectionListenerTheReturn.onNotConnected();
+                    mConnectionListener.onNotConnected();
                 } catch (Exception e) {
                     Log.e(TAG, "Removing has been failed." + e.getMessage());
                 }
@@ -344,20 +364,18 @@ public class BluetoothConnection {
 
     public void stopCar(String input) {
         writeToDevice(input);
-        mVehicleListenerTheReturn.onCarNotRunning();
+        mVehicleListener.onCarNotRunning();
     }
 
 
-    public String readGPS(){
-        return readString();
-    }
 
-    public String readString() {
+
+   public String readString() {
         //stores what is read from stream
         byte[] byteForStream = new byte[1024];
         String message = "";
 
-        mVehicleListenerTheReturn.onCarRunning();
+        mVehicleListener.onCarRunning();
 
         int bytes;
 
