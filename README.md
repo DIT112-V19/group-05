@@ -10,14 +10,14 @@ The interface enables control of vehicle without programming. Can be used for da
 
 ## How?
 ### Software:
-- Android Studio
-- Toasty
-- Google Directions API
-- Google Location and Activity Recognition
-- Google Maps
+* Android Studio
+* Toasty
+* Google Directions API
+* Google Location and Activity Recognition
+* Google Maps
 
-- Arduino IDE
-- Arduino libraries:
+* Arduino IDE
+* Arduino libraries:
   * <a href="https://github.com/platisd/smartcar_shield">smartcar shield</a> by Dimitris Platis (*)
   * <a href="https://playground.arduino.cc/Code/NewPing/">NewPing</a> by Tim Eckel (*)
   * <a href="http://arduiniana.org/libraries/tinygpsplus/">TinyGPS++</a> by Mikal Hart
@@ -48,8 +48,8 @@ The interface enables control of vehicle without programming. Can be used for da
 1. Download the repository
 2. Open hajkenCar.ino in Arduino IDE, download the above-mentioned libraries (via Arduino IDE) and install TinyGPS++ manually (library folder must be called "TinyGPS++")
 3. Adjust pin setup if necessary. 
-4. Optional: Test Sensors. Smartcar Shield library includes several sketches to test sensors' functionality.
-5. Calibrate odometer(s) and gyroscope. Use Smartcar Shield sketches for calibration (Odometer: sensors->odometer->FindPulsesPerMeter / Gyroscope: sensors->odometer->GyroscopeCalibration). Update PULSES_PER_METER and GYRO_OFFSET values.
+4. Calibrate odometer(s) and gyroscope. Use Smartcar Shield sketches for calibration (Odometer: sensors->odometer->FindPulsesPerMeter / Gyroscope: sensors->odometer->GyroscopeCalibration). Update PULSES_PER_METER and GYRO_OFFSET values.
+5. Optional: Test Sensors. Smartcar Shield library includes several sketches to test sensors' functionality.
 6. Upload sketch to your Arduino Smartcar.
 
 ### Android Application
