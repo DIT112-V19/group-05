@@ -22,27 +22,27 @@ import java.util.concurrent.TimeUnit;
 
 import static android.support.constraint.Constraints.TAG;
 
+
 public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;
 
     // Flag for GPS status
-    boolean isGPSEnabled = false;
+    private boolean isGPSEnabled = false;
 
     // Flag for network status
-    boolean isNetworkEnabled = false;
+    private boolean isNetworkEnabled = false;
 
     // Flag for GPS status
-    boolean canGetLocation = false;
+    private boolean canGetLocation = false;
 
-    Location location; // Location
-    double latitude; // Latitude
-    double longitude; // Longitude
+    private Location location; // Location
+    private double latitude; // Latitude
+    private double longitude; // Longitude
 
-
-    private String GPSstring;
-    private String sLat;
-    private String sLgn;
+    private String GPSstring; //String from Car holding GPS Coordinates
+    private String sLat; //For concatenation and casting
+    private String sLgn; //For concatenation and casting
 
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
@@ -53,19 +53,13 @@ public class GPSTracker extends Service implements LocationListener {
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
-    /*public GPSTracker(Context context) {
-        this.mContext = context;
-        //this.mInterfaceMainActivity = mInterfaceMainActivity;
-        getLocation();
-    }
-    */
-
     private static GPSTracker mInstance = null;
 
     private GPSTracker(Context context){
         mContext = context;
     }
 
+    //Singleton pattern
     public static GPSTracker getInstance(Context context){
         if (mInstance == null){
             mInstance = new GPSTracker(context);
