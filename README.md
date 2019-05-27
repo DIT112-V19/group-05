@@ -32,6 +32,7 @@ The application needs permission to use the phones location.
 <!DOCTYPE html>
 <html>
 <body>
+<div class="row">
   <div class="w3-card-4" style="width:50%">
     <img src="images/settings.png" class="w3-round" width="250">
     <div class="w3-container">
@@ -49,6 +50,7 @@ The application needs permission to use the phones location.
     <div class="w3-container">
       <p>3. Enable permission for the app</p>
     </div>
+  </div>
   </div>
 </body>
 </html>
