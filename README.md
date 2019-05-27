@@ -10,12 +10,13 @@ The interface enables control of vehicle without programming. Can be used for da
 
 ## How?
 ### Software:
+#### for App
 * Android Studio
 * Toasty
 * Google Directions API
 * Google Location and Activity Recognition
 * Google Maps
-
+#### for Arduino
 * Arduino IDE
 * Arduino libraries:
   * <a href="https://github.com/platisd/smartcar_shield">smartcar shield</a> by Dimitris Platis (*)
