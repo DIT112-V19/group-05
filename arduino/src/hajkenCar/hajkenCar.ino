@@ -104,11 +104,6 @@ void setup() {
   Serial3.begin(BluetoothBaud); // opens channel for bluetooth, pins 14+15
 
   initializeOdometer();
-
-  Serial3.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
-  Serial.write("Welcome to HAJKENcar!\nSit back and enjoy the ride.\n "); //Welcome message
-
-
 }
 
 /*
@@ -144,30 +139,6 @@ void loop() {
 
   }
 
-
-  /*
-    switch(MenuInput)
-    {
-    case 'm':
-    digitalWrite(LEDgreen, HIGH);
-    stayInSubMenu = true;
-    break;
-
-    case 'g':
-    gpsFunction();
-    while(stayInSubMenu){
-    waitingForInput();
-    getInputString();
-    }
-    break;
-
-    case 'd':
-    while(stayInSubMenu){
-    waitingForInput();
-    getInputString();
-    }
-    break;
-    }*/
 }
 
 /*
@@ -186,7 +157,7 @@ void loop() {
 **/
 
 void stringToArray(String str) {
-  //String x = "<l,6,v,1,r,0,f,20,t,30>"; // TEST INPUT
+  //String x = "<l,8,v,1,r,0,f,20,t,30>"; // TEST INPUT
 
   //Getting size from string for array
   String size;
@@ -214,11 +185,6 @@ void stringToArray(String str) {
   }
 
   //TEST PRINT
-
-  for (int k = 0; k < sizeInt; k++) {
-    Serial.print(commandArray[k]);
-    Serial.print(", ");
-  }
 
   //Running command method for current input
   commands(commandArray, sizeInt);
@@ -304,11 +270,11 @@ void forward(int distance) {
   if (distance == 0) {
     return;
   }
-  Serial3.write("Going forward\n"); //Printing status
-  Serial.write("Going forward\n"); //Printing status
 
   distanceReset();
   boolean obstacleBypassed = false;
+  car.update();
+
   int initialHeading = car.getHeading(); // get heading to drive in straight line
 
   car.setSpeed(speed);
@@ -374,16 +340,9 @@ void rotate(int angleToTurn, int numCorr) {
 
   //*****************
   //Correction for overturn or underturn
-  /*Serial3.println("inital heading");
-    Serial3.println(initialHeading);*/
   int neededTurn = currentTurned + angleToTurn;
 
-  /* NEEDS IMPROVEMENT ON VALUES > 180 - after left turns
-    Serial3.println("current turn");
-    Serial3.println(currentTurned);
-    Serial3.println("correction turn");
-    Serial3.println(neededTurn);
-  */
+
   if (abs(neededTurn) > 2 && abs(neededTurn) < 180) {
     rotate(neededTurn, numCorr + 1);
   }
@@ -409,23 +368,14 @@ void directionCorrection(int initialHeading) {
   int headingOffset = (initialHeading - currentHeading);
   headingOffset = mod(headingOffset, 360);
 
-  /* Serial3.print("Current heading: ");
-    Serial3.println(currentHeading);
-
-    Serial3.print("Initial Heading: ");
-    Serial3.println(initialHeading);
-
-    Serial3.print("Heading offset: ");
-    Serial3.println(headingOffset);
-  */
   if (headingOffset == 0) {
     car.overrideMotorSpeed(speed, speed);
   } else if (headingOffset > 180) {
     //Serial3.println("Correcting to the LEFT");
-    car.overrideMotorSpeed((speed), (speed + 10));
+    car.overrideMotorSpeed((speed - 20), (speed + 20));
   } else if (headingOffset < 180) {
     //Serial3.println("Correcting to the RIGHT");
-    car.overrideMotorSpeed((speed + 10), (speed));
+    car.overrideMotorSpeed((speed + 20), (speed - 20));
   }
 }
 
@@ -476,9 +426,7 @@ void go() {
 }
 
 void checkForStop() {
-  while (Serial.available() > 0) { // empties input buffer
-    Serial.read();
-  }
+
   char inputToStop;  //input variable
 
   if (Serial3.available()) {
@@ -491,9 +439,7 @@ void checkForStop() {
 }
 
 void checkForStart() {
-  while (Serial.available() > 0) { // empties input buffer
-    Serial.read();
-  }
+
   char inputToStart;  //input variable
   while (true) {
     if (Serial3.available()) {
@@ -581,9 +527,9 @@ int bypassObstacle() {
   rotate(-90, 0); // turn
   distanceReset();
   followingRightSide(); //check if obstacle still in the way
-  widthObstacle = car.getDistance(); //store width of Obstacle
-  Serial3.println("width front obstacle");
-  Serial3.println(widthObstacle);
+  widthObstacle = car.getDistance() + extraDistanceForRotationA; //store width of Obstacle
+  forwardWithoutObstacleControl(extraDistanceForRotationA);
+
 
   //Passing left side of obstacle
   //adjustedAngle = mod((car.getHeading() - headingBeforeObstacle), 360);
@@ -601,11 +547,8 @@ int bypassObstacle() {
   forwardWithoutObstacleControl(widthObstacle); //drive along backside, go stored width of obstacle
   adjustedAngle = mod((car.getHeading() - headingBeforeObstacle), 360);
   adjustedAngle = adjustedAngle * (-1);
-  Serial3.println("adjusted angle");
-  Serial3.println(adjustedAngle);
   rotate(adjustedAngle, 0); //turn
   //rotate(-90,0);
-  Serial3.println(car.getDistance());
   distanceReset();
   Serial3.println("Continue");
   digitalWrite(LEDred, LOW);
@@ -626,8 +569,7 @@ void followingRightSide() {
   car.update();
   while (ZeroCounter <= ZeroCounterMargin) {
     currentDistanceRightSide = USSensorRight.ping_cm();
-    Serial3.println("right side sensor");
-    Serial3.println(currentDistanceRightSide);
+
     if (currentDistanceRightSide > 13) {
       updatedHeading = mod((initialHeading + 90), 360);
       directionCorrection(updatedHeading);
@@ -647,7 +589,6 @@ void followingRightSide() {
       ZeroCounter = 0;
     }
     car.update();
-    Serial3.println(currentDistanceRightSide);
   }
 }
 
@@ -669,8 +610,7 @@ void forwardUntilObstacleRightSide() {
       nonZeroCounter = 0;
     }
   }
-  Serial3.println("right side is now");
-  Serial3.println(currentDistanceRightSide);
+
 }
 
 
@@ -689,7 +629,7 @@ void gpsFunction() {
   do {
     while (Serial1.available() > 0 && GPSreceiving) {
       if ((startMillis + 5000) < millis()) {
-        Serial3.println("timeout");
+        // Serial3.println("timeout");
         return;
       }
       gps.encode(Serial1.read());
