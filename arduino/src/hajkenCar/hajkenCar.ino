@@ -34,9 +34,12 @@ const int gyroOffset = 20; //updated was 11
 //**********
 //Car
 //**********
-float speed = 60;
-int turningSpeed = 50;
-int stopSpeed = 0;
+float speed = 50;
+const int TURNING_SPEED = 50;
+const int STOP_SPEED = 0;
+const int SLOW = 50;
+const int MEDIUM = 70;
+const int FAST = 90;
 
 //motor pin connection
 int leftMotorForwardPin = 8;
@@ -74,7 +77,6 @@ String longitude;
 boolean GPSreceiving = true;
 
 //SERIAL setup
-
 static const uint32_t GPSBaud = 9600;
 static const uint32_t BluetoothBaud = 9600;
 static const uint32_t SerialBaud = 9600;
@@ -99,7 +101,6 @@ void setup() {
   pinMode(LEDgreen, OUTPUT);
   pinMode(LEDred, OUTPUT);
 
-  Serial.begin(SerialBaud);
   Serial1.begin(GPSBaud); //GPS
   Serial3.begin(BluetoothBaud); // opens channel for bluetooth, pins 14+15
 
@@ -112,13 +113,10 @@ void setup() {
  *********************************************
 **/
 
-
-
 void loop() {
   waitingForInput(); //wait for mode input
   stayInSubMenu = true;
   String MenuInput = Serial3.readStringUntil('!');
-
 
   if (MenuInput == "m") {
     digitalWrite(LEDgreen, HIGH);
@@ -136,9 +134,7 @@ void loop() {
       waitingForInput();
       getInputString();
     }
-
   }
-
 }
 
 /*
@@ -157,9 +153,8 @@ void loop() {
 **/
 
 void stringToArray(String str) {
-  //String x = "<l,8,v,1,r,0,f,20,t,30>"; // TEST INPUT
 
-  //Getting size from string for array
+  //Getting the size from the string, for the array
   String size;
   int k = 3;
 
@@ -171,6 +166,7 @@ void stringToArray(String str) {
 
   //---------------------
 
+  //Creating the array with the commands
   String commandArray[sizeInt];
   int indexArray = 0;
   int i = k + 1; //Starting at correct position in string
@@ -183,9 +179,7 @@ void stringToArray(String str) {
     }
     i++;
   }
-
-  //TEST PRINT
-
+  
   //Running command method for current input
   commands(commandArray, sizeInt);
 }
@@ -197,23 +191,24 @@ void stringToArray(String str) {
 **/
 
 void commands(String commands[], int arraySize) {
+  
   digitalWrite(LEDgreen, LOW);
   digitalWrite(LEDyellow, HIGH);
   Serial3.println("Starting");
   int roundsToDrive = commands[3].toInt();
 
-  //Select speed
+  //-----Select speed---------
   if (commands[1].toInt() == 1) {
-    speed = 50;
+    speed = SLOW;
   } else if (commands[1].toInt() == 2) {
-    speed = 70;
+    speed = MEDIUM;
   } else if (commands[1].toInt() == 3) {
-    speed = 90;
+    speed = FAST;
   }
 
+  //-----Read commands and execute them-----
   int k = 0;
   do {
-
     for (int i = 4; i < (arraySize - 1); i = i + 2) {
 
       if (commands[i] == "f") {
@@ -222,23 +217,22 @@ void commands(String commands[], int arraySize) {
         rotate((int)commands[i + 1].toFloat(), 0);
       } else {
         Serial3.println("unknown or no command");
-        Serial.println("unknown or no command");
       }
     }
     k++;
-    if (roundsToDrive > 0 && k <= roundsToDrive) {
+    if (roundsToDrive > 0 && k <= roundsToDrive) { //depending on how many times to repeat the route
       reverseCommands(commands, arraySize);
       k++;
     }
   } while (k <= roundsToDrive);
+  
   Serial3.println("Done");
   digitalWrite(LEDyellow, LOW);
-
 }
 
 void reverseCommands(String commands[], int arraySize) {
 
-  rotate(180, 0); //Turn around for back
+  rotate(180, 0); //Turn around before going back on track
 
   for (int i = (arraySize - 2); i >= 4; i = i - 2) {
 
@@ -250,7 +244,6 @@ void reverseCommands(String commands[], int arraySize) {
       rotate(reverseTurn, 0);
     } else {
       Serial3.println("unknown or no command");
-      Serial.println("unknown or no command");
     }
   }
 
@@ -270,15 +263,15 @@ void forward(int distance) {
   if (distance == 0) {
     return;
   }
-
-  distanceReset();
+ 
   boolean obstacleBypassed = false;
+  distanceReset();
   car.update();
-
   int initialHeading = car.getHeading(); // get heading to drive in straight line
 
   car.setSpeed(speed);
   car.update();
+  
   while (car.getDistance() <= distance) {
     car.update();
     distance = distance - obstacleAvoidance(); //if Obstacle, reduce distance by distance before obstacle plus obstacle length
@@ -299,6 +292,7 @@ void forwardWithoutObstacleControl(int distance) {
 
   car.setSpeed(speed);
   car.update();
+  
   while (car.getDistance() <= distance) {
     car.update();
     directionCorrection(initialHeading);
@@ -318,9 +312,9 @@ void rotate(int angleToTurn, int numCorr) {
 
   //Setting rotation
   if (angleToTurn > 0) {
-    car.overrideMotorSpeed(turningSpeed, -turningSpeed);
+    car.overrideMotorSpeed(TURNING_SPEED, -TURNING_SPEED);
   } else if (angleToTurn < 0) {
-    car.overrideMotorSpeed(-turningSpeed, turningSpeed);
+    car.overrideMotorSpeed(-TURNING_SPEED, TURNING_SPEED);
   }
 
   unsigned int initialHeading = car.getHeading();
@@ -338,10 +332,9 @@ void rotate(int angleToTurn, int numCorr) {
     currentTurned = initialHeading - currentHeading;
   }
 
-  //*****************
+  //-----------------------------------
   //Correction for overturn or underturn
   int neededTurn = currentTurned + angleToTurn;
-
 
   if (abs(neededTurn) > 2 && abs(neededTurn) < 180) {
     rotate(neededTurn, numCorr + 1);
@@ -349,11 +342,10 @@ void rotate(int angleToTurn, int numCorr) {
   stop();
 }
 
-
 //**STOPPING**
 
 void stop() {
-  car.setSpeed(stopSpeed);
+  car.setSpeed(STOP_SPEED);
   car.update();
 }
 
@@ -371,59 +363,17 @@ void directionCorrection(int initialHeading) {
   if (headingOffset == 0) {
     car.overrideMotorSpeed(speed, speed);
   } else if (headingOffset > 180) {
-    //Serial3.println("Correcting to the LEFT");
-    car.overrideMotorSpeed((speed - 20), (speed + 20));
+    car.overrideMotorSpeed((speed - 20), (speed + 20)); //Correcting to the left
   } else if (headingOffset < 180) {
-    //Serial3.println("Correcting to the RIGHT");
-    car.overrideMotorSpeed((speed + 20), (speed - 20));
+    car.overrideMotorSpeed((speed + 20), (speed - 20)); //Correcting to the right
   }
 }
-
-/*
- *********************************************
-     EXAMPLE DRIVING SHAPES
- *********************************************
-**/
-
-//drives in a square, starting at lower left corner
-void square(int sideLength) {
-  for (int i = 0; i < 4; i = i + 1) {
-    forward(sideLength);
-    rotate(90, 0);
-  }
-}
-
-void circle() {
-  String testStringCircle[] = {"f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45", "f", "20", "r", "45"};
-  int circleArrayLength = 32;
-  commands(testStringCircle, circleArrayLength);
-}
-
 
 /*
  *********************************************
      MANUAL CONTROL
  *********************************************
 **/
-
-void go() {
-
-  char inputToGo;  //input variable
-  while (true) {
-    if (Serial3.available()) {
-      inputToGo = Serial3.read();
-      if (inputToGo = 'g') {
-        stopFromDriving = false;
-        while (!stopFromDriving) {
-          car.setSpeed(speed);
-          car.update();
-          checkForStop();
-        }
-        break;
-      }
-    }
-  }
-}
 
 void checkForStop() {
 
@@ -441,6 +391,7 @@ void checkForStop() {
 void checkForStart() {
 
   char inputToStart;  //input variable
+  
   while (true) {
     if (Serial3.available()) {
       inputToStart = Serial3.read();
@@ -494,6 +445,7 @@ void getInputString() {
      OBSTACLE AVOIDANCE
  *********************************************
 **/
+//Hey Hartmut
 
 //**STOPS IN FRONT OF OBSTACLE**
 
@@ -523,7 +475,7 @@ int bypassObstacle() {
   const int extraDistanceForRotationB = 20; //drive 20 cm extra to avoid crashing into obstacle
 
 
-  //Passing frontside of obstacle
+  //------------Passing frontside of obstacle---------------
   rotate(-90, 0); // turn
   distanceReset();
   followingRightSide(); //check if obstacle still in the way
@@ -531,9 +483,7 @@ int bypassObstacle() {
   forwardWithoutObstacleControl(extraDistanceForRotationA);
 
 
-  //Passing left side of obstacle
-  //adjustedAngle = mod((car.getHeading() - headingBeforeObstacle), 360);
-  //rotate(adjustedAngle,0); //turn
+  //------------Passing left side of obstacle---------------
   rotate(90, 0);
   distanceReset();
   forwardUntilObstacleRightSide();
@@ -542,24 +492,26 @@ int bypassObstacle() {
   forwardWithoutObstacleControl(extraDistanceForRotationB);
 
 
-  //Passing backside of obstacle
+  //-----------Passing backside of obstacle-----------------
   rotate(90, 0); //turn
   forwardWithoutObstacleControl(widthObstacle); //drive along backside, go stored width of obstacle
   adjustedAngle = mod((car.getHeading() - headingBeforeObstacle), 360);
   adjustedAngle = adjustedAngle * (-1);
   rotate(adjustedAngle, 0); //turn
-  //rotate(-90,0);
   distanceReset();
+
+
   Serial3.println("Continue");
   digitalWrite(LEDred, LOW);
   digitalWrite(LEDyellow, HIGH);
+  
   return (lengthObstacle + currentForward); //return sum of distance before obstacle plus length of obstacle
 }
 
 //checkingRightSide method
 void followingRightSide() {
-  int ZeroCounter = 0;
-  const int ZeroCounterMargin = 10;
+  int zeroCounter = 0;
+  const int ZERO_MARGIN = 10;
   int currentDistanceRightSide = USSensorRight.ping_cm();
   int initalDistanceRightSide = currentDistanceRightSide;
   int initialHeading = car.getHeading();
@@ -567,7 +519,7 @@ void followingRightSide() {
 
   car.setSpeed(speed); //drive
   car.update();
-  while (ZeroCounter <= ZeroCounterMargin) {
+  while (zeroCounter <= ZERO_MARGIN) {
     currentDistanceRightSide = USSensorRight.ping_cm();
 
     if (currentDistanceRightSide > 13) {
@@ -583,10 +535,10 @@ void followingRightSide() {
     }
 
     if (currentDistanceRightSide == 0) {
-      ZeroCounter++;
+      zeroCounter++;
     }
     else {
-      ZeroCounter = 0;
+      zeroCounter = 0;
     }
     car.update();
   }
@@ -610,10 +562,7 @@ void forwardUntilObstacleRightSide() {
       nonZeroCounter = 0;
     }
   }
-
 }
-
-
 
 /*
  *********************************************
@@ -629,7 +578,7 @@ void gpsFunction() {
   do {
     while (Serial1.available() > 0 && GPSreceiving) {
       if ((startMillis + 5000) < millis()) {
-        // Serial3.println("timeout");
+        //Searching for gps signal times out
         return;
       }
       gps.encode(Serial1.read());
@@ -644,7 +593,6 @@ void gpsFunction() {
         Serial3.println(latitude + "*" + longitude);
 
         GPSreceiving = false;
-
       }
     }
   } while (GPSreceiving);
