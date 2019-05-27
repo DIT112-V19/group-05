@@ -23,7 +23,7 @@ const unsigned int USS2_MAX_DISTANCE = 40;
 NewPing USSensorFront (USS1_TRIGGER_PIN, USS1_ECHO_PIN, USS1_MAX_DISTANCE);
 NewPing USSensorRight (USS2_TRIGGER_PIN, USS2_ECHO_PIN, USS2_MAX_DISTANCE);
 
-const unsigned short ODOMETER2_PIN = 3;
+const unsigned short ODOMETER2_PIN = 2;
 const unsigned long PULSES_PER_METER_2 = 345;
 
 //Gyroscope
@@ -102,7 +102,14 @@ void setup() {
   pinMode(LEDred, OUTPUT);
 
   Serial1.begin(GPSBaud); //GPS
+  Serial.begin(9600);
   Serial3.begin(BluetoothBaud); // opens channel for bluetooth, pins 14+15
+
+  initializeOdometer()//initialize odometer
+  
+  /*-------------------------------------------
+  //Tests here:*/ 
+  /*--------------------------------------------*/
 }
 
 /*
