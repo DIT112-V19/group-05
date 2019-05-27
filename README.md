@@ -29,26 +29,21 @@ An interface that enables control of vehicle without programming that can be use
 The application needs permission to use the phones location.
 
 
-
-
 <!DOCTYPE html>
 <html>
-<title>W3.CSS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<style>
+div.w3-card-4 {
+  width: 250px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  text-align: center;
+}
+
+div.w3-card-4 {
+  padding: 10px;
+}
+</style>
+
 <body>
-
-<div class="w3-container">
-  <div class="w3-card" style="width:50%">
-    <img src="img_avatar3.png" alt="Person" style="width:100%">
-    <div class="w3-container">
-      <h4><b>Simon</b></h4>
-      <p>The boss of all bosses</p>
-    </div>
-  </div>
-  <br>
-
-  <p>More shadows:</p>
   <div class="w3-card-4" style="width:50%">
     <img src="images/settings.png" class="w3-round" width="250">
     <div class="w3-container">
