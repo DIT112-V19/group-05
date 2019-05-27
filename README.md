@@ -24,6 +24,7 @@ The interface enables control of vehicle without programming. Can be used for da
   (*) available via Arduino IDE  
 
 ### Hardware:
+* Mobile Phone with Android OS and bluetooth
 * Arduino Mega
 *  <a href="https://github.com/platisd/smartcar_shield/tree/master/extras/eagle/smartcar_shield">PCB Smartcar Shield</a>
 * 4x DC motors
