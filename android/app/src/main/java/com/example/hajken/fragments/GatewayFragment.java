@@ -32,6 +32,7 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBluetooth = Bluetooth.getInstance(getContext(), mInterfaceMainActivity);
+        mBluetooth.startCar("m!");
     }
 
 
@@ -71,8 +72,8 @@ public class GatewayFragment extends Fragment implements View.OnClickListener {
 
             //This is the events that are associated with the buttons
             case R.id.GoogleMapsButton: {
+                mBluetooth.startCar("g!");
                 mInterfaceMainActivity.inflateFragment(getString(R.string.google_maps_fragment));
-
                 break;
             }
 

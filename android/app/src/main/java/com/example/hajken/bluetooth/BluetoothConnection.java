@@ -6,6 +6,9 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
+
+import com.example.hajken.helpers.GPSTracker;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -51,6 +54,12 @@ public class BluetoothConnection {
         return mInstance;
     }
 
+    private onBluetoothConnectionListener mListener;
+
+    public void registerListener(onBluetoothConnectionListener listener) {
+        mListener = listener;
+    }
+
     public void disconnectMode(){
         mListener.onNotConnected();
         setWasUnPaired(false);
@@ -62,11 +71,6 @@ public class BluetoothConnection {
         mListener.onConnect();
     }
 
-    private onBluetoothConnectionListener mListener;
-
-    public void registerListener(onBluetoothConnectionListener listener) {
-        mListener = listener;
-    }
 
     public void setWasUnPaired(boolean wasUnPaired) {
         this.wasUnPaired = wasUnPaired;
@@ -74,8 +78,6 @@ public class BluetoothConnection {
 
 
     private class AcceptThread extends Thread {
-
-
 
         private final BluetoothServerSocket mServerSocket;
 
@@ -206,7 +208,7 @@ public class BluetoothConnection {
     }
 
     private class ConnectedThread extends Thread {
-        private final InputStream mInputStream;
+        private InputStream mInputStream;
 
         public ConnectedThread(BluetoothSocket socket) {
             Log.d(TAG, " connectedThread starting ");
@@ -228,20 +230,29 @@ public class BluetoothConnection {
             readInput();
             setIsConnected(true);
 
-
         }
+
+
+
+
 
         private void readInput() {
             //stores what is read from stream
-            byte[] byteForStream = new byte[1024];
+            byte[] byteForStream = new byte[2048];
             mListener.onCarRunning();
+
+            String message = "";
+
             int bytes;
 
             while (true) {
                 try {
                     bytes = mInputStream.read(byteForStream);
-                    String message = new String(byteForStream, 0, bytes);
+
+                    message += new String(byteForStream, 0, bytes);
                     Log.d(TAG, " Read from inputstream " + message);
+                    System.out.println("Message is" + message);
+
                     if (message.equals("Done")){
                         mListener.onCarNotRunning();
 
@@ -255,13 +266,20 @@ public class BluetoothConnection {
                         mListener.onCarRunning();
 
                     }
+                    if(message.contains("*")){
+                        GPSTracker.getInstance(myContext).setGPSstring(message);
+                        Log.d(TAG, "Setting GPSString to " + message);
+                    }
 
 
-                } catch (IOException e) {
+
+                } catch (Exception e) {
                     Log.e(TAG, " error reading from inputstream " + e.getMessage());
                     break;
                 }
             }
+            message = "";
+
         }
 
         //will send data to remote device
@@ -305,6 +323,10 @@ public class BluetoothConnection {
         }
     }
 
+    public String readGPS(){
+        return readString();
+    }
+
     public boolean getWasUnPaired(){
         return wasUnPaired;
     }
@@ -334,11 +356,9 @@ public class BluetoothConnection {
     }
 
 
-    public String readGPS(){
-        return readString();
-    }
 
-    public String readString() {
+
+   public String readString() {
         //stores what is read from stream
         byte[] byteForStream = new byte[1024];
         String message = "";
