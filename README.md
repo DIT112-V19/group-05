@@ -4,7 +4,7 @@
 Software that enables the vehicle to follow a user specified route through the use of a smartphone application
 
 ## Why?
-An interface that enables control of vehicle without programming that can be used for data collection, surveillance of area, automate a path, etc. Many applicable areas where the use of a designed and predetermined route is required. 
+An interface that enables control of vehicle without programming that can be used for data collection, surveillance of area, automate a path, etc. Many applicable areas where the use of a designed and predetermined route is required.
 
 ## How?
 ### Software:
@@ -22,3 +22,16 @@ An interface that enables control of vehicle without programming that can be use
 * Ultrasonicsound Sensor - HC-SR04
 * Odometers
 * Gyroscope
+
+## Setup and get Started
+
+### Give app permission to use location
+The application needs permission to use the phones location. Enable it by open settings.
+
+<img src="images/settings.png" width="100">
+
+Go to App Permissions for 'Your Location'
+<img src="images/settings-appPermissions.png" width="100">
+
+Enable permission for the app
+<img src="images/settings-localPermissions.png" width="100">
