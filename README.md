@@ -30,8 +30,7 @@ An interface that enables control of vehicle without programming that can be use
 
 ## Setup and get Started!
 
-### Enable the app with permission for location
-=======
+
 ### Car & Arduino
 #### Car / Hardware
 * Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank) 
@@ -48,10 +47,10 @@ An interface that enables control of vehicle without programming that can be use
 * Calibrate odometer(s) and gyroscope. Use Smartcar Shield sketches for calibration (Odometer: sensors->odometer->FindPulsesPerMeter / Gyroscope: sensors->odometer->GyroscopeCalibration). Update PULSES_PER_METER and GYRO_OFFSET values.
 * Upload sketch to your Arduino.
 
-
+### Enable the app with permission for location
+=======
 
 ### Give app permission to use location
->>>>>>> 3692f5d664f71fca79d80095691c4f1f6a3633c5
 The application needs permission to use the phones location.
 
 | <html>  <img src="images/settings.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-appPermissions.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-localPermissions.png" class="w3-round" width="250"> </html> |
