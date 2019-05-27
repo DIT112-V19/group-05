@@ -10,18 +10,23 @@ An interface that enables control of vehicle without programming that can be use
 ### Software:
 * Android Studio
 * Arduino IDE
-* Libraries:
-  * smartcar shield
-  * NewPing
+* Arduino libraries(*):
+  * <a href="https://github.com/platisd/smartcar_shield">smartcar shield</a> by Dimitris Platis
+  * <a href="https://playground.arduino.cc/Code/NewPing/">NewPing</a> by Tim Eckel
+
+(*) available via Arduino IDE  
 
 ### Hardware:
 * Arduino Mega
-* Arduino Shield
-* DC motors
-* Bluetooth Module
-* Ultrasonicsound Sensor - HC-SR04
-* Odometers
-* Gyroscope
+*  <a href="https://github.com/platisd/smartcar_shield/tree/master/extras/eagle/smartcar_shield">PCB Smart Car Shield</a> 
+* 4x DC motors
+* Bluetooth module
+* Sensors:
+	* 2x UltraSonicSound Sensor (HC-SR04)
+	* Odometer (speed sensor)
+	* Gyroscope
+	* GPS-module (Neo-6M)
+* [custom-designed PCB (beta) with 3 LEDs (see: pcb/hajken_cutouts/) ]
 
 ## Setup and get Started
 
