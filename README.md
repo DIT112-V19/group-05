@@ -10,14 +10,14 @@ The interface enables control of vehicle without programming. Can be used for da
 
 ## How?
 ### Software:
-* Android Studio
-* Toasty
-* Google Directions API
-* Google Location and Activity Recognition
-* Google Maps
+- Android Studio
+- Toasty
+- Google Directions API
+- Google Location and Activity Recognition
+- Google Maps
 
-* Arduino IDE
-* Arduino libraries:
+- Arduino IDE
+- Arduino libraries:
   * <a href="https://github.com/platisd/smartcar_shield">smartcar shield</a> by Dimitris Platis (*)
   * <a href="https://playground.arduino.cc/Code/NewPing/">NewPing</a> by Tim Eckel (*)
   * <a href="http://arduiniana.org/libraries/tinygpsplus/">TinyGPS++</a> by Mikal Hart
@@ -35,52 +35,16 @@ The interface enables control of vehicle without programming. Can be used for da
 	* GPS-module (Neo-6M)
 * BETA: Hajken PCB with 3 LEDs and connections for sensors (see: pcb/hajken_cutouts/)
 
-<<<<<<< HEAD
 ## Setup and get Started
 
-### Car & Arduino
-* Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank)
-* Connect front UltraSonicSound Sensor to pin 51 (trigger) and pin 52 (echo) [or other equal free pins]
-* Connect right-side UltraSonicSound Sensor to pin 5 (trigger) and pin 6 (echo) [or other equal free pins] (or plugin into pins marked "Sensor right" on Hajken PCB)
-* Connect odometer to pin 3 (additional second odometer can be connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on Hajken PCB)
-* Connect Bluetooth module to (hardware) serial 3 [pin 15(RX), 14(TX) - connect RX to TX, TX to RX]
-* Connect GPS module to (hardware) serial 1 [pin 19(RX), 18(TX) - connect RX to TX, TX to RX]
-
-
-### Android Application
-
-**1. Download repository to desktop or other directory** <br />
-
-**2. Create an API-key for Google Directions API** <br />
-*This is required for the application to build.*<br />
-* Go to the <a href="https://cloud.google.com/console/google/maps-apis/overview">Google Cloud Platform Console</a> .
-* From the Project drop-down menu, select or create the project for which you want to add an API key.
-* From the  Navigation menu, select APIs & Services > Credentials.
-* On the Credentials page, click Create credentials > API key. <br />
-The API key created dialog displays your newly created API key.
-* Create a copy of gradle.properties.no.git and name it gradle.properties
-* Open gradle.properties
-* Find line 15 where it says GoolgeAPIKey = "myKey"
-* Insert your API-key where it says "myKey"
-
-**3. Build and run the app in Android Studios** <br />
-Tutorial for detailed instructions: https://developer.android.com/studio/run
-
-**4. Give app permission to use location** <br />
-Once the application is running, it needs permission to use the phones location.
-=======
-## Setup and get Started!
-
-
-### Car & Arduino
-#### Car / Hardware
+### Car / Hardware
 1. Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank) 
 2. Connect front UltraSonicSound Sensor to pin 51 (trigger) & pin 52 (echo) [or other equalivent free pins]
 3. Connect right-side UltraSonicSound Sensor to pin 5 (trigger) & pin 6 (echo) [or other equalivent free pins] (or plugin into pins marked "Sensor right" on *Hajken PCB*)
 4. Connect odometer to pin 3 (additional odometer: connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on *Hajken PCB*)
 5. Connect Bluetooth module to (hardware) serial 3 (pin 15(RX) & 14(TX) - connect RX to TX, TX to RX)
 6. Connect GPS module to (hardware) serial 1 (pin 19(RX) & 18(TX) - connect RX to TX, TX to RX)
-#### Arduino
+### Arduino
 1. Download the repository
 2. Open hajkenCar.ino in Arduino IDE, download the above-mentioned libraries (via Arduino IDE) and install TinyGPS++ manually (library folder must be called "TinyGPS++")
 3. Adjust pin setup if necessary. 
@@ -88,18 +52,32 @@ Once the application is running, it needs permission to use the phones location.
 5. Calibrate odometer(s) and gyroscope. Use Smartcar Shield sketches for calibration (Odometer: sensors->odometer->FindPulsesPerMeter / Gyroscope: sensors->odometer->GyroscopeCalibration). Update PULSES_PER_METER and GYRO_OFFSET values.
 6. Upload sketch to your Arduino Smartcar.
 
-### Enable the app with permission for location
-=======
+### Android Application
 
-### Give app permission to use location
-The application needs permission to use the phones location.
->>>>>>> ab406d90f888da854c8e3f216e3bdf2e77d11ff4
+**1. Create an API-key for Google Directions API** <br />
+*This is required for the application to build.*<br />
+* Go to the <a href="https://cloud.google.com/console/google/maps-apis/overview">Google Cloud Platform Console</a> .
+* From the Project drop-down menu, select or create the project for which you want to add an API key.
+* From the  Navigation menu, select APIs & Services > Credentials.
+* On the Credentials page, click Create credentials > API key. <br />
+The API key created dialog displays your newly created API key.
+* Open the Android folder
+* Create a copy of the file gradle.properties.no.git and name it gradle.properties
+* Open gradle.properties
+* Find line 15 where it says GoolgeAPIKey = "myKey"
+* Insert your API-key where it says "myKey"
+
+**2. Build and run the app in Android Studios** <br />
+Tutorial for detailed instructions: https://developer.android.com/studio/run
+
+**3. Give app permission to use location** <br />
+Once the application is running, it needs permission to use the phones location.
 
 | <html>  <img src="images/settings.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-appPermissions.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-localPermissions.png" class="w3-round" width="250"> </html> |
  | --- | --- | --- |
-| 1. Open Settings. Go to Permissions | 2. Go to Your Location | 3. Enable permission for the app |
+| a). Open Settings. Go to Permissions | b). Go to Your Location | c). Enable permission for the app |
 
-**5. The application is ready to run**
+**4. The application is ready to run **
 
 ## Navigate trough the interface
 
