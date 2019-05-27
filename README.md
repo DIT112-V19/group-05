@@ -23,34 +23,27 @@ An interface that enables control of vehicle without programming that can be use
 * Odometers
 * Gyroscope
 
-## Setup and get Started
+## Setup and get Started!
 
-### Give app permission to use location
+
+
+### Enable the app with permission for location
 The application needs permission to use the phones location.
 
+| <html>  <img src="images/settings.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-appPermissions.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-localPermissions.png" class="w3-round" width="250"> </html> |
+ | --- | --- | --- |
+| 1. Open Settings. Go to Permissions | 2. Go to Your Location | 3. Enable permission for the app |
 
-<!DOCTYPE html>
-<html>
-<body>
-<div class="row">
-  <div class="w3-card-4" style="width:50%">
-    <img src="images/settings.png" class="w3-round" width="250">
-    <div class="w3-container">
-      <p>1. Open Settings. Go to Permissions</p>
-    </div>
-  </div>
-  <div class="w3-card-4" style="width:50%">
-    <img src="images/settings-appPermissions.png" class="w3-round" width="250">
-    <div class="w3-container">
-      <p>2. Go to Your Location</p>
-    </div>
-  </div>
-  <div class="w3-card-4" style="width:50%">
-    <img src="images/settings-localPermissions.png" class="w3-round" width="250">
-    <div class="w3-container">
-      <p>3. Enable permission for the app</p>
-    </div>
-  </div>
-  </div>
-</body>
-</html>
+
+### Create an API-key for Google Directions API
+For the application to build an API-key is required.  
+
+1. Go to the <a href="https://cloud.google.com/console/google/maps-apis/overview">Google Cloud Platform Console</a> .
+2. From the Project drop-down menu, select or create the project for which you want to add an API key.
+3. From the  Navigation menu, select APIs & Services > Credentials.
+4. On the Credentials page, click Create credentials > API key.
+The API key created dialog displays your newly created API key.
+5. Create a copy of gradle.properties.no.git and name it gradle.properties
+6. Open gradle.properties
+7. Find line 15 where it says GoolgeAPIKey = "myKey"
+8. Insert your API-key where it says "myKey"
