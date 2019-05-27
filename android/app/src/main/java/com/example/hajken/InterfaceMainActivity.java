@@ -12,4 +12,6 @@ public interface InterfaceMainActivity {
 
     void setOnBackPressedActive(boolean onBackPressedActive);
 
+    void showToast(String message);
+
 }

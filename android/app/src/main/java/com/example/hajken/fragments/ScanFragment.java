@@ -15,11 +15,13 @@ import android.widget.Toast;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.bluetooth.BluetoothConnection;
+import com.example.hajken.bluetooth.ConnectionListener;
 import com.example.hajken.helpers.ListOfDevices;
 import com.example.hajken.R;
+
 import es.dmoral.toasty.Toasty;
 
-public class ScanFragment extends Fragment implements View.OnClickListener, BluetoothConnection.onBluetoothConnectionListener{
+public class ScanFragment extends Fragment implements View.OnClickListener, ConnectionListener {
 
     private static final String TAG = "ScanFragment";
     private Button scanButton, unPairButton, gateWayButton;
@@ -50,7 +52,7 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
             if (!mBluetoothAdapter.isEnabled()) {
                 Toasty.error(mContext,getString(R.string.no_active_bluetooth_adapter),Toast.LENGTH_LONG).show();
             } else {
-                BluetoothConnection.getInstance(getContext()).registerListener(this);
+                BluetoothConnection.getInstance(mContext).registerConnectionListener(this);
             }
         }
     }
@@ -123,27 +125,16 @@ public class ScanFragment extends Fragment implements View.OnClickListener, Blue
 
     @Override
     public void onConnect() {
+        Toasty.success(mContext,getString(R.string.connected_text),Toast.LENGTH_LONG).show();
         setStateOfButtons();
 
     }
 
     @Override
     public void onNotConnected() {
+        Toasty.error(mContext,getString(R.string.not_connected_text),Toast.LENGTH_LONG).show();
         setStateOfButtons();
     }
 
-    @Override
-    public void onCarRunning() {
 
-    }
-
-    @Override
-    public void onCarNotRunning() {
-
-    }
-
-    @Override
-    public void onFoundObstacle() {
-
-    }
 }

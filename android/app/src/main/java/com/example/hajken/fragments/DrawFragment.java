@@ -21,16 +21,19 @@ import android.widget.Toast;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.bluetooth.BluetoothConnection;
+import com.example.hajken.bluetooth.ConnectionListener;
+import com.example.hajken.bluetooth.VehicleListener;
 import com.example.hajken.helpers.CanvasView;
 import com.example.hajken.helpers.CoordinatesListItem;
 import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.R;
 import com.example.hajken.helpers.SaveData;
-import com.example.hajken.helpers.Vehicle;
+
 import es.dmoral.toasty.Toasty;
 
-public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
+public class DrawFragment extends Fragment implements View.OnClickListener, CustomDialogFragment.OnActionInterface,
+        VehicleListener, ConnectionListener {
 
     private final int SLOW = 1;
     private final int MED = 2;
@@ -52,9 +55,9 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     private CoordinateConverter mCoordinateConverter;
     private InterfaceMainActivity mInterfaceMainActivity;
     private SaveData mSaveData;
-    private Vehicle mVehicle;
     private Context mContext;
     private FragmentManager mFragmentManager;
+    private boolean isRunning;
 
     @Override
     public void onAttach(Context context) {
@@ -68,10 +71,11 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
         super.onCreate(savedInstanceState);
         mBluetooth = Bluetooth.getInstance(mContext);
         mSaveData = SaveData.getInstance(mContext);
-        mVehicle = Vehicle.getInstance();
         mCustomDialog = new CustomDialogFragment();
         mFragmentManager = getFragmentManager();
         mCoordinateConverter = CoordinateConverter.getInstance(mContext);
+        BluetoothConnection.getInstance(mContext).registerVehicleListener(this);
+        isRunning = false;
     }
 
     @Nullable
@@ -158,8 +162,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
 
             case R.id.send_to_vehicle_button: {
 
-                if (mBluetooth.isConnected()) {
-                    if (mVehicle.isRunning()){
+                    if (isRunning){
+                        Log.d(TAG, "onClick: STOP DIALOG");
                         showStopDialog();
                     } else {
                         if (saveButton.isChecked()) {
@@ -177,11 +181,6 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
                         showStartDialog();
                     }
                     break;
-
-                } else {
-                    Toasty.error(mContext, getString(R.string.not_connected_text), Toast.LENGTH_LONG).show();
-                    break;
-                }
             }
         }
     }
@@ -189,7 +188,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     @Override
     public void controlVehicle(Boolean execute) {
 
-        if (mVehicle.isRunning()) {
+        if (isRunning) {
             if (execute) {
                 mBluetooth.stopCar(getString(R.string.stop_vehicle_instruction));
             }
@@ -209,6 +208,7 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     }
 
     public void showStartDialog(){
+        mCustomDialog = new CustomDialogFragment();
         mCustomDialog.setDialogHeading(getString(R.string.start_dialog_heading));
         mCustomDialog.setAction(getString(R.string.action_start_text));
         mCustomDialog.setTargetFragment(DrawFragment.this,1);
@@ -216,7 +216,8 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     }
 
     public void showStopDialog(){
-        mCustomDialog.setDialogHeading(getString(R.string.start_dialog_heading));
+        mCustomDialog = new CustomDialogFragment();
+        mCustomDialog.setDialogHeading(getString(R.string.stop_dialog_heading));
         mCustomDialog.setAction(getString(R.string.action_stop_text));
         mCustomDialog.setTargetFragment(DrawFragment.this,1);
         mCustomDialog.show(mFragmentManager,getString(R.string.dialog_tag));
@@ -230,22 +231,28 @@ public class DrawFragment extends Fragment implements View.OnClickListener, Cust
     public void onNotConnected() {
         sendToVehicleButton.setActivated(false);
         sendToVehicleButton.setClickable(false);
+        Toasty.error(mContext,getString(R.string.not_connected_text),Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onCarRunning() {
+        isRunning = true;
+        mInterfaceMainActivity.showToast("Starting");
         sendToVehicleButton.setText(getString(R.string.stop_vehicle_text));
         mInterfaceMainActivity.setOnBackPressedActive(false);
     }
 
     @Override
     public void onCarNotRunning() {
+        isRunning = false;
+        mInterfaceMainActivity.showToast("Completed route");
         sendToVehicleButton.setText(getString(R.string.start_vehicle_text));
         mInterfaceMainActivity.setOnBackPressedActive(true);
     }
 
     @Override
     public void onFoundObstacle() {
+        mInterfaceMainActivity.showToast("Obstacle found");
 
     }
 }

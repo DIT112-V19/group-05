@@ -138,7 +138,14 @@ public class Bluetooth {
 
     public void actOnAction(String action, Intent intent){
 
-        if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+        if (mBluetoothConnection == null){
+            Log.d(TAG, "before else ");
+        }else {
+
+
+
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+
             mBluetoothConnection.connectMode();
         }
 
@@ -157,6 +164,8 @@ public class Bluetooth {
                 mBluetoothConnection.connectMode();
             }
         }
+        }
+
     }
 
     public BluetoothAdapter getmBluetoothAdapter() {

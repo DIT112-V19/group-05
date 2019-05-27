@@ -75,7 +75,6 @@ public class ListAdapter extends RecyclerView.Adapter {
         }
 
         void bindView(CoordinatesListItem item) {
-            //mItemText.setText(OurData.imageName[position]);
             Log.d(TAG, "loading bitmap");
             String path = "/data/user/0/com.example.hajken/app_imageDir/";
             String name = item.getmName();

@@ -7,8 +7,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.hajken.helpers.Vehicle;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,9 +32,12 @@ public class BluetoothConnection {
     private BluetoothSocket mSocket = null;
     private boolean isFinished = false;
     private boolean wasUnPaired = false;
-    private Vehicle mVehicle = Vehicle.getInstance();
     private ConnectedThread myConnectedThread;
     private static BluetoothConnection mInstance = null;
+
+    private ConnectionListener mConnectionListenerTheReturn;
+    private VehicleListener mVehicleListenerTheReturn;
+
 
     private BluetoothConnection(Context context) {
         myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -49,26 +50,34 @@ public class BluetoothConnection {
         if (mInstance == null) {
             mInstance = new BluetoothConnection(context);
             mInstance.start();
+
         }
         return mInstance;
     }
 
+
+    public void registerConnectionListener(ConnectionListener mConnectionListenerTheReturn) {
+        this.mConnectionListenerTheReturn = mConnectionListenerTheReturn;
+    }
+
+    public void registerVehicleListener(VehicleListener mVehicleListenerTheReturn) {
+        this.mVehicleListenerTheReturn = mVehicleListenerTheReturn;
+    }
+
+
+
     public void disconnectMode(){
-        mListener.onNotConnected();
         setWasUnPaired(false);
         setIsConnected(false);
+        mConnectionListenerTheReturn.onNotConnected();
+
     }
 
     public void connectMode(){
         setIsConnected(true);
-        mListener.onConnect();
+        mConnectionListenerTheReturn.onConnect();
     }
 
-    private onBluetoothConnectionListener mListener;
-
-    public void registerListener(onBluetoothConnectionListener listener) {
-        mListener = listener;
-    }
 
     public void setWasUnPaired(boolean wasUnPaired) {
         this.wasUnPaired = wasUnPaired;
@@ -236,36 +245,38 @@ public class BluetoothConnection {
         private void readInput() {
             //stores what is read from stream
             byte[] byteForStream = new byte[1024];
-            mListener.onCarRunning();
             int bytes;
+            String message = "";
 
             while (true) {
+
                 try {
                     bytes = mInputStream.read(byteForStream);
-                    String message = new String(byteForStream, 0, bytes);
+                    message += new String(byteForStream, 0, bytes);
                     Log.d(TAG, " Read from inputstream " + message);
 
-                    if (message.equals("Starting")){
-                        mListener.onCarRunning();
+                    if (message.equals("s")){
+                        mVehicleListenerTheReturn.onCarRunning();
+                        message = "";
                     }
 
-                    if (message.equals("Done")){
-                        mListener.onCarNotRunning();
+                    if (message.equals("d")){
+                        mVehicleListenerTheReturn.onCarNotRunning();
+                        message = "";
                     }
 
-                    if (message.equals("Obstacle")){
-                        mListener.onFoundObstacle();
+                    if (message.equals("o")){
+                        mVehicleListenerTheReturn.onFoundObstacle();
+                        message = "";
                     }
 
-                    if (message.equals("Continue")){
-                        mListener.onCarRunning();
-                    }
 
                 } catch (IOException e) {
                     Log.e(TAG, " error reading from inputstream " + e.getMessage());
                     break;
                 }
             }
+
         }
 
         //will send data to remote device
@@ -300,7 +311,6 @@ public class BluetoothConnection {
 
             mOutputStream = mSocket.getOutputStream();
             mOutputStream.write(inputInBytes);
-            mListener.onCarRunning();
 
             Log.d(TAG, " successfully written to outputstream in write()");
 
@@ -322,7 +332,7 @@ public class BluetoothConnection {
                             .getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
                     setWasUnPaired(true);
-                    mListener.onNotConnected();
+                    mConnectionListenerTheReturn.onNotConnected();
                 } catch (Exception e) {
                     Log.e(TAG, "Removing has been failed." + e.getMessage());
                 }
@@ -334,7 +344,7 @@ public class BluetoothConnection {
 
     public void stopCar(String input) {
         writeToDevice(input);
-        mListener.onCarNotRunning();
+        mVehicleListenerTheReturn.onCarNotRunning();
     }
 
 
@@ -347,7 +357,7 @@ public class BluetoothConnection {
         byte[] byteForStream = new byte[1024];
         String message = "";
 
-        mListener.onCarRunning();
+        mVehicleListenerTheReturn.onCarRunning();
 
         int bytes;
 
@@ -375,18 +385,6 @@ public class BluetoothConnection {
     }
 
 
-    public interface onBluetoothConnectionListener {
-        void onConnect();
-
-        void onNotConnected();
-
-        void onCarRunning();
-
-        void onCarNotRunning();
-
-        void onFoundObstacle();
-
-    }
 
 }
 

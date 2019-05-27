@@ -45,6 +45,7 @@
 
     <!-- Bluetooth strings -->
     <string name="not_connected_text">Not connected</string>
+    <string name="connected_text">Connected</string>
     <string name="no_bluetooth_adapter">No bluetooth adapter found</string>
     <string name="no_active_bluetooth_adapter">Please activate bluetooth</string>
 
@@ -68,6 +69,6 @@
     <string name="start_dialog_heading">Would you like to start the vehicle?</string>
     <string name="stop_dialog_heading">Would you like to stop the vehicle?</string>
     <string name="action_start_text">Start</string>
-    <string name="action_stop_text">Stop</string
-        >
+    <string name="action_stop_text">Stop</string>
+
 </resources>

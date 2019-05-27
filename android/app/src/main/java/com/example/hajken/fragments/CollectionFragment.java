@@ -19,6 +19,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.hajken.bluetooth.Bluetooth;
+import com.example.hajken.bluetooth.ConnectionListener;
+import com.example.hajken.bluetooth.VehicleListener;
 import com.example.hajken.helpers.CoordinateConverter;
 import com.example.hajken.helpers.ListAdapter;
 import com.example.hajken.bluetooth.BluetoothConnection;
@@ -26,13 +28,13 @@ import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.InterfaceMainActivity;
 import com.example.hajken.R;
 import com.example.hajken.helpers.SaveData;
-import com.example.hajken.helpers.Vehicle;
+
 import java.util.ArrayList;
 import es.dmoral.toasty.Toasty;
 
 public class CollectionFragment extends Fragment implements
         View.OnClickListener, CustomDialogFragment.OnActionInterface,
-        BluetoothConnection.onBluetoothConnectionListener {
+        ConnectionListener, VehicleListener {
 
     private final int SLOW = 1;
     private final int MED = 2;
@@ -52,11 +54,11 @@ public class CollectionFragment extends Fragment implements
     private Button sendToVehicleButton;
     private CustomDialogFragment mCustomDialog;
     private Bluetooth mBluetooth;
-    private Vehicle mVehicle;
     private Context mContext;
     private SaveData mSaveData;
     private CoordinateConverter mCoordinateConverter;
     private FragmentManager mFragmentManager;
+    private boolean isRunning;
 
     @Override
     public void onAttach(Context context) {
@@ -73,7 +75,8 @@ public class CollectionFragment extends Fragment implements
         mCoordinateConverter = CoordinateConverter.getInstance(mContext);
         mFragmentManager = getFragmentManager();
         mCustomDialog = new CustomDialogFragment();
-        mVehicle = Vehicle.getInstance();
+        isRunning = false;
+        BluetoothConnection.getInstance(mContext).registerVehicleListener(this);
     }
 
     @Nullable
@@ -165,16 +168,13 @@ public class CollectionFragment extends Fragment implements
 
         switch (view.getId()){
             case R.id.send_to_vehicle_button: {
-                if (mBluetooth.isConnected()) {
-                    if (mVehicle.isRunning()) {
+
+                    if (isRunning) {
                         showStopDialog();
                     } else {
                         instructions = mCoordinateConverter.returnInstructions(validPoints);
                         showStartDialog();
                     }
-                } else {
-                    Toasty.error(mContext, getString(R.string.not_connected_text), Toast.LENGTH_LONG).show();
-                }
                 break;
             }
         }
@@ -183,7 +183,7 @@ public class CollectionFragment extends Fragment implements
     @Override
     public void controlVehicle(Boolean execute) {
 
-        if (mVehicle.isRunning()){
+        if (isRunning){
             if (execute){
                 mBluetooth.stopCar(getString(R.string.stop_vehicle_instruction));
             }
@@ -207,22 +207,29 @@ public class CollectionFragment extends Fragment implements
     public void onNotConnected() {
         sendToVehicleButton.setActivated(false);
         sendToVehicleButton.setClickable(false);
+        Toasty.error(mContext,getString(R.string.not_connected_text),Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onCarRunning() {
+        isRunning = true;
+        Toasty.info(mContext,"Starting", Toast.LENGTH_LONG).show();
         sendToVehicleButton.setText(getString(R.string.stop_vehicle_text));
         mInterfaceMainActivity.setOnBackPressedActive(false);
     }
 
     @Override
     public void onCarNotRunning() {
+        isRunning = false;
+        Toasty.info(mContext,"Completed route", Toast.LENGTH_LONG).show();
         sendToVehicleButton.setText(getString(R.string.start_vehicle_text));
         mInterfaceMainActivity.setOnBackPressedActive(true);
     }
 
     @Override
     public void onFoundObstacle() {
+        Toasty.info(mContext,"Obstacle found", Toast.LENGTH_LONG).show();
+
 
     }
 

@@ -24,9 +24,10 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 import com.example.hajken.BuildConfig;
 import com.example.hajken.bluetooth.Bluetooth;
+import com.example.hajken.bluetooth.ConnectionListener;
+import com.example.hajken.bluetooth.VehicleListener;
 import com.example.hajken.helpers.CustomDialogFragment;
 import com.example.hajken.helpers.GPSTracker;
-import com.example.hajken.helpers.Vehicle;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.maps.android.SphericalUtil;
 import com.google.android.gms.maps.CameraUpdate;
@@ -57,7 +58,8 @@ import java.util.concurrent.TimeUnit;
 import es.dmoral.toasty.Toasty;
 import static android.content.ContentValues.TAG;
 
-public class GoogleMapsFragment extends Fragment  implements View.OnClickListener, OnMapReadyCallback, CustomDialogFragment.OnActionInterface, BluetoothConnection.onBluetoothConnectionListener {
+public class GoogleMapsFragment extends Fragment  implements View.OnClickListener, OnMapReadyCallback,
+        CustomDialogFragment.OnActionInterface, ConnectionListener, VehicleListener {
 
     private final int ZERO = 0;
     private final int SLOW = 1;
@@ -75,11 +77,11 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     private SeekBar seekBar;
     private Bluetooth mBluetooth;
     private Context mContext;
-    private Vehicle mVehicle;
     private CustomDialogFragment mCustomDialog;
     private InterfaceMainActivity mInterfaceMainActivity;
     private CoordinateConverter mCoordinateConverter;
     private FragmentManager mFragmentManager;
+    private boolean isRunning;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
 
     //Marker for the destination of the car
@@ -118,11 +120,12 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
         }
 
         mBluetooth = Bluetooth.getInstance(mContext);
-        mVehicle = Vehicle.getInstance();
         mCustomDialog = new CustomDialogFragment();
         mInterfaceMainActivity = (InterfaceMainActivity) getActivity();
         mCoordinateConverter = CoordinateConverter.getInstance(mContext);
         mFragmentManager = getFragmentManager();
+        isRunning = false;
+        BluetoothConnection.getInstance(mContext).registerVehicleListener(this);
     }
 
     @Override
@@ -250,17 +253,13 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
             //This is the events that are associated with the buttons
             case R.id.send_to_vehicle_button: {
 
-                if (mBluetooth.isConnected()){
-                    if(mVehicle.isRunning()){
+                    if(isRunning){
                         showStopDialog();
                     } else {
                         instructions = mCoordinateConverter.returnInstructions(getPathToPointFList());
                         showStartDialog();
                     }
                     break;
-                } else {
-                    Toasty.error(mContext, getString(R.string.not_connected_text), Toast.LENGTH_LONG).show();
-                }
             }
         }
     }
@@ -268,7 +267,7 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
     @Override
     public void controlVehicle(Boolean execute) {
 
-        if (mVehicle.isRunning()) {
+        if (isRunning) {
             if (execute) {
                 mBluetooth.stopCar(getString(R.string.stop_vehicle_instruction));
             }
@@ -569,12 +568,15 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
     @Override
     public void onNotConnected() {
+        Toasty.error(mContext,getString(R.string.not_connected_text),Toast.LENGTH_LONG).show();
         sendToVehicleButton.setClickable(false);
         sendToVehicleButton.setActivated(false);
     }
 
     @Override
     public void onCarRunning() {
+        isRunning = true;
+        Toasty.info(mContext,"Starting", Toast.LENGTH_LONG).show();
         sendToVehicleButton.setText(getString(R.string.stop_vehicle_text));
         mInterfaceMainActivity.setOnBackPressedActive(false);
 
@@ -582,12 +584,16 @@ public class GoogleMapsFragment extends Fragment  implements View.OnClickListene
 
     @Override
     public void onCarNotRunning() {
+        isRunning = false;
+        Toasty.info(mContext,"Completed route", Toast.LENGTH_LONG).show();
         sendToVehicleButton.setText(getString(R.string.start_vehicle_text));
         mInterfaceMainActivity.setOnBackPressedActive(true);
     }
 
     @Override
     public void onFoundObstacle() {
+        Toasty.info(mContext,"Obstacle found", Toast.LENGTH_LONG).show();
+
 
     }
 }

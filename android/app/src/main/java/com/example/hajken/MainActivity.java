@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
+
 import com.example.hajken.bluetooth.Bluetooth;
 import com.example.hajken.fragments.CollectionFragment;
 import com.example.hajken.fragments.DrawFragment;
@@ -20,12 +22,15 @@ import com.example.hajken.fragments.GoogleMapsFragment;
 import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.fragments.StartFragment;
 
+import es.dmoral.toasty.Toasty;
+
 public class MainActivity extends AppCompatActivity implements InterfaceMainActivity{
 
     private static final String TAG = "MainActivity";
     private static MainActivity mMainActivity;
     private Bluetooth mBluetooth;
     private boolean isOnBackPressedActive;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +120,25 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     public void setOnBackPressedActive(boolean onBackPressedActive) {
         this.isOnBackPressedActive = onBackPressedActive;
+    }
+
+    @Override
+    public void showToast(String message) {
+
+        this.runOnUiThread(() -> {
+            switch (message) {
+
+                case "Starting" :
+                    Toasty.info(getThis(),message,Toast.LENGTH_LONG).show();
+                case "Completed route" :
+                    Toasty.info(getThis(),message, Toast.LENGTH_LONG).show();
+                case "Obstacle found" :
+                    Toasty.info(getThis(),message, Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
     }
 
     public static MainActivity getThis(){
