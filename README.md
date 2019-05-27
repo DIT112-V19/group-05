@@ -77,7 +77,7 @@ Once the application is running, it needs permission to use the phones location.
  | --- | --- | --- |
 | a). Open Settings. Go to Permissions | b). Go to Your Location | c). Enable permission for the app |
 
-**4. The application is ready to run **
+**4. The application is ready for using**
 
 ## Navigate trough the interface
 
