@@ -34,11 +34,11 @@ An interface that enables control of vehicle without programming that can be use
 ### Car & Arduino
 #### Car / Hardware
 1. Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank) 
-2. Connect front UltraSonicSound Sensor to pin 51 (trigger) and pin 52 (echo) [or other equal free pins]
-3. Connect right-side UltraSonicSound Sensor to pin 5 (trigger) and pin 6 (echo) [or other equal free pins] (or plugin into pins marked "Sensor right" on *Hajken PCB*)
-4. Connect odometer to pin 3 (additional second odometer can be connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on *Hajken PCB*)
-5. Connect Bluetooth module to (hardware) serial 3 [pin 15(RX), 14(TX) - connect RX to TX, TX to RX]
-6. Connect GPS module to (hardware) serial 1 [pin 19(RX), 18(TX) - connect RX to TX, TX to RX] 
+2. Connect front UltraSonicSound Sensor to pin 51 (trigger) & pin 52 (echo) [or other equalivent free pins]
+3. Connect right-side UltraSonicSound Sensor to pin 5 (trigger) & pin 6 (echo) [or other equalivent free pins] (or plugin into pins marked "Sensor right" on *Hajken PCB*)
+4. Connect odometer to pin 3 (additional odometer: connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on *Hajken PCB*)
+5. Connect Bluetooth module to (hardware) serial 3 (pin 15(RX) & 14(TX) - connect RX to TX, TX to RX)
+6. Connect GPS module to (hardware) serial 1 (pin 19(RX) & 18(TX) - connect RX to TX, TX to RX)
 #### Arduino
 1. Download the repository
 2. Open hajkenCar.ino in Arduino IDE, download the above-mentioned libraries (via Arduino IDE) and install TinyGPS++ manually (library folder must be called "TinyGPS++")
