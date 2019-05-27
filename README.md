@@ -10,10 +10,11 @@ An interface that enables control of vehicle without programming that can be use
 ### Software:
 * Android Studio
 * Arduino IDE
-* Arduino libraries(*):
-  * <a href="https://github.com/platisd/smartcar_shield">smartcar shield</a> by Dimitris Platis
-  * <a href="https://playground.arduino.cc/Code/NewPing/">NewPing</a> by Tim Eckel
-(*) available via Arduino IDE  
+* Arduino libraries:
+  * <a href="https://github.com/platisd/smartcar_shield">smartcar shield</a> by Dimitris Platis (*)
+  * <a href="https://playground.arduino.cc/Code/NewPing/">NewPing</a> by Tim Eckel (*)
+  * <a href="http://arduiniana.org/libraries/tinygpsplus/">TinyGPS++</a> by Mikal Hart
+  (*) available via Arduino IDE  
 
 ### Hardware:
 * Arduino Mega
@@ -29,9 +30,6 @@ An interface that enables control of vehicle without programming that can be use
 
 ## Setup and get Started!
 
-<<<<<<< HEAD
-
-
 ### Enable the app with permission for location
 =======
 ### Car & Arduino
@@ -44,7 +42,8 @@ An interface that enables control of vehicle without programming that can be use
 * Connect GPS module to (hardware) serial 1 [pin 19(RX), 18(TX) - connect RX to TX, TX to RX] 
 #### Arduino
 * Download the repository
-* Open hajkenCar.ino in Arduino IDE, download the above-mentioned libraries and adjust pins if necessary. 
+* Open hajkenCar.ino in Arduino IDE, download the above-mentioned libraries (via Arduino IDE) and install TinyGPS++ manually (library folder must be called "TinyGPS++")
+* Adjust pin setup if necessary. 
 * Optional: Test Sensors. Smartcar Shield library includes several sketches to test sensors' functionality.
 * Calibrate odometer(s) and gyroscope. Use Smartcar Shield sketches for calibration (Odometer: sensors->odometer->FindPulsesPerMeter / Gyroscope: sensors->odometer->GyroscopeCalibration). Update PULSES_PER_METER and GYRO_OFFSET values.
 * Upload sketch to your Arduino.
