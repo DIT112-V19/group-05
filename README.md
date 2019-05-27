@@ -31,39 +31,24 @@ The application needs permission to use the phones location.
 
 <!DOCTYPE html>
 <html>
-<style>
-div.w3-card-4 {
-  width: 250px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  text-align: center;
-}
-
-div.w3-card-4 {
-  padding: 10px;
-}
-</style>
-
 <body>
   <div class="w3-card-4" style="width:50%">
     <img src="images/settings.png" class="w3-round" width="250">
     <div class="w3-container">
-      <h4><b>Settings</b></h4>
-      <p>1. Open settings</p>
+      <p>1. Open Settings. Go to Permissions</p>
     </div>
   </div>
-</div>
-
+  <div class="w3-card-4" style="width:50%">
+    <img src="images/settings-appPermissions.png" class="w3-round" width="250">
+    <div class="w3-container">
+      <p>2. Go to Your Location</p>
+    </div>
+  </div>
+  <div class="w3-card-4" style="width:50%">
+    <img src="images/settings-localPermissions.png" class="w3-round" width="250">
+    <div class="w3-container">
+      <p>3. Enable permission for the app</p>
+    </div>
+  </div>
 </body>
 </html>
-
-
-
-Enable it by open settings.
-
-<img src="images/settings.png" class="w3-round" width="250">
-
-Go to App Permissions for 'Your Location'
-<img src="images/settings-appPermissions.png" class="w3-round" width="250">
-
-Enable permission for the app
-<img src="images/settings-localPermissions.png" class="w3-round" width="250">
