@@ -10,24 +10,41 @@ An interface that enables control of vehicle without programming that can be use
 ### Software:
 * Android Studio
 * Arduino IDE
-* Libraries:
-  * smartcar shield
-  * NewPing
+* Arduino libraries(*):
+  * <a href="https://github.com/platisd/smartcar_shield">smartcar shield</a> by Dimitris Platis
+  * <a href="https://playground.arduino.cc/Code/NewPing/">NewPing</a> by Tim Eckel
+(*) available via Arduino IDE  
 
 ### Hardware:
 * Arduino Mega
-* Arduino Shield
-* DC motors
-* Bluetooth Module
-* Ultrasonicsound Sensor - HC-SR04
-* Odometers
-* Gyroscope
+*  <a href="https://github.com/platisd/smartcar_shield/tree/master/extras/eagle/smartcar_shield">PCB Smartcar Shield</a> 
+* 4x DC motors
+* Bluetooth module
+* Sensors:
+	* 2x UltraSonicSound Sensor (HC-SR04)
+	* Odometer (speed encoders)
+	* Gyroscope
+	* GPS-module (Neo-6M)
+* BETA: Hajken PCB with 3 LEDs and connections for sensors (see: pcb/hajken_cutouts/)
 
 ## Setup and get Started!
 
+<<<<<<< HEAD
 
 
 ### Enable the app with permission for location
+=======
+### Car & Arduino
+* Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank) 
+* Connect front UltraSonicSound Sensor to pin 51 (trigger) and pin 52 (echo) [or other equal free pins]
+* Connect right-side UltraSonicSound Sensor to pin 5 (trigger) and pin 6 (echo) [or other equal free pins] (or plugin into pins marked "Sensor right" on Hajken PCB)
+* Connect odometer to pin 3 (additional second odometer can be connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on Hajken PCB)
+* Connect Bluetooth module to (hardware) serial 3 [pin 15(RX), 14(TX) - connect RX to TX, TX to RX]
+* Connect GPS module to (hardware) serial 1 [pin 19(RX), 18(TX) - connect RX to TX, TX to RX]
+
+
+### Give app permission to use location
+>>>>>>> 3692f5d664f71fca79d80095691c4f1f6a3633c5
 The application needs permission to use the phones location.
 
 | <html>  <img src="images/settings.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-appPermissions.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-localPermissions.png" class="w3-round" width="250"> </html> |
