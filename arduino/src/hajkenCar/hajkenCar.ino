@@ -105,7 +105,7 @@ void setup() {
   Serial.begin(9600);
   Serial3.begin(BluetoothBaud); // opens channel for bluetooth, pins 14+15
 
-  initializeOdometer()//initialize odometer
+  initializeOdometer();//initialize odometer
   
   /*-------------------------------------------
   //Tests here:*/ 
