@@ -30,12 +30,20 @@ An interface that enables control of vehicle without programming that can be use
 ## Setup and get Started
 
 ### Car & Arduino
+#### Car / Hardware
 * Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank) 
 * Connect front UltraSonicSound Sensor to pin 51 (trigger) and pin 52 (echo) [or other equal free pins]
 * Connect right-side UltraSonicSound Sensor to pin 5 (trigger) and pin 6 (echo) [or other equal free pins] (or plugin into pins marked "Sensor right" on Hajken PCB)
 * Connect odometer to pin 3 (additional second odometer can be connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on Hajken PCB)
 * Connect Bluetooth module to (hardware) serial 3 [pin 15(RX), 14(TX) - connect RX to TX, TX to RX]
-* Connect GPS module to (hardware) serial 1 [pin 19(RX), 18(TX) - connect RX to TX, TX to RX]
+* Connect GPS module to (hardware) serial 1 [pin 19(RX), 18(TX) - connect RX to TX, TX to RX] 
+#### Arduino
+* Download the repository
+* Open hajkenCar.ino in Arduino IDE, download the above-mentioned libraries and adjust pins if necessary. 
+* Optional: Test Sensors. Smartcar Shield library includes several sketches to test sensors' functionality.
+* Calibrate odometer(s) and gyroscope. Use Smartcar Shield sketches for calibration (Odometer: sensors->odometer->FindPulsesPerMeter / Gyroscope: sensors->odometer->GyroscopeCalibration). Update PULSES_PER_METER and GYRO_OFFSET values.
+* Upload sketch to your Arduino.
+
 
 
 ### Give app permission to use location
