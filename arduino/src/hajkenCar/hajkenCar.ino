@@ -103,8 +103,6 @@ void setup() {
 
   Serial1.begin(GPSBaud); //GPS
   Serial3.begin(BluetoothBaud); // opens channel for bluetooth, pins 14+15
-
-  initializeOdometer();
 }
 
 /*
@@ -194,7 +192,7 @@ void commands(String commands[], int arraySize) {
   
   digitalWrite(LEDgreen, LOW);
   digitalWrite(LEDyellow, HIGH);
-  Serial3.println("Starting");
+  Serial3.println("s");
   int roundsToDrive = commands[3].toInt();
 
   //-----Select speed---------
@@ -226,7 +224,7 @@ void commands(String commands[], int arraySize) {
     }
   } while (k <= roundsToDrive);
   
-  Serial3.println("Done");
+  Serial3.println("d");
   digitalWrite(LEDyellow, LOW);
 }
 
@@ -453,7 +451,7 @@ int obstacleAvoidance() {
   car.update();
   carDistanceToObstacle = USSensorFront.ping_cm(); // UltraSonicSound Sensor measures (0 = more than 100 cm distance)
   if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) {
-    Serial3.write("Obstacle"); // Sending message to bluetooth
+    Serial3.write("o"); // Sending message to bluetooth
     digitalWrite(LEDred, HIGH);
     stop();
     while (obstacleBypassOff); // BYPASS OBASTACLE DEACTIVATED
