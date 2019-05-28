@@ -2,15 +2,15 @@
 #include <Smartcar.h>
 #include "TinyGPS++.h"
 
-//**********
-//ultraSonicSensor
+//SENSORS
+
+//Variables 
 float carDistanceToObstacle; //actual distance to next obstacle, in cm
 float stopDistanceToObstacle = 5; //distance that triggers to stop, in cm
-boolean obstacleBypassOff = false; //deactivate obstacle bypassing - stop driving when obstacle detected
-boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
-boolean stopFromDriving; //boolean to stop car
 
-//ultraSonicSensor Pin connection
+//Configuration
+
+//ultraSonicSensor
 const int USS1_TRIGGER_PIN = 51; //Trigger Pin
 const int USS1_ECHO_PIN = 52; //Echo Pin
 const int USS2_TRIGGER_PIN = 5; //Trigger Pin
@@ -19,21 +19,30 @@ const int USS2_ECHO_PIN = 6; //Echo Pin
 const unsigned int USS1_MAX_DISTANCE = 100; //max distance of an object to be detected, in cm
 const unsigned int USS2_MAX_DISTANCE = 40;
 
-//*create ultraSonicSensor Object*
 NewPing USSensorFront (USS1_TRIGGER_PIN, USS1_ECHO_PIN, USS1_MAX_DISTANCE);
 NewPing USSensorRight (USS2_TRIGGER_PIN, USS2_ECHO_PIN, USS2_MAX_DISTANCE);
 
+//Odometer
 const unsigned short ODOMETER2_PIN = 2;
 const unsigned long PULSES_PER_METER_2 = 345;
 
 //Gyroscope
-const int gyroOffset = 20; //updated was 11
-//**********
+const int GYRO_OFFSET = 20; //updated was 11
+
+GY50 gyroscope(GYRO_OFFSET);
 
 
-//**********
-//Car
-//**********
+//LEDs
+
+//Configuration
+const int LEDgreen = 31; //Green LED - “ready”
+const int LEDyellow = 33; //Yellow LED - “Driving on route”
+const int LEDred = 35; //Red LED - “obstacle”
+
+
+//SMART CAR
+
+//Variables
 float speed = 50;
 const int TURNING_SPEED = 50;
 const int STOP_SPEED = 0;
@@ -41,55 +50,46 @@ const int SLOW = 50;
 const int MEDIUM = 70;
 const int FAST = 90;
 
-//motor pin connection
-int leftMotorForwardPin = 8;
-int leftMotorBackwardPin = 10;
-int leftMotorSpeedPin = 9;
-int rightMotorForwardPin = 12;
-int rightMotorBackwardPin = 13;
-int rightMotorSpeedPin = 11;
+//Configuration
+const int leftMotorForwardPin = 8;
+const int leftMotorBackwardPin = 10;
+const int leftMotorSpeedPin = 9;
+const int rightMotorForwardPin = 12;
+const int rightMotorBackwardPin = 13;
+const int rightMotorSpeedPin = 11;
 
-
-//*create cars' motor's object*
 BrushedMotor leftMotor(leftMotorForwardPin, leftMotorBackwardPin, leftMotorSpeedPin);
 BrushedMotor rightMotor(rightMotorForwardPin, rightMotorBackwardPin, rightMotorSpeedPin);
-//*create car's control object*
 DifferentialControl control(leftMotor, rightMotor);
-//*create odometer object*
 DirectionlessOdometer odometer2(PULSES_PER_METER_2);
 
-//*create gyroscope object*
-GY50 gyroscope(gyroOffset);
-//*create car object*
 SmartCar car(control, gyroscope, odometer2);
 
-//**********
 
-//**********
-//Creating GPS-object
-TinyGPSPlus gps;
+//GPS MODULE
 
-//GPS variables
+//Variables
 double lat;
 double lng;
 String latitude;
 String longitude;
 boolean GPSreceiving = true;
 
-//SERIAL setup
+TinyGPSPlus gps;
+
+
+//SERIAL
+//Configuration
 static const uint32_t GPSBaud = 9600;
 static const uint32_t BluetoothBaud = 9600;
 static const uint32_t SerialBaud = 9600;
 
 
-//*********
-//LEDs
-const int LEDgreen = 31; //Green LED - “ready”
-const int LEDyellow = 33; //Yellow LED - “Driving on route”
-const int LEDred = 35; //Red LED - “obstacle”
-
-//Menu control flow
+//GLOBAL VARIABLES misc
 boolean stayInSubMenu = true;
+boolean obstacleBypassOff = false; //deactivate obstacle bypassing - stop driving when obstacle detected
+boolean obstacleAvoidanceOn = true; //(de)activate obstacle avoidance for testing
+boolean stopFromDriving; //boolean to stop car
 
 /*
  *********************************************
@@ -102,7 +102,7 @@ void setup() {
   pinMode(LEDred, OUTPUT);
 
   Serial1.begin(GPSBaud); //GPS
-  Serial.begin(9600);
+  Serial.begin(SerialBaud);
   Serial3.begin(BluetoothBaud); // opens channel for bluetooth, pins 14+15
 
   initializeOdometer();//initialize odometer
@@ -376,7 +376,7 @@ void directionCorrection(int initialHeading) {
 
 /*
  *********************************************
-     MANUAL CONTROL
+     MANUAL PAUSING when going forward
  *********************************************
 **/
 
@@ -408,49 +408,12 @@ void checkForStart() {
   }
 }
 
-/*
- *********************************************
-     UTILITY
- *********************************************
-**/
-
-int mod( int x, int y ) {
-  return x < 0 ? ((x + 1) % y) + y - 1 : x % y;
-}
-
-void distanceReset() {
-  odometer2.reset();
-}
-
-void initializeOdometer() {
-  odometer2.attach(ODOMETER2_PIN, []() {
-    odometer2.update();
-  });
-}
-
-void waitingForInput() {
-  while (!Serial3.available()) {
-    //Do nothing until Serial3 receives something
-  }
-}
-
-void getInputString() {
-  String input = Serial3.readStringUntil('!');
-
-  if (input == "m") {
-    stayInSubMenu = false;
-    return;
-  } else {
-    stringToArray(input);
-  }
-}
 
 /*
  *********************************************
      OBSTACLE AVOIDANCE
  *********************************************
 **/
-//Hey Hartmut
 
 //**STOPS IN FRONT OF OBSTACLE**
 
@@ -601,4 +564,41 @@ void gpsFunction() {
       }
     }
   } while (GPSreceiving);
+}
+
+/*
+ *********************************************
+     UTILITY
+ *********************************************
+**/
+
+int mod( int x, int y ) {
+  return x < 0 ? ((x + 1) % y) + y - 1 : x % y;
+}
+
+void distanceReset() {
+  odometer2.reset();
+}
+
+void initializeOdometer() {
+  odometer2.attach(ODOMETER2_PIN, []() {
+    odometer2.update();
+  });
+}
+
+void waitingForInput() {
+  while (!Serial3.available()) {
+    //Do nothing until Serial3 receives something
+  }
+}
+
+void getInputString() {
+  String input = Serial3.readStringUntil('!');
+  //if m pressed - go to main menu setup
+  if (input == "m") {
+    stayInSubMenu = false;
+    return;
+  } else {
+    stringToArray(input);
+  }
 }
