@@ -55,9 +55,10 @@ There are many more applicable areas where there is use of a designed and predet
 4. Connect odometer to pin 3 (additional odometer: connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on *Hajken PCB*)
 5. Connect Bluetooth module to (hardware) serial 3 (pin 15(RX) & 14(TX) - connect RX to TX, TX to RX)
 6. Connect GPS module to (hardware) serial 1 (pin 19(RX) & 18(TX) - connect RX to TX, TX to RX)
+
 ### Arduino
-1. Download the repository
-2. Open hajkenCar.ino in Arduino IDE, download the above-mentioned libraries (via Arduino IDE) and install TinyGPS++ manually (library folder must be called "TinyGPS++")
+1. Open hajkenCar.ino in Arduino IDE
+2. Download the above-mentioned libraries (via Arduino IDE) and install TinyGPS++ manually (library folder must be called "TinyGPS++")
 3. Adjust pin setup if necessary. 
 4. Calibrate odometer(s) and gyroscope. Use Smartcar Shield sketches for calibration (Odometer: sensors->odometer->FindPulsesPerMeter / Gyroscope: sensors->odometer->GyroscopeCalibration). Update PULSES_PER_METER and GYRO_OFFSET values.
 5. Optional: Test Sensors. Smartcar Shield library includes several sketches to test sensors' functionality.
@@ -88,8 +89,12 @@ Once the application is running, it needs permission to use the phones location.
  | --- | --- | --- |
 | a). Open Settings. Go to Permissions | b). Go to Your Location | c). Enable permission for the app |
 
-**4. The application is ready to use**
+**4. The application is ready for using**
 
 ## Navigate trough the interface
 
-A link to a video showing how to use the interface
+The basic navigation through the app can be seen in the following 3 pictures:
+<html>  <img src="images/Interface_Part1.gif" class="w3-round"> </html> | <html>  <img src="images/Interface_Part1.gif" class="w3-round"> </html> | <html>  <img src="images/Interface_Part1.gif" class="w3-round"> </html> |
+ | --- | --- | --- |
+
+
