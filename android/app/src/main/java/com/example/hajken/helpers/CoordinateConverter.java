@@ -10,13 +10,18 @@ public class CoordinateConverter {
 
     private String instructions;
     private static CoordinateConverter mInstance = null;
-    private Context myContext;
+    private Context mContext;
     private int speed;
     private int nrOfLoops;
+    private final int PERM_EXTRA_ARR_SIZE_ARDUINO = 4;
+    private MathUtility mMathUtility;
 
     private CoordinateConverter(Context context){
-        myContext = context;
+        mContext = context;
+        mMathUtility = MathUtility.getInstance(mContext);
+
     }
+
 
     public static CoordinateConverter getInstance(Context context){
         if (mInstance == null){
@@ -25,13 +30,14 @@ public class CoordinateConverter {
         return mInstance;
     }
 
+
     public String returnInstructions(ArrayList<PointF> validPoints){
 
         instructions = "<";
         Log.d(TAG, "returnInstructions: ");
 
         //Set length of string (for encoding purposes in Arduino)
-        instructions = instructions.concat("l,"+(((validPoints.size()-1)*4)+4));
+        instructions = instructions.concat("l,"+(((validPoints.size()-1)*PERM_EXTRA_ARR_SIZE_ARDUINO)+PERM_EXTRA_ARR_SIZE_ARDUINO));
 
         //Set speed of vehicle for route
         instructions = instructions.concat(",v,"+getSpeed()+",");
@@ -44,12 +50,12 @@ public class CoordinateConverter {
 
         for(int i = 0; i < validPoints.size()-1;i++){
 
-            if (MathUtility.getInstance(myContext).getMagnitude(validPoints.get(i),validPoints.get(i+1)) > 20){
-                angles = MathUtility.getInstance(myContext).getRotation(validPoints.get(i),validPoints.get(i+1),prevAngle);
+            if (mMathUtility.getMagnitude(validPoints.get(i),validPoints.get(i+1)) > 20){
+                angles = mMathUtility.getRotation(validPoints.get(i),validPoints.get(i+1),prevAngle);
                 prevAngle = angles.get(1); // previous degrees
                 instructions = instructions.concat("t,"+angles.get(0)); // actual rotation
                 instructions = instructions.concat(",");
-                instructions = instructions.concat("f,"+MathUtility.getInstance(myContext).getMagnitude(validPoints.get(i),validPoints.get(i+1)));
+                instructions = instructions.concat("f,"+mMathUtility.getMagnitude(validPoints.get(i),validPoints.get(i+1)));
 
                 Log.d(TAG, "returnInstructions: "+validPoints.size());
                 Log.d(TAG, "returnInstructions: "+i);

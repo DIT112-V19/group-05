@@ -2,6 +2,7 @@ package com.example.hajken.helpers;
 
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +18,17 @@ public class ListOfDevices extends ArrayAdapter<BluetoothDevice> {
 
     private LayoutInflater mLayoutInflater;
     private ArrayList<BluetoothDevice> mDevices;
-    private int  mViewResourceId;
+    private int mViewResourceId;
 
-    public ListOfDevices(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices){
-        super(context, tvResourceId,devices);
+    public ListOfDevices(Context context, int tvResourceId, ArrayList<BluetoothDevice> devices) {
+        super(context, tvResourceId, devices);
         this.mDevices = devices;
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mViewResourceId = tvResourceId;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         convertView = mLayoutInflater.inflate(mViewResourceId, null);
 
         BluetoothDevice device = mDevices.get(position);

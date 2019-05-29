@@ -36,7 +36,8 @@
     <color name="drawn_path_color">#114F63</color>
     <color name="actual_path_color">#FFFFFF</color>
 
-
+    <!-- CustomDialog colors -->
+    <color name="custom_dialog_text_color">#FFFFFF</color>
 
 
 </resources>

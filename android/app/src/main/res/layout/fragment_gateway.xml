@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.19"
         app:layout_constraintVertical_chainStyle="spread_inside"
-        app:srcCompat="@drawable/circular_shape" />
+        app:srcCompat="@drawable/shape_circular" />
 
     <Button
         android:id="@+id/collection_button"
@@ -32,7 +32,7 @@
         android:layout_marginTop="70dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="50dp"
-        android:background="@drawable/button"
+        android:background="@drawable/btn_general"
         android:text="@string/collection_button"
         android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -52,7 +52,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="80dp"
-        android:background="@drawable/button"
+        android:background="@drawable/btn_general"
         android:text="@string/draw_button"
         android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -71,7 +71,7 @@
         android:layout_marginTop="100dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="20dp"
-        android:background="@drawable/button"
+        android:background="@drawable/btn_general"
         android:text="@string/google_maps_button"
         android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
