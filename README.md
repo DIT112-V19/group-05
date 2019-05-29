@@ -12,8 +12,6 @@ An Android App in which the user can draw a (free-hand) route. The vehicle will 
 The interface enables a simple way of controlling the vehicle without programming. Driving according to certain user-drawn route and reversing/repeating this route, can be used for:
 * data collection 
 * surveillance of area
-* art (painting) 
-* etc. 
 
 There are many more applicable areas where there is use of a designed and predetermined route.
 
@@ -97,7 +95,7 @@ Once the application is running, it needs permission to use the phones location.
 
 **5. The application is ready for using**
 
-## Navigate trough the interface
+## Navigate through the interface
 
 The basic navigation through the app can be seen in the following 3 pictures:
 
