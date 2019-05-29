@@ -32,7 +32,7 @@ There are many more applicable areas where there is use of a designed and predet
   (*) available via Arduino IDE  
 
 ### Hardware:
-* Mobile Phone with Android OS and bluetooth
+* Mobile Phone with Android OS and Bluetooth
 * Arduino Mega
 *  <a href="https://github.com/platisd/smartcar_shield/tree/master/extras/eagle/smartcar_shield">PCB Smartcar Shield</a>
 * 4x DC motors
@@ -48,8 +48,8 @@ There are many more applicable areas where there is use of a designed and predet
 
 ### Car / Hardware
 1. Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank) 
-2. Connect front UltraSonicSound Sensor to pin 51 (trigger) & pin 52 (echo) [or other equalivent free pins]
-3. Connect right-side UltraSonicSound Sensor to pin 5 (trigger) & pin 6 (echo) [or other equalivent free pins] (or plugin into pins marked "Sensor right" on *Hajken PCB*)
+2. Connect front UltraSonicSound Sensor to pin 51 (trigger) & pin 52 (echo) [or other equivalent free pins]
+3. Connect right-side UltraSonicSound Sensor to pin 5 (trigger) & pin 6 (echo) [or other equivalent free pins] (or plugin into pins marked "Sensor right" on *Hajken PCB*)
 4. Connect odometer to pin 3 (additional odometer: connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on *Hajken PCB*)
 5. Connect Bluetooth module to (hardware) serial 3 (pin 15(RX) & 14(TX) - connect RX to TX, TX to RX)
 6. Connect GPS module to (hardware) serial 1 (pin 19(RX) & 18(TX) - connect RX to TX, TX to RX)
@@ -86,7 +86,7 @@ Once the application is running, it needs permission to use the phones location.
  | --- | --- | --- |
 | a). Open Settings. Go to Permissions | b). Go to Your Location | c). Enable permission for the app |
 
-**4. The application is ready for using**
+**4. The application is ready to use**
 
 ## Navigate trough the interface
 
