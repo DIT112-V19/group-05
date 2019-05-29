@@ -21,10 +21,7 @@ There are many more applicable areas where there is use of a designed and predet
 ### Software:
 #### for App
 * Android Studio
-* Toasty
-* Google Directions API
-* Google Location and Activity Recognition
-* Google Maps
+
 #### for Arduino
 * Arduino IDE
 * Arduino libraries:
@@ -48,6 +45,9 @@ There are many more applicable areas where there is use of a designed and predet
 
 ## Setup and get Started
 
+### Download repository
+https://github.com/DIT112-V19/group-05/archieve/master.zip
+
 ### Car / Hardware
 1. Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank) 
 2. Connect front UltraSonicSound Sensor to pin 51 (trigger) & pin 52 (echo) [or other equivalent free pins]
@@ -66,7 +66,13 @@ There are many more applicable areas where there is use of a designed and predet
 
 ### Android Application
 
-**1. Create an API-key for Google Directions API** <br />
+**1. Import Android Project
+1. Open Android Studios
+2. Choose import project
+3. Select android inside of the cloned folder
+4. Follow setup instructions
+
+**2. Create an API-key for Google Directions API** <br />
 *This is required for the application to build.*<br />
 * Go to the <a href="https://cloud.google.com/console/google/maps-apis/overview">Google Cloud Platform Console</a> .
 * From the Project drop-down menu, select or create the project for which you want to add an API key.
@@ -79,17 +85,17 @@ The API key created dialog displays your newly created API key.
 * Find line 15 where it says GoolgeAPIKey = "myKey"
 * Insert your API-key where it says "myKey"
 
-**2. Build and run the app in Android Studios** <br />
+**3. Build and run the app in Android Studios** <br />
 Tutorial for detailed instructions: https://developer.android.com/studio/run
 
-**3. Give app permission to use location** <br />
+**4. Give app permission to use location** <br />
 Once the application is running, it needs permission to use the phones location.
 
 | <html>  <img src="images/settings.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-appPermissions.png" class="w3-round" width="250"> </html> |   <html>  <img src="images/settings-localPermissions.png" class="w3-round" width="250"> </html> |
  | --- | --- | --- |
 | a). Open Settings. Go to Permissions | b). Go to Your Location | c). Enable permission for the app |
 
-**4. The application is ready for using**
+**5. The application is ready for using**
 
 ## Navigate trough the interface
 
