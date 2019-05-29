@@ -54,6 +54,9 @@ https://github.com/DIT112-V19/group-05/archieve/master.zip
 5. Connect Bluetooth module to (hardware) serial 3 (pin 15(RX) & 14(TX) - connect RX to TX, TX to RX)
 6. Connect GPS module to (hardware) serial 1 (pin 19(RX) & 18(TX) - connect RX to TX, TX to RX)
 
+Hardware setup:
+<html>  <img src="images/hardware-setup.png" class="w3-round" width="300"> </html>
+
 ### Arduino
 1. Open hajkenCar.ino in Arduino IDE
 2. Download the above-mentioned libraries (via Arduino IDE) and install TinyGPS++ manually (library folder must be called "TinyGPS++")
