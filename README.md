@@ -55,7 +55,7 @@ https://github.com/DIT112-V19/group-05/archieve/master.zip
 6. Connect GPS module to (hardware) serial 1 (pin 19(RX) & 18(TX) - connect RX to TX, TX to RX)
 
 Hardware setup:
-<html>  <img src="images/hardware-setup.png" class="w3-round" width="300"> </html>
+<html>  <img src="images/hardware-setup.png" class="center" width="400"> </html>
 
 ### Arduino
 1. Open hajkenCar.ino in Arduino IDE
