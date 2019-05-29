@@ -23,7 +23,7 @@ NewPing USSensorFront (USS1_TRIGGER_PIN, USS1_ECHO_PIN, USS1_MAX_DISTANCE);
 NewPing USSensorRight (USS2_TRIGGER_PIN, USS2_ECHO_PIN, USS2_MAX_DISTANCE);
 
 //Odometer
-const unsigned short ODOMETER2_PIN = 2;
+const unsigned short ODOMETER2_PIN = 3;
 const unsigned long PULSES_PER_METER_2 = 345;
 
 //Gyroscope
@@ -44,7 +44,7 @@ const int LEDred = 35; //Red LED - “obstacle”
 
 //Variables
 float speed = 50;
-const int TURNING_SPEED = 50;
+const int TURNING_SPEED = 35;
 const int STOP_SPEED = 0;
 const int SLOW = 50;
 const int MEDIUM = 70;
@@ -105,11 +105,12 @@ void setup() {
   Serial.begin(SerialBaud);
   Serial3.begin(BluetoothBaud); // opens channel for bluetooth, pins 14+15
 
-  initializeOdometer();//initialize odometer
+  initializeOdometer();//initializes odometer
   
   /*-------------------------------------------
   //Tests here:*/ 
   /*--------------------------------------------*/
+
 }
 
 /*
@@ -220,8 +221,6 @@ void commands(String commands[], int arraySize) {
         forward((int)commands[i + 1].toFloat());
       } else if (commands[i] == "t") {
         rotate((int)commands[i + 1].toFloat(), 0);
-      } else {
-        Serial3.println("unknown or no command");
       }
     }
     k++;
@@ -233,6 +232,8 @@ void commands(String commands[], int arraySize) {
   
   Serial3.println("d");
   digitalWrite(LEDyellow, LOW);
+  digitalWrite(LEDgreen, HIGH);
+
 }
 
 void reverseCommands(String commands[], int arraySize) {
@@ -247,8 +248,6 @@ void reverseCommands(String commands[], int arraySize) {
       int reverseTurn = (int)commands[i + 1].toFloat();
       reverseTurn = reverseTurn * -1;
       rotate(reverseTurn, 0);
-    } else {
-      Serial3.println("unknown or no command");
     }
   }
 
@@ -387,6 +386,7 @@ void checkForStop() {
   if (Serial3.available()) {
     inputToStop = Serial3.read();
     if (inputToStop == 's') {
+      digitalWrite(LEDyellow, LOW);
       stop();
       checkForStart();
     }
@@ -422,6 +422,7 @@ int obstacleAvoidance() {
   carDistanceToObstacle = USSensorFront.ping_cm(); // UltraSonicSound Sensor measures (0 = more than 100 cm distance)
   if (carDistanceToObstacle <= stopDistanceToObstacle && carDistanceToObstacle > 0) {
     Serial3.write("o"); // Sending message to bluetooth
+    digitalWrite(LEDyellow, LOW);
     digitalWrite(LEDred, HIGH);
     stop();
     while (obstacleBypassOff); // BYPASS OBASTACLE DEACTIVATED
