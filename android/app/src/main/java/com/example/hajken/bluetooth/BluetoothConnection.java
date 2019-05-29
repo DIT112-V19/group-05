@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.util.Log;
 
+
 import com.example.hajken.helpers.GPSTracker;
 
 import java.io.IOException;
@@ -17,7 +18,6 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class BluetoothConnection {
-
 
     private static final String TAG = "BluetoothConnection ";
     private final String APPNAME = "HAJKEN";
@@ -35,9 +35,12 @@ public class BluetoothConnection {
     private BluetoothSocket mSocket = null;
     private boolean isFinished = false;
     private boolean wasUnPaired = false;
-
     private ConnectedThread myConnectedThread;
     private static BluetoothConnection mInstance = null;
+
+    private ConnectionListener mConnectionListener;
+    private VehicleListener mVehicleListener;
+
 
     private BluetoothConnection(Context context) {
         myBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -50,25 +53,33 @@ public class BluetoothConnection {
         if (mInstance == null) {
             mInstance = new BluetoothConnection(context);
             mInstance.start();
+
         }
         return mInstance;
     }
 
-    private onBluetoothConnectionListener mListener;
 
-    public void registerListener(onBluetoothConnectionListener listener) {
-        mListener = listener;
+    public void registerConnectionListener(ConnectionListener mConnectionListener) {
+        this.mConnectionListener = mConnectionListener;
     }
 
+    public void registerVehicleListener(VehicleListener mVehicleListener) {
+        this.mVehicleListener = mVehicleListener;
+    }
+
+
+
+
     public void disconnectMode(){
-        mListener.onNotConnected();
         setWasUnPaired(false);
         setIsConnected(false);
+        mConnectionListener.onNotConnected();
+
     }
 
     public void connectMode(){
         setIsConnected(true);
-        mListener.onConnect();
+        mConnectionListener.onConnect();
     }
 
 
@@ -238,14 +249,14 @@ public class BluetoothConnection {
 
         private void readInput() {
             //stores what is read from stream
-            byte[] byteForStream = new byte[2048];
-            mListener.onCarRunning();
 
+            byte[] byteForStream = new byte[2048];
             String message = "";
 
             int bytes;
 
             while (true) {
+
                 try {
                     bytes = mInputStream.read(byteForStream);
 
@@ -253,18 +264,19 @@ public class BluetoothConnection {
                     Log.d(TAG, " Read from inputstream " + message);
                     System.out.println("Message is" + message);
 
-                    if (message.equals("Done")){
-                        mListener.onCarNotRunning();
-
+                    if (message.equals("s")){
+                        mVehicleListener.onCarRunning();
+                        message = "";
                     }
-                    if (message.equals("Obstacle")){
-                        mListener.onCarNotRunning();
 
-
+                    if (message.equals("d")){
+                        mVehicleListener.onCarNotRunning();
+                        message = "";
                     }
-                    if (message.equals("Continue")){
-                        mListener.onCarRunning();
 
+                    if (message.equals("o")){
+                        mVehicleListener.onFoundObstacle();
+                        message = "";
                     }
                     if(message.contains("*")){
                         GPSTracker.getInstance(myContext).setGPSstring(message);
@@ -278,6 +290,7 @@ public class BluetoothConnection {
                     break;
                 }
             }
+
             message = "";
 
         }
@@ -314,7 +327,6 @@ public class BluetoothConnection {
 
             mOutputStream = mSocket.getOutputStream();
             mOutputStream.write(inputInBytes);
-            mListener.onCarRunning();
 
             Log.d(TAG, " successfully written to outputstream in write()");
 
@@ -340,7 +352,7 @@ public class BluetoothConnection {
                             .getMethod("removeBond", (Class[]) null);
                     m.invoke(device, (Object[]) null);
                     setWasUnPaired(true);
-                    mListener.onNotConnected();
+                    mConnectionListener.onNotConnected();
                 } catch (Exception e) {
                     Log.e(TAG, "Removing has been failed." + e.getMessage());
                 }
@@ -352,7 +364,7 @@ public class BluetoothConnection {
 
     public void stopCar(String input) {
         writeToDevice(input);
-        mListener.onCarNotRunning();
+        mVehicleListener.onCarNotRunning();
     }
 
 
@@ -363,8 +375,7 @@ public class BluetoothConnection {
         byte[] byteForStream = new byte[1024];
         String message = "";
 
-        mListener.onCarRunning();
-
+        mVehicleListener.onCarRunning();
 
         int bytes;
 
@@ -383,40 +394,14 @@ public class BluetoothConnection {
     }
 
 
-    public boolean getIsConnected(){
+    protected boolean getIsConnected(){
         return isConnected;
     }
 
-    public void setIsConnected(Boolean isConnected){
+    private void setIsConnected(Boolean isConnected){
         this.isConnected = isConnected;
     }
 
-    public String getDeviceName(){
-        return mBluetoothDevice.getName();
-    }
-
-    public BluetoothAdapter getMyBluetoothAdapter() {
-        return myBluetoothAdapter;
-    }
-
-    public boolean isFinished() {
-        return isFinished;
-    }
-
-    public interface onBluetoothConnectionListener {
-        void onConnect();
-
-        void onNotConnected();
-
-         void onCarRunning();
-
-         void onCarNotRunning();
-
-    }
-
-    public OutputStream getmOutputStream(){
-        return this.mOutputStream;
-    }
 
 
 }

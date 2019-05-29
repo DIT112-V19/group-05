@@ -2,6 +2,7 @@ package com.example.hajken.helpers;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
@@ -12,65 +13,13 @@ import android.widget.TextView;
 
 import com.example.hajken.R;
 
-//DialogFragment is similar to Fragment but it is shrunked
 public class CustomDialogFragment extends DialogFragment {
 
-    public interface OnActionInterface {
-        void controlVehicle(Boolean start);
-    }
-
-    public OnActionInterface onAction; //interface object
-
     private static final String TAG = "CustomDialogFragment";
-    private TextView actionOk;
+    private TextView actionExecute;
     private TextView actionCancel;
     private TextView dialogHeading;
-    private String heading, action = "Start";
-
-    public void setDialogHeading(String incoming) {
-        this.heading = incoming;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        //Inflates the dialog
-        View view = inflater.inflate(R.layout.dialog_custom, container, false);
-
-        dialogHeading = view.findViewById(R.id.heading);
-        actionOk = view.findViewById(R.id.action_ok);
-        actionCancel = view.findViewById(R.id.action_cancel);
-
-        //Event of cancel
-        actionCancel.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "onCreateView: closing dialog");
-                onAction.controlVehicle(false);
-                getDialog().dismiss();
-            }
-        });
-
-        //Event of start
-        actionOk.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "onCreateView: send to start");
-                //Sends back to Collectionfragment -> controlVehicle is true
-                onAction.controlVehicle(true);
-                getDialog().dismiss();
-            }
-        });
-
-        //Changes the name of the heading of the dialog
-        dialogHeading.setText(heading);
-
-        //Changes the name of the action button of the dialog
-        actionOk.setText(action);
-        return view;
-    }
+    private String heading, action;
 
     @Override
     public void onAttach(Context context) {
@@ -80,8 +29,54 @@ public class CustomDialogFragment extends DialogFragment {
             onAction = (OnActionInterface) getTargetFragment();
         } catch (ClassCastException exception) {
             Log.e(TAG, "onAttach: ClassCastException " + exception.getMessage());
-
         }
+    }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        //Inflates the dialog
+        View view = inflater.inflate(R.layout.dialog_custom, container, false);
+
+        dialogHeading = view.findViewById(R.id.heading);
+        actionExecute = view.findViewById(R.id.action_execute);
+        actionCancel = view.findViewById(R.id.action_cancel);
+
+        //Event of cancel
+        actionCancel.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                onAction.controlVehicle(false);
+                getDialog().dismiss();
+            }
+        });
+
+        //Event of execute
+        actionExecute.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                onAction.controlVehicle(true);
+                getDialog().dismiss();
+            }
+        });
+
+        //Changes the name of the heading of the dialog
+        dialogHeading.setText(heading);
+
+        //Changes the name of the action btn_general of the dialog
+        actionExecute.setText(action);
+        return view;
+    }
+
+    public interface OnActionInterface {
+        void controlVehicle(Boolean execute);
+    }
+
+    public OnActionInterface onAction; //interface object
+
+    public void setDialogHeading(String incoming) {
+        this.heading = incoming;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 }

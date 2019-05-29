@@ -51,7 +51,7 @@ public class MathUtility {
 
     //https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm
 
-    public ArrayList<PointF> rdpSimplifier(ArrayList<PointF> listOfCoordinates, double epsilon){
+    ArrayList<PointF> rdpSimplifier(ArrayList<PointF> listOfCoordinates, double epsilon){
 
         double dmax = 0.0;
         int index = 0;
@@ -85,11 +85,11 @@ public class MathUtility {
         return resultList;
     }
 
-    public float getMagnitude(PointF pointA, PointF pointB){
+    float getMagnitude(PointF pointA, PointF pointB){
         return (float) Math.sqrt(Math.pow((pointB.x-pointA.x),2)+Math.pow((pointB.y-pointA.y),2));
     }
 
-    public ArrayList<Float> getRotation(PointF pointA, PointF pointB, float prevDegrees){
+    ArrayList<Float> getRotation(PointF pointA, PointF pointB, float prevDegrees){
         float diffY = pointB.y - pointA.y;
         float diffX = pointB.x - pointA.x;
         float atan = (float) Math.atan(Math.abs(diffY) / Math.abs(diffX));
