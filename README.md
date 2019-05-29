@@ -4,7 +4,9 @@ Video here
 
 ## What?
 
-An Android App in which the user can draw a (free-hand) route. The vehicle will drive according to the drawn route and, if requested, reverse and repeat it. Additionally, the vehicle can get its current GPS position and drive according to a track based on a route planned in google maps.
+<i>“You draw, we drive!”</i>
+
+An Android App in which the user can draw a (free-hand) route. The vehicle will drive according to the drawn route and, if requested, reverse and repeat it. Additionally, the vehicle can get its current GPS location and drive according to a track based on a route planned in google maps.
 
 ## Why?
 The interface enables a simple way of controlling the vehicle without programming. Driving according to certain user-drawn route and reversing/repeating this route, can be used for:
