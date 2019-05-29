@@ -94,8 +94,9 @@ Once the application is running, it needs permission to use the phones location.
 ## Navigate trough the interface
 
 The basic navigation through the app can be seen in the following 3 pictures:
-| <html>  <img src="images/Interface_Part1.gif" class="w3-round" width="250"> </html> | <html>  <img src="images/Interface_Part2.gif" class="w3-round" width="250"> </html> | <html>  <img src="images/Interface_Part3.gif" class="w3-round" width="250"> </html> |
- | --- | --- | --- |
+
+| <html>  <img src="images/Interface_Part1.gif" class="w3-round" width="250"> </html> |  <html>  <img src="images/Interface_Part2.gif" class="w3-round" width="250"> </html> |   <html>  <img src="images/Interface_Part3.gif" class="w3-round" width="250"> </html> |
+  | --- | --- | --- |
  | Connect to car | Draw and drive | Map and drive |
 
 
