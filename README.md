@@ -3,10 +3,17 @@
 Video here
 
 ## What?
-An Android application interacting with a Smartcar. Allows a user to design routes by drawing them on the phone.
+
+An Android App in which the user can draw a (free-hand) route. The vehicle will drive according to the drawn route and, if requested, reverse and repeat it. Additionally, the vehicle can get its current GPS position and drive according to a track based on a route planned in google maps.
 
 ## Why?
-The interface enables control of vehicle without programming. Can be used for data collection, surveillance of area, automate a path, etc. Many applicable areas where the use of a designed and predetermined route is required.
+The interface enables a simple way of controlling the vehicle without programming. Driving according to certain user-drawn route and reversing/repeating this route, can be used for:
+* data collection 
+* surveillance of area
+* art (painting) 
+* etc. 
+
+There are many more applicable areas where there is use of a designed and predetermined route.
 
 ## How?
 ### Software:
