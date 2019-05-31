@@ -1,6 +1,6 @@
 # Route Design - The HAJKEN Car
 
-<html> <a href="https://youtu.be/X-CesTomLoQ" target="_blank"> <img src="images/YouTubeLink.png" class="w3-round" width="700"> </a></html>
+<html> <a target="_blank" href="https://youtu.be/X-CesTomLoQ" target="_blank"> <img src="images/YouTubeLink.png" class="w3-round" width="700"> </a></html>
 
 ## What?
 
@@ -26,6 +26,7 @@ There are many more applicable areas where there is use of a designed and predet
   * <a href="https://github.com/platisd/smartcar_shield">smartcar shield</a> by Dimitris Platis (*)
   * <a href="https://playground.arduino.cc/Code/NewPing/">NewPing</a> by Tim Eckel (*)
   * <a href="http://arduiniana.org/libraries/tinygpsplus/">TinyGPS++</a> by Mikal Hart
+  
   (*) available via Arduino IDE  
 
 ### Hardware:
