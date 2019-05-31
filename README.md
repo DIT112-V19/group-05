@@ -1,6 +1,6 @@
 # Route Design - The HAJKEN Car
 
-<html target="_blank" rel="noopener noreferrer" href="https://youtu.be/X-CesTomLoQ"> 
+<href="https://youtu.be/X-CesTomLoQ" html target="_blank" > 
 	<img class="w3-round" width="700" src="images/YouTubeLink.png"/>
 </html>
 
