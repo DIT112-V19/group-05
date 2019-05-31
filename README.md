@@ -4,6 +4,9 @@
 	<img class="w3-round" width="700" src="images/YouTubeLink.png"/>
 </html>
 
+<img src="images/YouTubeLink.png" onclick="window.open('https://youtu.be/X-CesTomLoQ', '_blank');" />
+
+
 ## What?
 
 <i>“You draw, it drives!”</i>
