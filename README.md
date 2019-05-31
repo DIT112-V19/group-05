@@ -1,10 +1,10 @@
 # Route Design - The HAJKEN Car
 
-Video here
+Link to Video and youtube screenshot here
 
 ## What?
 
-<i>“You draw, we drive!”</i>
+<i>“You draw, it drives!”</i>
 
 An Android App in which the user can draw a (free-hand) route. The vehicle will drive according to the drawn route and, if requested, reverse and repeat it. Additionally, the vehicle can get its current GPS location and drive according to a track based on a route planned in google maps.
 
@@ -39,7 +39,7 @@ There are many more applicable areas where there is use of a designed and predet
 	* Odometer (speed encoders)
 	* Gyroscope
 	* GPS-module (Neo-6M)
-* BETA: Hajken PCB with 3 LEDs and connections for sensors (see: pcb/hajken_cutouts/)
+* BETA: Hajken PCB with 3 LEDs and connections for sensors (see: pcb/hajken_cutouts_v2/)
 
 ## Setup and get Started
 
@@ -48,14 +48,14 @@ https://github.com/DIT112-V19/group-05/archieve/master.zip
 
 ### Car / Hardware
 1. Follow the <a href="https://www.hackster.io/platisd/getting-started-with-the-smartcar-platform-1648ad">instructions</a> for the hardware setup of the smartcar with differential control (aka driving like a tank) 
-2. Connect front UltraSonicSound Sensor to pin 51 (trigger) & pin 52 (echo) [or other equivalent free pins]
-3. Connect right-side UltraSonicSound Sensor to pin 5 (trigger) & pin 6 (echo) [or other equivalent free pins] (or plugin into pins marked "Sensor right" on *Hajken PCB*)
+2. Connect front UltraSonic Sensor to pin 51 (trigger) & pin 52 (echo) [or other equivalent free pins]
+3. Connect right-side UltraSonic Sensor to pin 5 (trigger) & pin 6 (echo) [or other equivalent free pins] (or plugin into pins marked "Sensor right" on *Hajken PCB*)
 4. Connect odometer to pin 3 (additional odometer: connect to pin 2) (or plugin into pins marked "Odometer right"/"Odometer left" on *Hajken PCB*)
 5. Connect Bluetooth module to (hardware) serial 3 (pin 15(RX) & 14(TX) - connect RX to TX, TX to RX)
 6. Connect GPS module to (hardware) serial 1 (pin 19(RX) & 18(TX) - connect RX to TX, TX to RX)
 
-Hardware setup:
-<html>  <img src="images/hardware-setup.png" class="center" width="400"> </html>
+Hardware setup (with *Hajken PCB*):
+<html>  <img src="images/hardware-setup.png" class="center" width="500"> </html>
 
 ### Arduino
 1. Open hajkenCar.ino in Arduino IDE
@@ -67,7 +67,7 @@ Hardware setup:
 
 ### Android Application
 
-**1. Import Android Project
+**<b><i> Import Android Project</i></b>
 1. Open Android Studios
 2. Choose import project
 3. Select android inside of the cloned folder
