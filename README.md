@@ -1,6 +1,6 @@
 # Route Design - The HAJKEN Car
 
-Link to Video and youtube screenshot here
+<html> <a href="https://youtu.be/X-CesTomLoQ" target="_blank"> <img src="images/YouTubeLink.png" class="w3-round" width="700"> </a></html>
 
 ## What?
 
@@ -67,11 +67,11 @@ Hardware setup (with *Hajken PCB*):
 
 ### Android Application
 
-**<b><i> Import Android Project</i></b>
-1. Open Android Studios
-2. Choose import project
-3. Select android inside of the cloned folder
-4. Follow setup instructions
+**1. Import Android Project**
+* Open Android Studios
+* Choose import project
+* Select android inside of the cloned folder
+* Follow setup instructions
 
 **2. Create an API-key for Google Directions API** <br />
 *This is required for the application to build.*<br />
