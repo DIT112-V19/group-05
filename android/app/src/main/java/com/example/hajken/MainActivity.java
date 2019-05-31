@@ -11,30 +11,28 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hajken.bluetooth.Bluetooth;
-import com.example.hajken.bluetooth.BluetoothConnection;
 import com.example.hajken.fragments.CollectionFragment;
 import com.example.hajken.fragments.DrawFragment;
 import com.example.hajken.fragments.GatewayFragment;
 import com.example.hajken.fragments.GoogleMapsFragment;
 import com.example.hajken.fragments.ScanFragment;
 import com.example.hajken.fragments.StartFragment;
-import java.util.List;
+
+import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity implements InterfaceMainActivity{
 
     private static final String TAG = "MainActivity";
     private static MainActivity mMainActivity;
     private Bluetooth mBluetooth;
-    private boolean onBackPressedActive;
+    private boolean isOnBackPressedActive;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        Log.d(TAG, "TAG MAINACTIVITY - onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -45,29 +43,21 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 
         mMainActivity = this;
-        InterfaceMainActivity mInterfaceMainActivity = this;
         this.registerReceiver(mReceiver,filter);
-        onBackPressedActive = true;
-        mBluetooth = Bluetooth.getInstance(this, mInterfaceMainActivity);
+        isOnBackPressedActive = true;
+        mBluetooth = Bluetooth.getInstance(this);
 
-        init(); // when mainActivity starts, it will inflate StartFragment first
+        init();
     }
 
     private void init(){
-        Log.d(TAG, "TAG MAINACTIVITY - init");
-
         StartFragment fragment = new StartFragment();
         doFragmentTransaction(fragment,getString(R.string.start_fragment),false);
-
     }
 
-    //used to be a string message here as well but we are not using that
     private void doFragmentTransaction(Fragment fragment, String tag, boolean addToBackStack){
 
-        Log.d(TAG, "TAG MAINACTIVITY - doFragmentTransaction");
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
         transaction.replace(R.id.main_container,fragment,tag);
 
         if (addToBackStack){
@@ -80,9 +70,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     //this method is responsible to start fragmentTransactions
     @Override
     public void inflateFragment(String fragmentTag) {
-
-        Log.d(TAG, "TAG MAINACTIVITY - inflateFragment");
-
 
         if (fragmentTag.equals(getString(R.string.scan_fragment))){
 
@@ -112,10 +99,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
 
     }
 
-    //Override method to be able to adapt onBackPressed for fragments --- could this be done with just an if statement instead of loop?
     @Override
     public void onBackPressed(){
-        if (onBackPressedActive){
+        if (isOnBackPressedActive){
             super.onBackPressed();
         } else {
             Log.d(TAG, "onBackPressed: cant go back");
@@ -125,14 +111,32 @@ public class MainActivity extends AppCompatActivity implements InterfaceMainActi
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "TAG MAINACTIVITY - BroadcastReceiver onReceive");
             String action = intent.getAction();
             mBluetooth.actOnAction(action, intent);
         }
     };
 
     public void setOnBackPressedActive(boolean onBackPressedActive) {
-        this.onBackPressedActive = onBackPressedActive;
+        this.isOnBackPressedActive = onBackPressedActive;
+    }
+
+    @Override
+    public void showToast(String message) {
+
+        this.runOnUiThread(() -> {
+            switch (message) {
+
+                case "Starting" :
+                    Toasty.info(getThis(),message,Toast.LENGTH_LONG).show();
+                case "Completed route" :
+                    Toasty.info(getThis(),message, Toast.LENGTH_LONG).show();
+                case "Obstacle found" :
+                    Toasty.info(getThis(),message, Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
     }
 
     public static MainActivity getThis(){

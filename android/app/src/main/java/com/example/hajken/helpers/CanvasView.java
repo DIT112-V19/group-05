@@ -3,7 +3,6 @@ package com.example.hajken.helpers;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PointF;
@@ -11,9 +10,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
 import com.example.hajken.R;
-
 import java.util.ArrayList;
 
 public class CanvasView extends View {
@@ -143,7 +140,7 @@ public class CanvasView extends View {
             case MotionEvent.ACTION_DOWN:
                 Log.d(TAG, "onTouchEvent: STEP A");
 
-                //Reset/clear canvas and lists of coordinates
+                //Clear canvas and coordinates
                 clearCanvas();
                 listOfCoordinates.clear();
                 if (validPoints != null){
@@ -178,7 +175,6 @@ public class CanvasView extends View {
                 copyList(validPoints);
                 displayActualPath(actualPathPoints);
 
-
                 invalidate();
                 break;
         }
@@ -192,7 +188,7 @@ public class CanvasView extends View {
         canvas.drawBitmap(mBitmap, 0, 0, mPaint);
         canvas.drawPath(mPath, mPaint);
         canvas.drawPath(mStartPoint,mStartPointPaint);
-        canvas.drawPath(mActualPath,mActualPathPaint); // actual draw on canvas
+        canvas.drawPath(mActualPath,mActualPathPaint);
 
     }
 
@@ -213,9 +209,7 @@ public class CanvasView extends View {
             point.y = validPoints.get(i).y;
             this.actualPathPoints.add(point);
         }
-
     }
-
 
     public void displayActualPath(ArrayList<PointF> actualPathPoints){
         //Inverts all y-values so that it is the correct rotation for bitMap :)
@@ -240,6 +234,7 @@ public class CanvasView extends View {
                 bY = actualPathPoints.get(i).y;
             }
         }
+
         mActualPath.lineTo(actualPathPoints.get(actualPathPoints.size()-1).x,actualPathPoints.get(actualPathPoints.size()-1).y);
     }
 

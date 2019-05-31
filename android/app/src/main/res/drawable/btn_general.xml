@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- button state when not activated -->
+    <!-- btn_general state when not activated -->
     <item
         android:state_activated="false">
         <shape>
@@ -18,7 +18,7 @@
         </shape>
     </item>
 
-    <!-- button state when active -->
+    <!-- btn_general state when active -->
     <item
         android:state_activated="true">
         <shape>
